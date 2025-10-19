@@ -61,6 +61,60 @@
       font-size: 14px;
       line-height: 1.5;
     }
+
+    /* Zoom Overlay */
+    .zoom-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .zoom-overlay.active {
+      display: flex;
+    }
+
+    .zoom-overlay img {
+      max-width: 90%;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+
+    .zoom-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Image Wrap and Zoom Button */
+    .img-wrap {
+      position: relative;
+      margin: 12px 0;
+    }
+
+    .zoom-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      z-index: 2;
+    }
   </style>
 </head>
 <body>
@@ -102,36 +156,38 @@
         <div id="poolsSection">
           <h2>Pools & Lanes</h2>
 
-          <div class="definition-box">
-            <h3>What is a Pool?</h3>
-            <p>A pool represents a participant in a business process, typically an organization or a role. It acts as a container for a complete process.</p>
-            <ul>
-              <li>Contains one complete process</li>
-              <li>Represents a process participant or organization</li>
-              <li>Can interact with other pools via messages</li>
-              <li>Can be collapsed or expanded</li>
-            </ul>
-          </div>
+          <div class="example-grid">
+            <div class="definition-box">
+              <h3>What is a Pool?</h3>
+              <p>A <b>pool</b> represents a <b>participant</b> in a business process, typically an <b>organization</b> or a <b>role</b>. It acts as a <b>container</b> for a complete process.</p>
+              <ul>
+                <li>Contains <b>one complete process</b></li>
+                <li>Represents a <b>process participant</b> or organization</li>
+                <li>Can interact with other pools via <b>messages</b></li>
+                <li>Can be <b>collapsed</b> or <b>expanded</b></li>
+              </ul>
+            </div>
 
-        
-
-          <div class="definition-box" style="margin-top:20px">
-            <h3>What are Lanes?</h3>
-            <p>Lanes are sub-partitions within a pool that extend the entire length of the pool. They represent different roles or departments within an organization.</p>
-            <ul>
-              <li>Organizes activities by role or department</li>
-              <li>Shows who is responsible for activities</li>
-              <li>Can be nested for complex organizations</li>
-            </ul>
+            <div class="definition-box">
+              <h3>What are Lanes?</h3>
+              <p><b>Lanes</b> are <b>sub-partitions</b> within a pool that extend the entire length of the pool. They represent different <b>roles</b> or <b>departments</b> within an organization.</p>
+              <ul>
+                <li>Organizes activities by <b>role</b> or <b>department</b></li>
+                <li>Shows <b>who is responsible</b> for activities</li>
+                <li>Can be <b>nested</b> for complex organizations</li>
+              </ul>
+            </div>
           </div>
 
           <div class="example-">
             <div class="example-box">
               <div class="example-title">Lane and Pool</div>
               <div class="example-desc">Simple lane structure showing role separation</div>
-              <img src="img/poolandlane.png" alt="Basic Lanes Example">
+              <div class="img-wrap">
+                <button class="zoom-btn" onclick="openZoom('img/poolandlane.png')">🔍 Zoom</button>
+                <img src="img/poolandlane.png" alt="Basic Lanes Example">
+              </div>
             </div>
-            
           </div>
         </div>
 
@@ -148,21 +204,29 @@
             <div class="example-box">
               <div class="example-title">Normal Flow</div>
               <div class="example-desc">Standard sequence flow showing the default path</div>
-              <img src="img/sequenceflow.png" alt="Normal Flow Example">
+              <div class="img-wrap">
+                <button class="zoom-btn" onclick="openZoom('img/sequenceflow.png')">🔍 Zoom</button>
+                <img src="img/sequenceflow.png" alt="Normal Flow Example">
+              </div>
             </div>
             <div class="example-box">
               <div class="example-title">Message Flow</div>
               <div class="example-desc">Communication between pools/participants</div>
-              <img src="img/messageflow.png" alt="Message Flow Example">
+              <div class="img-wrap">
+                <button class="zoom-btn" onclick="openZoom('img/messageflow.png')">🔍 Zoom</button>
+                <img src="img/messageflow.png" alt="Message Flow Example">
+              </div>
             </div>
-            
           </div>
-          <div class="example-box">
-              <div class="example-title">Usage</div>
-              <div class="example-desc">Sequence Flow for Normal Flow Within the Pool </br> Message Flow is for external Pool and also for throwing and catching message events</div>
+
+          <div class="example-box" style="margin-top: 20px">
+            <div class="example-title">Usage</div>
+            <div class="example-desc">Sequence Flow for Normal Flow Within the Pool </br> Message Flow is for external Pool and also for throwing and catching message events</div>
+            <div class="img-wrap">
+              <button class="zoom-btn" onclick="openZoom('img/seqandmesflow.png')">🔍 Zoom</button>
               <img src="img/seqandmesflow.png" alt="Message Flow Example">
             </div>
-            
+          </div>
         </div>
 
         <!-- Naming Conventions Section -->
@@ -173,13 +237,17 @@
             <h3>Naming Guidelines</h3>
           </div>
 
-          <div class="example-">
-            <div class="example-box">
-              <div class="example-title">Lane Naming</div>
-              <div class="example-desc">Use organization or role names (e.g., "Sales Department")</div>
-              <img src="img/namingsequence.png" alt="Pool Naming Example">
-            </div>
+          <div class="example-grid">
             
+            </div>
+            <div class="example-box">
+              <div class="example-title">Sequence Flow Naming</div>
+              <div class="example-desc">Use clear conditional statements for sequence flows</div>
+              <div class="img-wrap">
+                <button class="zoom-btn" onclick="openZoom('img/namingsequence.png')">🔍 Zoom</button>
+                <img src="img/namingsequence.png" alt="Sequence Flow Naming Example">
+              </div>
+            </div>
           </div>
         </div>
 
@@ -256,6 +324,33 @@
     namingSection.classList.add('hidden');
     mistakesSection.classList.add('hidden');
     setActiveMenu(menuPools);
+
+    // Zoom functionality
+    function openZoom(src) {
+      if(!src) return;
+      document.getElementById('zoomedImage').src = src;
+      document.getElementById('zoomOverlay').classList.add('active');
+      document.getElementById('zoomOverlay').setAttribute('aria-hidden', 'false');
+    }
+
+    function closeZoom() {
+      document.getElementById('zoomOverlay').classList.remove('active');
+      document.getElementById('zoomOverlay').setAttribute('aria-hidden', 'true');
+      document.getElementById('zoomedImage').src = '';
+    }
+
+    document.getElementById('zoomOverlay').addEventListener('click', e => {
+      if(e.target.id === 'zoomOverlay') closeZoom();
+    });
+    document.addEventListener('keydown', e => {
+      if(e.key === 'Escape') closeZoom();
+    });
   </script>
+
+  <!-- Zoom Overlay -->
+  <div class="zoom-overlay" id="zoomOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <button class="zoom-close" id="zoomClose" onclick="closeZoom()">Close ✕</button>
+    <img id="zoomedImage" src="" alt="Zoomed diagram">
+  </div>
 </body>
 </html>

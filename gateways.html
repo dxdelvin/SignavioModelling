@@ -107,9 +107,6 @@
               <text x="14" y="30" font-family="Inter, Arial" font-size="12" fill="#0f1724">Logistics Dispatch</text>
             </g>
 
-            <!-- tokens layer -->
-
-            <!-- tokens layer -->
             <g id="tokensLayer"></g>
           </svg>
 
@@ -119,7 +116,6 @@
             <div class="small-note" style="margin-left:auto">Tip: use <strong>Step</strong> to emit one token at a time.</div>
           </div>
 
-          <!-- Explanation moved above reference; reference will be below and dynamic -->
           <div class="explain-box" id="explainBox">
             <div style="font-weight:800;margin-bottom:6px" id="explainTitle">XOR — Exclusive</div>
             <div class="small" id="explainText">
@@ -128,7 +124,6 @@
             </div>
           </div>
 
-          <!-- Diagram (reference) moved below explanation; caption updates with selection -->
           <div class="usage-large" id="conceptImageRef" style="margin-top:10px">
             <div style="display:flex;justify-content:space-between;align-items:center">
               <div style="font-weight:800" id="usageCaption">Diagram (reference)</div>
@@ -138,7 +133,7 @@
             </div>
 
             <div class="img-wrap" style="height:200px;border-radius:8px;border:1px dashed rgba(7,18,40,0.04);display:flex;align-items:center;justify-content:center;margin-top:8px;">
-              <img id="usageImg" src="img/gateways_concept.png" alt="Gateways concept reference">
+              <img id="usageImg" src="img/gateways_xor.png" alt="XOR Gateway reference">
             </div>
           </div>
 
@@ -227,35 +222,44 @@ const usageCaption = document.getElementById('usageCaption');
 const usageImg = document.getElementById('usageImg');
 
 [btnXor, btnAnd, btnOr].forEach(b => b.addEventListener('click', ()=> {
-  [btnXor, btnAnd, btnOr].forEach(x => x.classList.remove('active'));
+  [btnXor, btnAnd, btnOr].forEach(x => {
+    x.classList.remove('active');
+    x.setAttribute('aria-pressed', 'false');
+  });
   b.classList.add('active');
-  setActiveMenu(menuConcept);
+  b.setAttribute('aria-pressed', 'true');
   resetEverything();
   updateExplanation();
 }));
 
 function updateExplanation(){
+  const gateway = document.querySelector('#gateway text');
   const mode = btnXor.classList.contains('active') ? 'XOR' : (btnAnd.classList.contains('active') ? 'AND' : 'OR');
+  
   if(mode === 'XOR'){
     explainTitle.innerText = 'XOR — Exclusive';
     explainText.innerHTML = '<strong>XOR:</strong> Token chooses a single outgoing path — exclusive routing. When emitted, the token picks one path; at merge points the first arriving token continues the flow.';
+    gateway.textContent = '⊗';
   } else if(mode === 'AND'){
     explainTitle.innerText = 'AND — Parallel (Demerge & Merge)';
     explainText.innerHTML = '<strong>AND:</strong> Token splits into parallel tokens sent to all outgoing paths (demerge). They move together and later synchronize at an AND-join (merge) — only when all required tokens arrive the merged token continues to the next task.';
+    gateway.textContent = '+';
   } else {
     explainTitle.innerText = 'OR — Inclusive';
     explainText.innerHTML = '<strong>OR:</strong> Token can go to one or several paths depending on conditions. At joins, OR can continue when one or many of the incoming tokens are present depending on modeling semantics (in this demo the first arrival advances).';
+    gateway.textContent = 'o';
   }
 
-  // update reference caption and image source (fallback to gateways_concept.png)
-  usageCaption.innerText = `${mode} reference`;
-  // try gateway-specific images (you can change filenames to match your assets)
+  // update reference caption and image source
+  usageCaption.innerText = `${mode} Gateway Reference`;
   const modeKey = mode.toLowerCase();
-  const candidate = `img/gateways_${modeKey}.png`;
-  // set candidate; if file missing, the browser will still try to load; keep a general concept file fallback
-  usageImg.src = candidate;
-  // after a brief delay, if image failed to load, fallback to default concept.png
-  usageImg.onerror = function(){ this.onerror = null; this.src = 'img/gateways_concept.png'; };
+  const newSrc = `img/gateways_${modeKey}.png`;
+  // Only update if the src is different to avoid unnecessary reloads
+  if (usageImg.src !== newSrc) {
+    usageImg.src = newSrc;
+  }
+  // Update the alt text to be more descriptive
+  usageImg.alt = `${mode} Gateway reference diagram`;
 }
 
 // SVG token/animation logic (same merge/sync behavior)
@@ -417,6 +421,10 @@ if(!raf) raf = requestAnimationFrame(loop);
 // init
 setActiveMenu(menuConcept);
 updateExplanation();
+// Set initial image on load
+document.addEventListener('DOMContentLoaded', function() {
+    usageImg.src = 'img/gateways_xor.png';
+});
 </script>
 </body>
 </html>
