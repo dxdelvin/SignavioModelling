@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Module — Pools & Sequence Flows</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    .hidden {
+      display: none !important;
+    }
+    .example-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .example-box {
+      background: #fff;
+      border-radius: var(--round);
+      padding: 16px;
+      border: 1px solid rgba(7,18,40,0.04);
+    }
+    .example-box img {
+      width: 100%;
+      border: 1px solid rgba(7,18,40,0.04);
+      border-radius: 8px;
+      margin: 12px 0;
+    }
+    .example-title {
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--bsh-accent);
+    }
+    .example-desc {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container events-layout" role="main">
+    <!-- LEFT Sidebar -->
+    <aside class="sidebar" aria-label="Navigation">
+      <div class="brand">
+        <div class="logo">BSH</div>
+        <div>
+          <div class="title">Signavio BPMN</div>
+          <div class="small" style="color:var(--muted)">Pools & Flows</div>
+        </div>
+      </div>
+
+      <nav class="menu" aria-label="Module menu">
+        <button id="menu-pools" class="active" aria-pressed="true">Pools & Lanes</button>
+        <button id="menu-naming" aria-pressed="false">Naming Conventions</button>
+        <button id="menu-flows" aria-pressed="false">Sequence Flows</button>
+        <button id="menu-mistakes" aria-pressed="false">Common Mistakes</button>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <section class="main" aria-live="polite">
+      <header class="header">
+        <div class="h-left">
+          <a href="index.html" title="Back to Home" style="text-decoration:none">
+            <div class="logo" style="width:44px;height:44px;border-radius:8px;font-size:16px">←</div>
+          </a>
+          <div>
+            <div class="h-title">Pools & Sequence Flows</div>
+            <div class="h-sub">Learn about process organization and connections</div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content" role="region" aria-label="Main content area">
+        <!-- Pools & Lanes Section -->
+        <div id="poolsSection">
+          <h2>Pools & Lanes</h2>
+
+          <div class="definition-box">
+            <h3>What is a Pool?</h3>
+            <p>A pool represents a participant in a business process, typically an organization or a role. It acts as a container for a complete process.</p>
+            <ul>
+              <li>Contains one complete process</li>
+              <li>Represents a process participant or organization</li>
+              <li>Can interact with other pools via messages</li>
+              <li>Can be collapsed or expanded</li>
+            </ul>
+          </div>
+
+        
+
+          <div class="definition-box" style="margin-top:20px">
+            <h3>What are Lanes?</h3>
+            <p>Lanes are sub-partitions within a pool that extend the entire length of the pool. They represent different roles or departments within an organization.</p>
+            <ul>
+              <li>Organizes activities by role or department</li>
+              <li>Shows who is responsible for activities</li>
+              <li>Can be nested for complex organizations</li>
+            </ul>
+          </div>
+
+          <div class="example-">
+            <div class="example-box">
+              <div class="example-title">Lane and Pool</div>
+              <div class="example-desc">Simple lane structure showing role separation</div>
+              <img src="img/poolandlane.png" alt="Basic Lanes Example">
+            </div>
+            
+          </div>
+        </div>
+
+        <!-- Sequence Flows Section -->
+        <div id="flowsSection" class="hidden">
+          <h2>Sequence Flows</h2>
+
+          <div class="definition-box">
+            <h3>Types of Flows</h3>
+            <p>Flows connect elements in a process and show the sequence of activities.</p>
+          </div>
+
+          <div class="example-grid">
+            <div class="example-box">
+              <div class="example-title">Normal Flow</div>
+              <div class="example-desc">Standard sequence flow showing the default path</div>
+              <img src="img/sequenceflow.png" alt="Normal Flow Example">
+            </div>
+            <div class="example-box">
+              <div class="example-title">Message Flow</div>
+              <div class="example-desc">Communication between pools/participants</div>
+              <img src="img/messageflow.png" alt="Message Flow Example">
+            </div>
+            
+          </div>
+          <div class="example-box">
+              <div class="example-title">Usage</div>
+              <div class="example-desc">Sequence Flow for Normal Flow Within the Pool </br> Message Flow is for external Pool and also for throwing and catching message events</div>
+              <img src="img/seqandmesflow.png" alt="Message Flow Example">
+            </div>
+            
+        </div>
+
+        <!-- Naming Conventions Section -->
+        <div id="namingSection" class="hidden">
+          <h2>Naming Conventions</h2>
+
+          <div class="definition-box">
+            <h3>Naming Guidelines</h3>
+          </div>
+
+          <div class="example-">
+            <div class="example-box">
+              <div class="example-title">Lane Naming</div>
+              <div class="example-desc">Use organization or role names (e.g., "Sales Department")</div>
+              <img src="img/namingsequence.png" alt="Pool Naming Example">
+            </div>
+            
+          </div>
+        </div>
+
+        <!-- Common Mistakes Section -->
+        <div id="mistakesSection" class="hidden">
+          <h2>Common Mistakes</h2>
+
+          <div class="definition-box">
+            <h3>According to Signavio Best Practices</h3>
+            <ul>
+              <li>Using message flows within the same pool</li>
+              <li>Crossing sequence flows between lanes</li>
+              <li>Missing pool names or unclear participant roles</li>
+              <li>Inconsistent lane usage across processes</li>
+            </ul>
+          </div>
+
+          <div  class="example-grid">
+            <div class="example-box">
+              <div class="example-title">Incorrect Message Flows</div>
+              <div class="example-desc">Common mistake in message flow usage</div>
+              <img src="img/placeholder.png" alt="Message Flow Mistakes">
+            </div>
+            <div class="example-box">
+              <div class="example-title">Lane Misuse</div>
+              <div class="example-desc">Incorrect lane organization and flow crossing</div>
+              <img src="img/placeholder.png" alt="Lane Usage Mistakes">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const menuPools = document.getElementById('menu-pools');
+    const menuFlows = document.getElementById('menu-flows');
+    const menuNaming = document.getElementById('menu-naming');
+    const menuMistakes = document.getElementById('menu-mistakes');
+
+    const poolsSection = document.getElementById('poolsSection');
+    const flowsSection = document.getElementById('flowsSection');
+    const namingSection = document.getElementById('namingSection');
+    const mistakesSection = document.getElementById('mistakesSection');
+
+    function setActiveMenu(btn) {
+      [menuPools, menuFlows, menuNaming, menuMistakes].forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+
+      [poolsSection, flowsSection, namingSection, mistakesSection].forEach(section => {
+        section.classList.add('hidden');
+      });
+
+      if (btn === menuPools) poolsSection.classList.remove('hidden');
+      if (btn === menuFlows) flowsSection.classList.remove('hidden');
+      if (btn === menuNaming) namingSection.classList.remove('hidden');
+      if (btn === menuMistakes) mistakesSection.classList.remove('hidden');
+    }
+
+    menuPools.addEventListener('click', () => setActiveMenu(menuPools));
+    menuFlows.addEventListener('click', () => setActiveMenu(menuFlows));
+    menuNaming.addEventListener('click', () => setActiveMenu(menuNaming));
+    menuMistakes.addEventListener('click', () => setActiveMenu(menuMistakes));
+
+    // Initialize - hide all sections except Pools & Lanes
+    flowsSection.classList.add('hidden');
+    namingSection.classList.add('hidden');
+    mistakesSection.classList.add('hidden');
+    setActiveMenu(menuPools);
+  </script>
+</body>
+</html>

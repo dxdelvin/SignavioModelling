@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Welcome — Signavio BPMN Learning</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">BSH</div>
+      <div>
+        <div class="h-title">Signavio BPMN</div>
+        <div class="h-sub">Process Modeling and Designing</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <a class="module-btn" href="events.html">
+          <div class="num">1</div>
+          <div>
+            <div style="font-weight:800">Events</div>
+            <div class="small">Start, Intermediate, End — click to learn the differences</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="card">
+        <a class="module-btn" href="tasks.html">
+          <div class="num">2</div>
+          <div>
+            <div style="font-weight:800">Tasks</div>
+            <div class="small">Tasks, Collapsed Process & Guidelines </div>
+          </div>
+        </a>
+      </div>
+
+      <div class="card">
+        <a class="module-btn" href="gateways.html">
+          <div class="num">3</div>
+          <div>
+            <div style="font-weight:800">Gateways</div>
+            <div class="small">Exclusive, Parallel, Inclusive</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="card">
+        <a class="module-btn" href="sequenceandpool.html">
+          <div class="num">4</div>
+          <div>
+            <div style="font-weight:800">Pools & Sequence Flows</div>
+            <div class="small">Process organization and connections</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="module-btn disabled" aria-disabled="true">
+          <div class="num">5</div>
+          <div>
+            <div style="font-weight:800">Artifacts</div>
+            <div class="small">Data objects, annotations</div>
+          </div>
+        </div>
+      </div>
+
+          </div>
+
+          <div class="bpmn-section">
+      <div class="section-header">
+        <h2>Interactive BPMN Modeler</h2>
+        <p class="small">Try out BPMN modeling directly in your browser using bpmn.io</p>
+      </div>
+      <div class="bpmn-container">
+        <iframe
+          src="https://demo.bpmn.io/new"
+          title="BPMN.io Modeler"
+          width="100%"
+          height="600"
+          frameborder="0"
+          allow="clipboard-write"
+          class="bpmn-frame"
+        ></iframe>
+      </div>
+    </div>
+    </div>
+
+    <!-- BPMN.io Integration -->
+    
+  </div>
+
+  <style>
+    .bpmn-section {
+      margin-top: 40px;
+      padding: 20px;
+      background: #fff;
+      border-radius: var(--round);
+      box-shadow: var(--shadow-1);
+    }
+
+    .section-header {
+      margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+      margin: 0 0 8px 0;
+      color: var(--bsh-accent);
+    }
+
+    .bpmn-container {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(7,18,40,0.04);
+      background: #fff;
+    }
+
+    .bpmn-frame {
+      display: block;
+      width: 100%;
+      min-height: 600px;
+      background: #fff;
+    }
+
+    @media (max-width: 768px) {
+      .bpmn-frame {
+        min-height: 400px;
+      }
+    }
+  </style>
+</body>
+</html>

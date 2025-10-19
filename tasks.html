@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Module — Tasks, Collapsed Process & Guidelines</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      --task-accent: #FF6841;
+    }
+
+    /* Core Layout */
+    .task-box { 
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(7,18,40,0.04);
+      box-shadow: 0 2px 12px rgba(7,18,40,0.04);
+    }
+
+    .task-box h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: var(--task-accent);
+    }
+
+    /* Definition Styles */
+    .definition {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .definition ul {
+      margin-top: 16px;
+      margin-left: 24px;
+    }
+
+    .definition li {
+      margin-bottom: 12px;
+    }
+
+    /* Image Containers */
+    .img-wrap {
+      border: 1px solid rgba(7,18,40,0.04);
+      border-radius: 12px;
+      padding: 20px;
+      background: #fff;
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .img-wrap img {
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .img-wrap .zoom-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+    }
+
+    /* Naming Conventions */
+    .naming-convention-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 12px rgba(7,18,40,0.04);
+    }
+
+    .naming-convention-box h3 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: var(--task-accent);
+    }
+
+    /* Benefits Grid */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 16px;
+    }
+
+    .benefits-grid ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .benefits-grid li {
+      margin-bottom: 12px;
+      color: var(--muted);
+    }
+
+    /* Utilities */
+    .small-note {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .task-box,
+      .naming-convention-box {
+        padding: 20px;
+      }
+
+      .benefits-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .img-wrap {
+        padding: 12px;
+      }
+
+      .img-wrap .zoom-btn {
+        top: 8px;
+        right: 8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .task-box h3,
+      .naming-convention-box h3 {
+        font-size: 18px;
+      }
+
+      .definition ul {
+        margin-left: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container events-layout" role="main">
+    <!-- LEFT Sidebar -->
+    <aside class="sidebar" aria-label="Navigation">
+      <div class="brand">
+        <div class="logo">BSH</div>
+        <div>
+          <div class="title">Signavio BPMN</div>
+          <div class="small" style="color:var(--muted)">Tasks Module</div>
+        </div>
+      </div>
+
+      <nav class="menu" aria-label="Module menu">
+        <button id="menu-tasks" class="active" aria-pressed="true">Task Types </button>
+        <button id="menu-collapsed" aria-pressed="false">Collapsed Process</button>
+        <button id="menu-expanded" aria-pressed="false">Expanded Process</button>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <section class="main" aria-live="polite">
+      <header class="header">
+        <div class="h-left">
+          <a href="index.html" title="Back to Home" style="text-decoration:none">
+            <div class="logo" style="width:44px;height:44px;border-radius:8px;font-size:16px">←</div>
+          </a>
+          <div>
+            <div class="h-title">Tasks, Collapsed Process & General Guidelines</div>
+            <div class="h-sub">Learn about different task types and collapsed processes</div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content" role="region" aria-label="Tasks and guidelines content">
+        <div id="tasksSection">
+          <h2>Task in BPMN</h2>
+
+          <div class="task-box">
+            <div class="definition">
+              <p>Tasks represent atomic units of work in a process. Keep tasks focused on a single responsibility.</p>
+              <ul>
+                <li>Use verb-noun pairs for clarity (e.g., "Approve Invoice").</li>
+                <li>Limit scope — one logical action per task.</li>
+                <li>Document inputs, outputs, and responsible roles.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="task-box">
+            <h3>Task Examples</h3>
+            <div class="img-wrap">
+              <button class="zoom-btn" onclick="openZoom('img/task_examples.png')">🔍 Zoom</button>
+              <img src="img/task_examples.png" alt="Task Examples in BPMN" style="max-width:100%">
+            </div>
+          </div>
+
+          <div class="naming-convention-box">
+            <h3>Naming Convention</h3>
+            <div class="img-wrap">
+              <button class="zoom-btn" onclick="openZoom('img/namingconv1.png')">🔍 Zoom</button>
+              <img src="img/namingconv1.png" alt="Task Naming Convention Part 1" style="max-width:100%">
+            </div>
+            <div class="img-wrap" style="margin-top:20px">
+              <button class="zoom-btn" onclick="openZoom('img/namingconv2.png')">🔍 Zoom</button>
+              <img src="img/namingconv2.png" alt="Task Naming Convention Part 2" style="max-width:100%">
+            </div>
+          </div>
+        </div>
+
+        <!-- Collapsed Process Section -->
+        <div id="collapsedSection" class="hidden">
+          <h2>Collapsed Processes</h2>
+          
+          <div class="task-box">
+            <h3>When to Use Collapsed Processes</h3>
+            <p>Collapsed processes (also called Sub-processes) are used to encapsulate related activities into a single, manageable unit.</p>
+            
+            <div class="img-wrap">
+              <button class="zoom-btn" onclick="openZoom('img/collapsed_process2.png')">🔍 Zoom</button>
+              <img src="img/collapsed_process2.png" alt="Collapsed Process Example" style="max-width:100%">
+              <div class="small-note">Example: A collapsed process containing Different Process</div>
+            </div>
+          </div>
+
+          <div class="task-box">
+            <h3>Benefits & Best Practices</h3>
+            <div class="benefits-grid">
+              <ul>
+                <li>Reduces visual complexity</li>
+                <li>Improves maintainability</li>
+                <li>Enables process reuse</li>
+                <li>Better process organization</li>
+              </ul>
+              <ul>
+                <li>Use meaningful names</li>
+                <li>Keep related activities together</li>
+                <li>Document boundaries</li>
+                <li>Consider detail level needed</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Expanded Process Section -->
+        <div id="expandedSection" class="hidden">
+          <h2>Expanded Processes</h2>
+          
+          <div class="task-box">
+            <h3>What is an Expanded Process?</h3>
+            <p>An expanded process shows all the details of a subprocess directly within the main process diagram. It's useful when you want to display the internal workflow without having to navigate to a separate diagram.</p>
+            <p>This approach provides immediate visibility into subprocess activities, making it easier to understand the overall process flow at a glance.</p>
+          </div>
+
+          <div class="task-box">
+            <h3>When to Use Expanded Process</h3>
+            <div class="naming-convention-box">
+              <ul>
+                <li>When immediate visibility of subprocess details is important</li>
+                <li>For relatively simple subprocesses that don't overwhelm the main diagram</li>
+                <li>Also Triggering Other Flows If Certain Conditions are Met During a Subprocess Stage</li>
+              </ul>
+            </div>
+
+            <div class="img-wrap">
+              <button class="zoom-btn" onclick="openZoom('img/expandedprocess.png')">🔍 Zoom</button>
+              <img src="img/expandedprocess.png" alt="Expanded Process Example" style="max-width:100%">
+              <div class="small-note">Example: An expanded process showing internal workflow details</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+<div class="zoom-overlay" id="zoomOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <button class="zoom-close" id="zoomClose" onclick="closeZoom()">Close ✕</button>
+    <img id="zoomedImage" src="" alt="Zoomed diagram">
+  </div>
+  <script>
+    const menuTasks = document.getElementById('menu-tasks');
+    const menuCollapsed = document.getElementById('menu-collapsed');
+    const menuExpanded = document.getElementById('menu-expanded');
+
+    const tasksSection = document.getElementById('tasksSection');
+    const collapsedSection = document.getElementById('collapsedSection');
+    const expandedSection = document.getElementById('expandedSection');
+
+    collapsedSection.classList.add('hidden');
+    expandedSection.classList.add('hidden');
+
+    function setActiveMenu(btn) {
+      [menuTasks, menuCollapsed, menuExpanded].forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+
+      tasksSection.classList.add('hidden');
+      collapsedSection.classList.add('hidden');
+      expandedSection.classList.add('hidden');
+
+      if (btn === menuTasks) tasksSection.classList.remove('hidden');
+      if (btn === menuCollapsed) collapsedSection.classList.remove('hidden');
+      if (btn === menuExpanded) expandedSection.classList.remove('hidden');
+    }
+
+    menuTasks.addEventListener('click', () => setActiveMenu(menuTasks));
+    menuCollapsed.addEventListener('click', () => setActiveMenu(menuCollapsed));
+    menuExpanded.addEventListener('click', () => setActiveMenu(menuExpanded));
+
+    setActiveMenu(menuTasks);
+
+    // zoom overlay
+function openZoom(src){
+  if(!src) return;
+  document.getElementById('zoomedImage').src = src;
+  document.getElementById('zoomOverlay').classList.add('active');
+  document.getElementById('zoomOverlay').setAttribute('aria-hidden','false');
+}
+function closeZoom(){
+  document.getElementById('zoomOverlay').classList.remove('active');
+  document.getElementById('zoomOverlay').setAttribute('aria-hidden','true');
+  document.getElementById('zoomedImage').src = '';
+}
+document.getElementById('zoomOverlay').addEventListener('click', e => { if(e.target.id === 'zoomOverlay') closeZoom(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeZoom(); });
+
+  </script>
+</body>
+</html>

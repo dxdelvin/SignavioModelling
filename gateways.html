@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Module — Gateways (XOR • AND • OR)</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* Local tweaks (kept small; primary styles in styles.css) */
+    .gateway-topbar { display:flex; gap:10px; align-items:center; margin-bottom:12px; }
+    .gateway-btn { padding:8px 12px; border-radius:8px; border:1px solid rgba(7,18,40,0.06); cursor:pointer; background:transparent; font-weight:800; }
+    .gateway-btn.active { background: linear-gradient(90deg, rgba(255,104,65,0.06), transparent); color: var(--bsh-accent); box-shadow: inset 0 0 0 1px rgba(255,104,65,0.04); }
+    .controls { display:flex; gap:8px; align-items:center; margin-top:6px; }
+    .small-note { font-size:13px; color:var(--muted); }
+    .token { transition: none; } /* central RAF controls movement */
+    .task-box { fill:#fff; stroke:rgba(7,18,40,0.06); rx:8; ry:8; }
+    .task-active { filter: drop-shadow(0 8px 22px rgba(255,104,65,0.12)); stroke:var(--bsh-accent); }
+    .hidden { display:none !important; }
+    .explain-box { border-radius:8px; background:#fff; border:1px solid rgba(7,18,40,0.04); padding:12px; }
+    .img-wrap img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
+    @media (max-width:980px){
+      .demo-area{flex-direction:column}
+      .demo-left{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="container events-layout" role="main">
+    <!-- LEFT Sidebar -->
+    <aside class="sidebar" aria-label="Navigation">
+      <div class="brand">
+        <div class="logo">BSH</div>
+        <div>
+          <div class="title">Signavio BPMN</div>
+          <div class="small" style="color:var(--muted)">Gateways Module</div>
+        </div>
+      </div>
+
+      <nav class="menu" aria-label="Module menu">
+        <button id="menu-concept" class="active" aria-pressed="true">Concept &amp; Types</button>
+        <button id="menu-usage" aria-pressed="false">Usage</button>
+        <button id="menu-mistakes" aria-pressed="false">Common Mistakes  <span class="badge">Inprogress</span></button>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <section class="main" aria-live="polite">
+      <header class="header">
+        <div class="h-left">
+          <a href="index.html" title="Back to Home" style="text-decoration:none">
+            <div class="logo" style="width:44px;height:44px;border-radius:8px;font-size:16px">←</div>
+          </a>
+          <div>
+            <div class="h-title">Gateways — XOR (Exclusive) • AND (Parallel) • OR (Inclusive)</div>
+            <div class="h-sub">Top bar selects the gateway demo; press <strong>Step</strong> to emit a token and demonstrate routing</div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content demo-area" role="region" aria-label="Gateways demo area">
+        <!-- LEFT: animation stage + controls + explanation (Concept view) -->
+        <div class="demo-left" id="conceptColumn">
+          <div style="font-weight:800">Gateways demo</div>
+
+          <!-- gateway chooser -->
+          <div class="gateway-topbar" role="tablist" aria-label="Gateway types">
+            <button id="btn-xor" class="gateway-btn active" aria-pressed="true">XOR (Exclusive)</button>
+            <button id="btn-and" class="gateway-btn" aria-pressed="false">AND (Parallel)</button>
+            <button id="btn-or" class="gateway-btn" aria-pressed="false">OR (Inclusive)</button>
+          </div>
+
+          <!-- SVG stage -->
+          <svg id="stage" class="svg-stage" viewBox="0 0 900 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gateway animation stage" preserveAspectRatio="xMidYMid meet">
+            <!-- incoming -->
+            <g id="incomingBox" transform="translate(20,150)">
+              <rect class="task-box" width="140" height="44" rx="8" ry="8"/>
+              <text x="16" y="30" font-family="Inter, Arial" font-size="12" fill="#0f1724">Incoming Order</text>
+            </g>
+
+            <!-- path into gateway - extended to reach diamond head edge -->
+            <path id="p_in" d="M160 172 L220 172" stroke="rgba(7,18,40,0.12)" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+            <!-- gateway diamond (split) -->
+            <g id="gateway" transform="translate(220,172)">
+              <path d="M -16 0 L 0 -16 L 16 0 L 0 16 Z" fill="#fff" stroke="rgba(7,18,40,0.14)" stroke-width="2"/>
+              <text x="-6" y="5" font-family="Inter, Arial" font-size="12" fill="#0f1724">⊗</text>
+            </g>
+
+            <!-- outgoing paths (start close to gateway so there's no big whitespace) -->
+            <path id="pA" d="M236 154 C300 130, 380 120, 480 108" stroke="rgba(7,18,40,0.12)" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <g id="outA" transform="translate(480,90)">
+              <rect class="task-box" width="160" height="44" rx="8" ry="8"/>
+              <text x="14" y="30" font-family="Inter, Arial" font-size="12" fill="#0f1724">Supplier Selection</text>
+            </g>
+
+            <path id="pB" d="M236 172 C340 172, 420 172, 480 172" stroke="rgba(7,18,40,0.12)" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <g id="outB" transform="translate(480,150)">
+              <rect class="task-box" width="160" height="44" rx="8" ry="8"/>
+              <text x="14" y="30" font-family="Inter, Arial" font-size="12" fill="#0f1724">QA Check</text>
+            </g>
+
+            <path id="pC" d="M236 190 C300 210, 380 232, 480 264" stroke="rgba(7,18,40,0.12)" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <g id="outC" transform="translate(480,240)">
+              <rect class="task-box" width="160" height="44" rx="8" ry="8"/>
+              <text x="14" y="30" font-family="Inter, Arial" font-size="12" fill="#0f1724">Logistics Dispatch</text>
+            </g>
+
+            <!-- tokens layer -->
+
+            <!-- tokens layer -->
+            <g id="tokensLayer"></g>
+          </svg>
+
+          <div class="controls">
+            <button id="stepBtn" class="btn">Step</button>
+            <button id="resetBtn" class="btn ghost">Reset</button>
+            <div class="small-note" style="margin-left:auto">Tip: use <strong>Step</strong> to emit one token at a time.</div>
+          </div>
+
+          <!-- Explanation moved above reference; reference will be below and dynamic -->
+          <div class="explain-box" id="explainBox">
+            <div style="font-weight:800;margin-bottom:6px" id="explainTitle">XOR — Exclusive</div>
+            <div class="small" id="explainText">
+              <strong>XOR:</strong> Token chooses a single outgoing path — exclusive routing.
+              When emitted, the token picks one path; at merge points the first arriving token continues the flow.
+            </div>
+          </div>
+
+          <!-- Diagram (reference) moved below explanation; caption updates with selection -->
+          <div class="usage-large" id="conceptImageRef" style="margin-top:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:800" id="usageCaption">Diagram (reference)</div>
+              <div>
+                <button class="btn" onclick="openZoom(document.getElementById('usageImg').src)">Zoom</button>
+              </div>
+            </div>
+
+            <div class="img-wrap" style="height:200px;border-radius:8px;border:1px dashed rgba(7,18,40,0.04);display:flex;align-items:center;justify-content:center;margin-top:8px;">
+              <img id="usageImg" src="img/gateways_concept.png" alt="Gateways concept reference">
+            </div>
+          </div>
+
+          <div class="small-note" style="margin-top:8px">When AND splits into parallel tokens, they move together and then merge at the join gateway. The merged token then activates "Book Goods".</div>
+        </div>
+
+        <!-- RIGHT: Usage & Mistakes (hidden when Concept selected) -->
+        <div class="demo-right">
+          <!-- FULL Usage (hidden until left menu selected) -->
+          <div class="usage-large hidden" id="usageBlock">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:800">Usage — Example diagram</div>
+              <div>
+                <button class="btn" onclick="openZoom('img/gateways_usage.png')">Zoom</button>
+              </div>
+            </div>
+
+            <div class="img-wrap" style="height:340px;margin-top:8px">
+              <img src="img/gateways_usage.png" alt="Gateways usage diagram" style="max-width:100%;max-height:100%;object-fit:contain">
+            </div>
+
+            <div class="small-note">Example: XOR selects a supplier; AND forks QA & Logistics in parallel; OR conditionally notifies extra suppliers.</div>
+          </div>
+
+          <!-- Common mistakes (hidden until selected) -->
+          <div class="mistakes-list hidden" id="mistakesBlock">
+            <div style="font-weight:800">Common Mistakes — Things to Avoid</div>
+            <ul style="margin-top:8px;color:var(--muted)">
+              <li>Using AND when XOR is intended — creates unnecessary parallelism.</li>
+              <li>Not merging parallel flows — leaves the model unsynchronized.</li>
+              <li>Ambiguous conditions in OR gateways — label conditions clearly.</li>
+              <li>Mixing split/join gateway types incorrectly — keep split & join semantics consistent.</li>
+            </ul>
+            <div class="small-note" style="margin-top:8px">Replace the example image below with a screenshot of a common mistake if you have one.</div>
+            <img id="mistakeImage" src="img/gateways_mistake.png" alt="Common mistake" style="max-width:100%;margin-top:10px">
+            <div style="margin-top:8px;display:flex;gap:8px">
+              <button class="btn" onclick="openZoom('img/gateways_mistake.png')">Zoom</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- zoom overlay -->
+      <div class="zoom-overlay" id="zoomOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+        <button class="zoom-close" id="zoomClose" onclick="closeZoom()">Close ✕</button>
+        <img id="zoomedImage" src="" alt="Zoomed diagram">
+      </div>
+    </section>
+  </div>
+
+<script>
+
+
+// Menu behavior
+const menuConcept = document.getElementById('menu-concept');
+const menuUsage = document.getElementById('menu-usage');
+const menuMistakes = document.getElementById('menu-mistakes');
+
+const conceptColumn = document.getElementById('conceptColumn');
+const usageBlock = document.getElementById('usageBlock');
+const mistakesBlock = document.getElementById('mistakesBlock');
+const conceptImageRef = document.getElementById('conceptImageRef');
+
+function setActiveMenu(btn){
+  [menuConcept, menuUsage, menuMistakes].forEach(b=>{
+    b.classList.remove('active');
+    b.setAttribute('aria-pressed','false');
+  });
+  btn.classList.add('active');
+  btn.setAttribute('aria-pressed','true');
+
+  if(btn === menuConcept){
+    conceptColumn.style.display = '';
+    usageBlock.classList.add('hidden');
+    mistakesBlock.classList.add('hidden');
+  } else if(btn === menuUsage){
+    conceptColumn.style.display = 'none';
+    usageBlock.classList.remove('hidden');
+    mistakesBlock.classList.add('hidden');
+  } else {
+    conceptColumn.style.display = 'none';
+    usageBlock.classList.add('hidden');
+    mistakesBlock.classList.remove('hidden');
+  }
+}
+
+menuConcept.addEventListener('click', ()=> setActiveMenu(menuConcept));
+menuUsage.addEventListener('click', ()=> setActiveMenu(menuUsage));
+menuMistakes.addEventListener('click', ()=> setActiveMenu(menuMistakes));
+
+// Explanation area
+const explainTitle = document.getElementById('explainTitle');
+const explainText = document.getElementById('explainText');
+
+// Gateway buttons
+const btnXor = document.getElementById('btn-xor');
+const btnAnd = document.getElementById('btn-and');
+const btnOr  = document.getElementById('btn-or');
+const usageCaption = document.getElementById('usageCaption');
+const usageImg = document.getElementById('usageImg');
+
+[btnXor, btnAnd, btnOr].forEach(b => b.addEventListener('click', ()=> {
+  [btnXor, btnAnd, btnOr].forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  setActiveMenu(menuConcept);
+  resetEverything();
+  updateExplanation();
+}));
+
+function updateExplanation(){
+  const mode = btnXor.classList.contains('active') ? 'XOR' : (btnAnd.classList.contains('active') ? 'AND' : 'OR');
+  if(mode === 'XOR'){
+    explainTitle.innerText = 'XOR — Exclusive';
+    explainText.innerHTML = '<strong>XOR:</strong> Token chooses a single outgoing path — exclusive routing. When emitted, the token picks one path; at merge points the first arriving token continues the flow.';
+  } else if(mode === 'AND'){
+    explainTitle.innerText = 'AND — Parallel (Demerge & Merge)';
+    explainText.innerHTML = '<strong>AND:</strong> Token splits into parallel tokens sent to all outgoing paths (demerge). They move together and later synchronize at an AND-join (merge) — only when all required tokens arrive the merged token continues to the next task.';
+  } else {
+    explainTitle.innerText = 'OR — Inclusive';
+    explainText.innerHTML = '<strong>OR:</strong> Token can go to one or several paths depending on conditions. At joins, OR can continue when one or many of the incoming tokens are present depending on modeling semantics (in this demo the first arrival advances).';
+  }
+
+  // update reference caption and image source (fallback to gateways_concept.png)
+  usageCaption.innerText = `${mode} reference`;
+  // try gateway-specific images (you can change filenames to match your assets)
+  const modeKey = mode.toLowerCase();
+  const candidate = `img/gateways_${modeKey}.png`;
+  // set candidate; if file missing, the browser will still try to load; keep a general concept file fallback
+  usageImg.src = candidate;
+  // after a brief delay, if image failed to load, fallback to default concept.png
+  usageImg.onerror = function(){ this.onerror = null; this.src = 'img/gateways_concept.png'; };
+}
+
+// SVG token/animation logic (same merge/sync behavior)
+const tokensLayer = document.getElementById('tokensLayer');
+const pathIn = document.getElementById('p_in');
+const pathA = document.getElementById('pA');
+const pathB = document.getElementById('pB');
+const pathC = document.getElementById('pC');
+const outA = document.getElementById('outA');
+const outB = document.getElementById('outB');
+const outC = document.getElementById('outC');
+
+const stepBtn = document.getElementById('stepBtn');
+const resetBtn = document.getElementById('resetBtn');
+
+stepBtn.addEventListener('click', ()=> emitStep());
+resetBtn.addEventListener('click', ()=> resetEverything());
+
+let tokenSeq = 0;
+const tokens = [];
+let raf = null;
+
+function getPathPoint(pathEl, t){
+  const len = pathEl.getTotalLength();
+  return pathEl.getPointAtLength(Math.max(0, Math.min(len, t * len)));
+}
+
+function createToken(color = 'var(--bsh-accent)'){
+  tokenSeq++;
+  const id = 'tk-' + tokenSeq;
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.setAttribute('id', id);
+  // initial position sits at incoming rect's right edge (match p_in start)
+  g.setAttribute('transform', 'translate(160,170)');
+  g.classList.add('token');
+  const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  c.setAttribute('r', 8);
+  c.setAttribute('fill', color);
+  c.setAttribute('stroke', '#fff');
+  c.setAttribute('stroke-width', 2);
+  g.appendChild(c);
+  tokensLayer.appendChild(g);
+  const obj = { id, el: g, path: null, prog: 0, speed: 0.008 + Math.random()*0.003, arrived:false, routed:false };
+  tokens.push(obj);
+  return obj;
+}
+
+function setTokenPath(tk, pathEl){
+  tk.path = pathEl;
+  tk.prog = 0;
+  tk.arrived = false;
+  tk.routed = false;
+}
+
+function loop(){
+  for(let i = tokens.length - 1; i >= 0; i--){
+    const t = tokens[i];
+    if(!t.path) continue;
+    t.prog += t.speed;
+    if(t.prog > 1) t.prog = 1;
+    const pt = getPathPoint(t.path, t.prog);
+    if(pt) t.el.setAttribute('transform', `translate(${pt.x-8},${pt.y-8})`);
+    if(t.prog >= 1 && !t.arrived){
+      t.arrived = true;
+      handleArrival(t);
+    }
+  }
+  raf = requestAnimationFrame(loop);
+}
+
+function handleArrival(tok){
+  const p = tok.path;
+  if(p === pathIn){
+    routeAtGateway(tok);
+    return;
+  }
+  if(p === pathA || p === pathB || p === pathC){
+    const parent = p === pathA ? outA : (p === pathB ? outB : outC);
+    const rect = parent.querySelector('rect');
+    if(rect){ rect.classList.add('task-active'); setTimeout(()=> rect.classList.remove('task-active'), 700); }
+    setTimeout(()=> {
+      try { tok.el.remove(); } catch(e){}
+      const idx = tokens.findIndex(x=>x.id===tok.id);
+      if(idx!==-1) tokens.splice(idx,1);
+    }, 900);
+    return;
+  }
+}
+
+function routeAtGateway(tok){
+  const mode = btnXor.classList.contains('active') ? 'XOR' : (btnAnd.classList.contains('active') ? 'AND' : 'OR');
+  if(mode === 'XOR'){
+    const pickArray = ['A','B','C'];
+    // distribute picks to look varied
+    const pick = pickArray[tokenSeq % pickArray.length];
+    const p = pick === 'A' ? pathA : (pick === 'B' ? pathB : pathC);
+    setTokenPath(tok, p);
+  } else if(mode === 'AND'){
+    const speed = 0.01;
+    const gatePoint = getPathPoint(pathIn, 1);
+    setTokenPath(tok, pathA); tok.speed = speed;
+    const tB = createToken('var(--bsh-accent)'); setTokenPath(tB, pathB); tB.speed = speed;
+    const tC = createToken('var(--bsh-accent)'); setTokenPath(tC, pathC); tC.speed = speed;
+    [tok, tB, tC].forEach(tk => {
+      if(gatePoint) tk.el.setAttribute('transform', `translate(${gatePoint.x-8},${gatePoint.y-8})`);
+      tk.prog = 0;
+    });
+  } else {
+    // OR - some conditional picks; ensure at least one path is chosen
+    const choices = [];
+    if(Math.random() < 0.5) choices.push('B');
+    if(Math.random() < 0.4) choices.push('C');
+    if(choices.length === 0) choices.push('A');
+    choices.forEach((ch, idx)=>{
+      const p = ch === 'A' ? pathA : (ch === 'B' ? pathB : pathC);
+      if(idx === 0) setTokenPath(tok, p);
+      else { const clone = createToken('var(--bsh-accent)'); setTokenPath(clone, p); }
+    });
+  }
+}
+
+function emitStep(){
+  const t = createToken('var(--bsh-accent)');
+  setTokenPath(t, pathIn);
+  if(!raf) raf = requestAnimationFrame(loop);
+}
+
+function resetEverything(){
+  while(tokens.length){
+    try{ tokens[0].el.remove(); }catch(e){}
+    tokens.shift();
+  }
+  tokenSeq = 0;
+  [outA, outB, outC].forEach(g => {
+    const r = g.querySelector('rect'); if(r) r.classList.remove('task-active');
+  });
+}
+
+// zoom helpers
+function openZoom(src){
+  if(!src) return;
+  const overlay = document.getElementById('zoomOverlay');
+  document.getElementById('zoomedImage').src = src;
+  overlay.classList.add('active');
+  overlay.setAttribute('aria-hidden','false');
+}
+function closeZoom(){
+  const overlay = document.getElementById('zoomOverlay');
+  overlay.classList.remove('active');
+  overlay.setAttribute('aria-hidden','true');
+  document.getElementById('zoomedImage').src = '';
+}
+document.getElementById('zoomOverlay').addEventListener('click', e => { if(e.target.id === 'zoomOverlay') closeZoom(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeZoom(); });
+
+// start RAF loop
+if(!raf) raf = requestAnimationFrame(loop);
+
+// init
+setActiveMenu(menuConcept);
+updateExplanation();
+</script>
+</body>
+</html>

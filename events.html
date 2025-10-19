@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>         
+            <title>Module — Events (Concept & Types)</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+
+    .hidden { display:none !important; }
+    .type-tab.active { outline: none; }
+  </style>
+</head>
+<body>
+  <div class="container events-layout" role="main">
+    <aside class="sidebar" aria-label="Navigation">
+      <div class="brand">
+        <div class="logo">BSH</div>
+        <div>
+          <div class="title">Signavio BPMN</div>
+          <div class="small" style="color:var(--muted)">Events Module</div>
+        </div>
+      </div>
+
+      <nav class="menu" aria-label="Module menu">
+        <button id="menu-concept" class="active" aria-pressed="true" onclick="showMenu('concept')">Concept &amp; Types</button>
+        <button id="menu-usage" aria-pressed="false" onclick="showMenu('usage')">Usage</button>
+        <button id="menu-mistakes" disabled aria-pressed="false" onclick="showMenu('mistakes')">Common Mistakes  <span class="badge">Inprogress</span></button>
+      </nav>
+    </aside>
+
+    <section class="main" aria-live="polite">
+      <header class="header">
+        <div class="h-left">
+          <a href="index.html" title="Back to Home" style="text-decoration:none">
+            <div class="logo" style="width:44px;height:44px;border-radius:8px;font-size:16px">←</div>
+          </a>
+          <div>
+            <div id="pageTitle" class="h-title">Events — Concept &amp; Types</div>
+            <div class="h-sub">Click an event on the left to view its types and example diagrams</div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content" id="conceptBlock" role="region" aria-label="Events concept area">
+        <div class="content-left" id="contentLeft">
+          <div style="font-weight:800">Events</div>
+          <div class="event-list" role="list" aria-label="Event types">
+            <div class="event-card" role="listitem" tabindex="0" data-event="start" aria-selected="true" onclick="selectEvent('start')">
+              <div class="event-icon" aria-hidden><!-- start icon -->
+                <svg width="36" height="36" viewBox="0 0 60 60" aria-hidden>
+                  <circle cx="30" cy="30" r="18" stroke="#1f2937" stroke-width="3" fill="transparent"/>
+                </svg>
+              </div>
+              <div>
+                <div class="event-title">Start Event</div>
+                <div class="event-desc">Triggers the process instance. Usually a single start for a simple flow.</div>
+              </div>
+            </div>
+
+            <div class="event-card" role="listitem" tabindex="0" data-event="intermediate" aria-selected="false" onclick="selectEvent('intermediate')">
+              <div class="event-icon" aria-hidden><!-- intermediate icon -->
+                <svg width="36" height="36" viewBox="0 0 60 60" aria-hidden>
+                  <circle cx="30" cy="30" r="18" stroke="#1f2937" stroke-width="2" fill="transparent"/>
+                  <circle cx="30" cy="30" r="12" stroke="#1f2937" stroke-width="2" fill="transparent"/>
+                </svg>
+              </div>
+              <div>
+                <div class="event-title">Intermediate Event</div>
+                <div class="event-desc">Occurs during a process — catching or throwing variants exist.</div>
+              </div>
+            </div>
+
+            <div class="event-card" role="listitem" tabindex="0" data-event="end" aria-selected="false" onclick="selectEvent('end')">
+              <div class="event-icon" aria-hidden><!-- end icon -->
+                <svg width="36" height="36" viewBox="0 0 60 60" aria-hidden>
+                  <circle cx="30" cy="30" r="18" fill="#0f1724"/>
+                </svg>
+              </div>
+              <div>
+                <div class="event-title">End Event</div>
+                <div class="event-desc">Terminates a path or the entire process. Multiple end events possible.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-right" id="contentRight">
+          <!-- Type bar (static) -->
+          <div class="type-bar" id="typeBar" role="tablist" aria-label="Event type tabs">
+            <button class="type-tab active" data-type="Plain" onclick="selectType('Plain')">Plain <span class="count">(1)</span></button>
+            <button class="type-tab" data-type="Message" onclick="selectType('Message')">Message <span class="count">(1)</span></button>
+            <button class="type-tab" data-type="Timer" onclick="selectType('Timer')">Timer <span class="count">(1)</span></button>
+            <button class="type-tab" data-type="Conditional" onclick="selectType('Conditional')">Conditional <span class="count">(1)</span></button>
+          </div>
+
+          <div class="type-content" id="typeContent" aria-live="polite">
+            <div class="small" id="introText">Select an event on the left to see its types and example diagrams.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USAGE block (shown only when Usage selected) -->
+      <div class="content" id="usageBlock" style="display:none;">
+        <div style="flex:1">
+          <div style="font-weight:800;margin-bottom:8px">Usage</div>
+
+          <div class="special" id="specialTopicIntro">
+            <h3>Special Topic: Attached Intermediate Events</h3>
+            <p>Attached intermediate events are commonly used as <strong>cancel conditions</strong> on tasks (e.g., an attached timer cancels a waiting task and takes an alternative path).</p>
+          </div>
+
+          <div class="special" id="specialTopicExamples" style="margin-top:12px">
+            <h3>Examples</h3>
+            <p class="small" style="color:var(--muted)">Replace the image below with your screenshot that shows an attached intermediate event example.</p>
+
+            <div class="usage-large" aria-label="Usage large diagram">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-weight:800">Usage Diagram</div>
+                <div>
+                  <button class="btn" onclick="openZoom('img/usage_diagram.png')">Zoom</button>
+                </div>
+              </div>
+
+              <div class="img-wrap" id="usageImageWrap">
+                <img id="usageImage" src="img/usage_diagram.png" alt="Usage diagram placeholder">
+              </div>
+
+              <div class="small" style="color:var(--muted)">
+                Add your explanation here or embed it in the screenshot.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MISTAKES block -->
+      <div class="content" id="mistakesBlock" style="display:none;">
+        <div style="flex:1">
+          <div style="font-weight:800;margin-bottom:8px">Common Mistakes — Things to Avoid</div>
+
+          <div class="mistakes-list" aria-label="Common mistakes list">
+          
+
+            <!-- Mistake 1 -->
+            <div class="mistake-box" style="margin-bottom: 40px; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="color: #dc2626; margin-bottom: 12px;">❌ Misused Intermediate Events</h3>
+              <p style="color: var(--muted); margin-bottom: 20px;">Using intermediate events when simple sequence flows would suffice creates unnecessary complexity.</p>
+              <div class="mistake-pair" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="wrong" style="border: 2px solid #dc2626; border-radius: 8px; padding: 12px;">
+                  <img src="img/events_wrong_intermediate.png" alt="Wrong example: overused intermediate events" style="width: 100%; margin-bottom: 8px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div class="caption" style="color: #dc2626; font-weight: 600;">Wrong</div>
+                    <button class="btn" onclick="openZoom('img/events_wrong_intermediate.png')">Zoom</button>
+                  </div>
+                </div>
+                <div class="right" style="border: 2px solid #16a34a; border-radius: 8px; padding: 12px;">
+                  <img src="img/events_right_intermediate.png" alt="Right example: proper intermediate events" style="width: 100%; margin-bottom: 8px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div class="caption" style="color: #16a34a; font-weight: 600;">Correct</div>
+                    <button class="btn" onclick="openZoom('img/events_right_intermediate.png')">Zoom</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mistake 2 -->
+            <div class="mistake-box" style="margin-bottom: 40px; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="color: #dc2626; margin-bottom: 12px;">❌ Missing End Events</h3>
+              <p style="color: var(--muted); margin-bottom: 20px;">Leaving process paths without proper end events makes it unclear where the process terminates.</p>
+              <div class="mistake-pair" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="wrong" style="border: 2px solid #dc2626; border-radius: 8px; padding: 12px;">
+                  <img src="img/events_wrong_end.png" alt="Wrong example: missing end events" style="width: 100%; margin-bottom: 8px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div class="caption" style="color: #dc2626; font-weight: 600;">Wrong</div>
+                    <button class="btn" onclick="openZoom('img/events_wrong_end.png')">Zoom</button>
+                  </div>
+                </div>
+                <div class="right" style="border: 2px solid #16a34a; border-radius: 8px; padding: 12px;">
+                  <img src="img/events_right_end.png" alt="Right example: proper end events" style="width: 100%; margin-bottom: 8px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div class="caption" style="color: #16a34a; font-weight: 600;">Correct</div>
+                    <button class="btn" onclick="openZoom('img/events_right_end.png')">Zoom</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <!-- Zoom overlay -->
+  <div class="zoom-overlay" id="zoomOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <button class="zoom-close" id="zoomClose" onclick="closeZoom()">Close ✕</button>
+    <img id="zoomedImage" src="" alt="Zoomed diagram">
+  </div>
+
+<script>
+
+
+// content model (descriptions you provided)
+const model = {
+  start: {
+    label: 'Start Event',
+    types: {
+      Plain: {count:1, desc: "These events can only occur at the start of a process, as they're representing the trigger. Hence, they can only have one outgoing sequence flow.", file: 'img/start_plain.png'},
+      Message: {count:1, desc: "Can be used whenever the process gets triggered by receiving a message, a physical object, or anything else.", file: 'img/start_message.png'},
+      Timer: {count:1, desc: "Can be used whenever the process start depends on a certain point in time.", file: 'img/start_timer.png'},
+      Conditional: {count:0, desc: "", file: 'img/empty_placeholder.png'}
+    }
+  },
+  intermediate: {
+    label: 'Intermediate Event',
+    types: {
+      Plain: {count:1, desc: "Blank intermediate events can be used to highlight a certain progress (Milestone) in the process flow. E.g. 'QC Done'.", file: 'img/intermediate_plain.png'},
+      Message: {count:1, desc: "Represents an incoming message, object or file and waits until that point of receiving.", file: 'img/intermediate_message.png'},
+      Timer: {count:1, desc: "Delays the process until a given point in time. Can be used to wait.", file: 'img/intermediate_timer.png'},
+      Conditional: {count:1, desc: "Delay the process until an external condition is met (Conditional Intermediate Event).", file: 'img/intermediate_conditional.png'}
+    }
+  },
+  end: {
+    label: 'End Event',
+    types: {
+      Plain: {count:1, desc: "This event marks the end of the process; it can only have an incoming sequence flow.", file: 'img/end_plain.png'},
+      Message: {count:1, desc: "Represents a message, physical goods, or files sent by ending the process at the same time.", file: 'img/end_message.png'},
+      Timer: {count:0, desc: "", file: 'img/empty_placeholder.png'},
+      Conditional: {count:0, desc: "", file: 'img/empty_placeholder.png'}
+    }
+  }
+};
+
+let currentEvent = 'start';
+
+// show / hide main sections
+function showMenu(menu){
+  document.getElementById('menu-concept').classList.remove('active');
+  document.getElementById('menu-usage').classList.remove('active');
+  document.getElementById('menu-mistakes').classList.remove('active');
+  document.getElementById('menu-concept').setAttribute('aria-pressed','false');
+  document.getElementById('menu-usage').setAttribute('aria-pressed','false');
+  document.getElementById('menu-mistakes').setAttribute('aria-pressed','false');
+
+  if(menu === 'concept'){
+    document.getElementById('menu-concept').classList.add('active');
+    document.getElementById('menu-concept').setAttribute('aria-pressed','true');
+    document.getElementById('conceptBlock').style.display = '';
+    document.getElementById('usageBlock').style.display = 'none';
+    document.getElementById('mistakesBlock').style.display = 'none';
+    document.getElementById('pageTitle').innerText = 'Events — Concept & Types';
+    // render current event
+    renderTypeBar(currentEvent);
+    selectType('Plain'); // default
+  } else if(menu === 'usage'){
+    document.getElementById('menu-usage').classList.add('active');
+    document.getElementById('menu-usage').setAttribute('aria-pressed','true');
+    document.getElementById('conceptBlock').style.display = 'none';
+    document.getElementById('usageBlock').style.display = '';
+    document.getElementById('mistakesBlock').style.display = 'none';
+    document.getElementById('pageTitle').innerText = 'Events — Usage';
+  } else {
+    document.getElementById('menu-mistakes').classList.add('active');
+    document.getElementById('menu-mistakes').setAttribute('aria-pressed','true');
+    document.getElementById('conceptBlock').style.display = 'none';
+    document.getElementById('usageBlock').style.display = 'none';
+    document.getElementById('mistakesBlock').style.display = '';
+    document.getElementById('pageTitle').innerText = 'Events — Common Mistakes';
+  }
+}
+
+// event selection
+function selectEvent(key){
+  currentEvent = key;
+  document.querySelectorAll('.event-card').forEach(c => c.setAttribute('aria-selected', c.dataset.event === key ? 'true' : 'false'));
+  renderTypeBar(key);
+  selectType('Plain');
+}
+
+// render the type bar for the selected event (keeps UI static but updates counts if needed)
+function renderTypeBar(eventKey){
+  const bar = document.getElementById('typeBar');
+  bar.querySelectorAll('.type-tab').forEach(tab => {
+    const t = tab.dataset.type;
+    const count = model[eventKey].types[t] ? model[eventKey].types[t].count : 0;
+    tab.querySelector('.count').innerText = `(${count})`;
+    // visually disable if count 0
+    if(count === 0){
+      tab.style.opacity = '0.5';
+      tab.style.cursor = 'not-allowed';
+      tab.setAttribute('aria-disabled','true');
+    } else {
+      tab.style.opacity = '';
+      tab.style.cursor = '';
+      tab.removeAttribute('aria-disabled');
+    }
+  });
+}
+
+// show selected type panel (renders HTML into #typeContent — uses static imgs from img/)
+function selectType(typeName){
+  // set active tab
+  document.querySelectorAll('.type-tab').forEach(t => t.classList.toggle('active', t.dataset.type === typeName));
+  const data = model[currentEvent].types[typeName];
+  const container = document.getElementById('typeContent');
+  container.innerHTML = '';
+  if(!data || data.count === 0){
+    container.innerHTML = `<div class="small">No common ${typeName} variants for ${model[currentEvent].label}.</div>`;
+    return;
+  }
+
+  const intro = document.createElement('div');
+  intro.className = 'small';
+  intro.innerText = `${model[currentEvent].label} — ${typeName} — ${data.desc}`;
+  container.appendChild(intro);
+
+  // single-column variants: data.count panels, but for most types count is 1
+  for(let i=1;i<=data.count;i++){
+    const v = document.createElement('div');
+    v.className = 'variant';
+    const title = document.createElement('div');
+    title.className = 'v-title';
+    // Set specific titles based on event type and variant
+    if (typeName === 'Plain') {
+      title.innerText = `${model[currentEvent].label} (Plain)`;
+    } else {
+      title.innerText = `${currentEvent.charAt(0).toUpperCase() + currentEvent.slice(1)} ${typeName} Event`;
+    }
+    const thumb = document.createElement('div');
+    thumb.className = 'thumb';
+    const img = document.createElement('img');
+    // choose file: model file is generic; if you had multiple variants you'd follow naming pattern
+    img.src = data.file;
+    img.alt = `${title.innerText} diagram placeholder`;
+    thumb.appendChild(img);
+    
+    v.appendChild(title);
+    v.appendChild(thumb);
+    container.appendChild(v);
+  }
+}
+
+// zoom overlay
+function openZoom(src){
+  if(!src) return;
+  document.getElementById('zoomedImage').src = src;
+  document.getElementById('zoomOverlay').classList.add('active');
+  document.getElementById('zoomOverlay').setAttribute('aria-hidden','false');
+}
+function closeZoom(){
+  document.getElementById('zoomOverlay').classList.remove('active');
+  document.getElementById('zoomOverlay').setAttribute('aria-hidden','true');
+  document.getElementById('zoomedImage').src = '';
+}
+document.getElementById('zoomOverlay').addEventListener('click', e => { if(e.target.id === 'zoomOverlay') closeZoom(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeZoom(); });
+
+// init
+showMenu('concept');
+selectEvent('start');
+selectType('Plain');
+
+</script>
+</body>
+</html>
