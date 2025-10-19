@@ -6,9 +6,13 @@
             <title>Module — Events (Concept & Types)</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-
     .hidden { display:none !important; }
     .type-tab.active { outline: none; }
+    button[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -25,7 +29,7 @@
       <nav class="menu" aria-label="Module menu">
         <button id="menu-concept" class="active" aria-pressed="true" onclick="showMenu('concept')">Concept &amp; Types</button>
         <button id="menu-usage" aria-pressed="false" onclick="showMenu('usage')">Usage</button>
-        <button id="menu-mistakes" disabled aria-pressed="false" onclick="showMenu('mistakes')">Common Mistakes  <span class="badge">Inprogress</span></button>
+        <button id="menu-mistakes" disabled aria-pressed="false" aria-disabled="true" tabindex="-1">Common Mistakes  <span class="badge">Inprogress</span></button>
       </nav>
     </aside>
 
@@ -236,6 +240,9 @@ let currentEvent = 'start';
 
 // show / hide main sections
 function showMenu(menu){
+  // Don't process if trying to show mistakes section (it's disabled)
+  if (menu === 'mistakes') return;
+
   document.getElementById('menu-concept').classList.remove('active');
   document.getElementById('menu-usage').classList.remove('active');
   document.getElementById('menu-mistakes').classList.remove('active');

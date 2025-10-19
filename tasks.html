@@ -159,6 +159,7 @@
 
       <nav class="menu" aria-label="Module menu">
         <button id="menu-tasks" class="active" aria-pressed="true">Task Types </button>
+        <button id="menu-naming" aria-pressed="false">Naming Convention</button>
         <button id="menu-collapsed" aria-pressed="false">Collapsed Process</button>
         <button id="menu-expanded" aria-pressed="false">Expanded Process</button>
       </nav>
@@ -201,8 +202,13 @@
             </div>
           </div>
 
-          <div class="naming-convention-box">
-            <h3>Naming Convention</h3>
+        </div>
+
+        <!-- Naming Convention Section -->
+        <div id="namingSection" class="hidden">
+          <h2>Naming Convention</h2>
+          <div class="task-box">
+            <h3>BPMN Naming Guidelines</h3>
             <div class="img-wrap">
               <button class="zoom-btn" onclick="openZoom('img/namingconv1.png')">🔍 Zoom</button>
               <img src="img/namingconv1.png" alt="Task Naming Convention Part 1" style="max-width:100%">
@@ -284,18 +290,21 @@
   </div>
   <script>
     const menuTasks = document.getElementById('menu-tasks');
+    const menuNaming = document.getElementById('menu-naming');
     const menuCollapsed = document.getElementById('menu-collapsed');
     const menuExpanded = document.getElementById('menu-expanded');
 
     const tasksSection = document.getElementById('tasksSection');
+    const namingSection = document.getElementById('namingSection');
     const collapsedSection = document.getElementById('collapsedSection');
     const expandedSection = document.getElementById('expandedSection');
 
+    namingSection.classList.add('hidden');
     collapsedSection.classList.add('hidden');
     expandedSection.classList.add('hidden');
 
     function setActiveMenu(btn) {
-      [menuTasks, menuCollapsed, menuExpanded].forEach(b => {
+      [menuTasks, menuNaming, menuCollapsed, menuExpanded].forEach(b => {
         b.classList.remove('active');
         b.setAttribute('aria-pressed', 'false');
       });
@@ -303,15 +312,18 @@
       btn.setAttribute('aria-pressed', 'true');
 
       tasksSection.classList.add('hidden');
+      namingSection.classList.add('hidden');
       collapsedSection.classList.add('hidden');
       expandedSection.classList.add('hidden');
 
       if (btn === menuTasks) tasksSection.classList.remove('hidden');
+      if (btn === menuNaming) namingSection.classList.remove('hidden');
       if (btn === menuCollapsed) collapsedSection.classList.remove('hidden');
       if (btn === menuExpanded) expandedSection.classList.remove('hidden');
     }
 
     menuTasks.addEventListener('click', () => setActiveMenu(menuTasks));
+    menuNaming.addEventListener('click', () => setActiveMenu(menuNaming));
     menuCollapsed.addEventListener('click', () => setActiveMenu(menuCollapsed));
     menuExpanded.addEventListener('click', () => setActiveMenu(menuExpanded));
 

@@ -221,6 +221,18 @@ button{font-family:inherit}
   color: var(--bsh-accent);
 }
 
+/* Disabled button styles */
+button[disabled] {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  touch-action: none !important;
+}
+
 /* responsive adjustments */
 @media (max-width:980px){
   .container.events-layout{padding:12px;display:block}

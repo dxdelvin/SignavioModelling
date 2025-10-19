@@ -41,7 +41,7 @@
       <nav class="menu" aria-label="Module menu">
         <button id="menu-concept" class="active" aria-pressed="true">Concept &amp; Types</button>
         <button id="menu-usage" aria-pressed="false">Usage</button>
-        <button id="menu-mistakes" aria-pressed="false">Common Mistakes  <span class="badge">Inprogress</span></button>
+        <button id="menu-mistakes" disabled aria-pressed="false" aria-disabled="true" tabindex="-1">Common Mistakes  <span class="badge">Inprogress</span></button>
       </nav>
     </aside>
 
@@ -163,21 +163,7 @@
             <div class="small-note">Example: XOR selects a supplier; AND forks QA & Logistics in parallel; OR conditionally notifies extra suppliers.</div>
           </div>
 
-          <!-- Common mistakes (hidden until selected) -->
-          <div class="mistakes-list hidden" id="mistakesBlock">
-            <div style="font-weight:800">Common Mistakes — Things to Avoid</div>
-            <ul style="margin-top:8px;color:var(--muted)">
-              <li>Using AND when XOR is intended — creates unnecessary parallelism.</li>
-              <li>Not merging parallel flows — leaves the model unsynchronized.</li>
-              <li>Ambiguous conditions in OR gateways — label conditions clearly.</li>
-              <li>Mixing split/join gateway types incorrectly — keep split & join semantics consistent.</li>
-            </ul>
-            <div class="small-note" style="margin-top:8px">Replace the example image below with a screenshot of a common mistake if you have one.</div>
-            <img id="mistakeImage" src="img/gateways_mistake.png" alt="Common mistake" style="max-width:100%;margin-top:10px">
-            <div style="margin-top:8px;display:flex;gap:8px">
-              <button class="btn" onclick="openZoom('img/gateways_mistake.png')">Zoom</button>
-            </div>
-          </div>
+    
         </div>
       </div>
 
