@@ -27,8 +27,9 @@
       </div>
 
       <nav class="menu" aria-label="Module menu">
-        <button id="menu-concept" class="active" aria-pressed="true" onclick="showMenu('concept')">Concept &amp; Types</button>
-        <button id="menu-usage" aria-pressed="false" onclick="showMenu('usage')">Usage</button>
+        <button id="menu-concept" class="active" aria-pressed="true">Concept &amp; Types</button>
+        <button id="menu-naming" aria-pressed="false">Naming Convention</button>
+        <button id="menu-usage" aria-pressed="false">Usage</button>
         <button id="menu-mistakes" disabled aria-pressed="false" aria-disabled="true" tabindex="-1">Common Mistakes  <span class="badge">Inprogress</span></button>
       </nav>
     </aside>
@@ -51,8 +52,7 @@
           <div style="font-weight:800">Events</div>
           <div class="event-list" role="list" aria-label="Event types">
             <div class="event-card" role="listitem" tabindex="0" data-event="start" aria-selected="true" onclick="selectEvent('start')">
-              <div class="event-icon" aria-hidden><!-- start icon -->
-                <svg width="36" height="36" viewBox="0 0 60 60" aria-hidden>
+              <div class="event-icon" aria-hidden><svg width="36" height="36" viewBox="0 0 60 60" aria-hidden>
                   <circle cx="30" cy="30" r="18" stroke="#1f2937" stroke-width="3" fill="transparent"/>
                 </svg>
               </div>
@@ -63,8 +63,7 @@
             </div>
 
             <div class="event-card" role="listitem" tabindex="0" data-event="intermediate" aria-selected="false" onclick="selectEvent('intermediate')">
-              <div class="event-icon" aria-hidden><!-- intermediate icon -->
-                <svg width="36" height="36" viewBox="0 0 60 60" aria-hidden>
+              <div class="event-icon" aria-hidden><svg width="36" height="36" viewBox="0 0 60 60" aria-hidden>
                   <circle cx="30" cy="30" r="18" stroke="#1f2937" stroke-width="2" fill="transparent"/>
                   <circle cx="30" cy="30" r="12" stroke="#1f2937" stroke-width="2" fill="transparent"/>
                 </svg>
@@ -76,8 +75,7 @@
             </div>
 
             <div class="event-card" role="listitem" tabindex="0" data-event="end" aria-selected="false" onclick="selectEvent('end')">
-              <div class="event-icon" aria-hidden><!-- end icon -->
-                <svg width="36" height="36" viewBox="0 0 60 60" aria-hidden>
+              <div class="event-icon" aria-hidden><svg width="36" height="36" viewBox="0 0 60 60" aria-hidden>
                   <circle cx="30" cy="30" r="18" fill="#0f1724"/>
                 </svg>
               </div>
@@ -90,7 +88,6 @@
         </div>
 
         <div class="content-right" id="contentRight">
-          <!-- Type bar (static) -->
           <div class="type-bar" id="typeBar" role="tablist" aria-label="Event type tabs">
             <button class="type-tab active" data-type="Plain" onclick="selectType('Plain')">Plain <span class="count">(1)</span></button>
             <button class="type-tab" data-type="Message" onclick="selectType('Message')">Message <span class="count">(1)</span></button>
@@ -104,7 +101,26 @@
         </div>
       </div>
 
-      <!-- USAGE block (shown only when Usage selected) -->
+      <div class="content" id="namingBlock" style="display:none;">
+        <div style="flex:1">
+          <div style="font-weight:800;margin-bottom:8px">Event Naming Conventions</div>
+          
+          <div class="usage-large" aria-label="Naming convention diagram">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:800">Naming Guideline </div>
+              <div>
+                <button class="btn" onclick="openZoom('img/namingconv2.png')">Zoom</button>
+              </div>
+            </div>
+
+            <div class="img-wrap" id="namingImageWrap" style="height: 300px; padding: 20px; justify-content: center; align-items: center; display: flex;">
+              <img id="namingImage" src="img/namingconv2.png" alt="Naming convention placeholder" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+            </div>
+            <div class="small">This is a placeholder for event naming conventions. You can replace 'img/namingconv2.png' with your desired image.</div>
+          </div>
+        </div>
+      </div>
+
       <div class="content" id="usageBlock" style="display:none;">
         <div style="flex:1">
           <div style="font-weight:800;margin-bottom:8px">Usage</div>
@@ -135,7 +151,6 @@
         </div>
       </div>
 
-      <!-- MISTAKES block -->
       <div class="content" id="mistakesBlock" style="display:none;">
         <div style="flex:1">
           <div style="font-weight:800;margin-bottom:8px">Common Mistakes — Things to Avoid</div>
@@ -143,7 +158,6 @@
           <div class="mistakes-list" aria-label="Common mistakes list">
           
 
-            <!-- Mistake 1 -->
             <div class="mistake-box" style="margin-bottom: 40px; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
               <h3 style="color: #dc2626; margin-bottom: 12px;">❌ Misused Intermediate Events</h3>
               <p style="color: var(--muted); margin-bottom: 20px;">Using intermediate events when simple sequence flows would suffice creates unnecessary complexity.</p>
@@ -165,7 +179,6 @@
               </div>
             </div>
 
-            <!-- Mistake 2 -->
             <div class="mistake-box" style="margin-bottom: 40px; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
               <h3 style="color: #dc2626; margin-bottom: 12px;">❌ Missing End Events</h3>
               <p style="color: var(--muted); margin-bottom: 20px;">Leaving process paths without proper end events makes it unclear where the process terminates.</p>
@@ -193,7 +206,6 @@
     </section>
   </div>
 
-  <!-- Zoom overlay -->
   <div class="zoom-overlay" id="zoomOverlay" role="dialog" aria-modal="true" aria-hidden="true">
     <button class="zoom-close" id="zoomClose" onclick="closeZoom()">Close ✕</button>
     <img id="zoomedImage" src="" alt="Zoomed diagram">
@@ -201,8 +213,80 @@
 
 <script>
 
+// Menu Buttons
+const menuConcept = document.getElementById('menu-concept');
+const menuNaming = document.getElementById('menu-naming');
+const menuUsage = document.getElementById('menu-usage');
+const menuMistakes = document.getElementById('menu-mistakes');
 
-// content model (descriptions you provided)
+const conceptBlock = document.getElementById('conceptBlock');
+const namingBlock = document.getElementById('namingBlock');
+const usageBlock = document.getElementById('usageBlock');
+const mistakesBlock = document.getElementById('mistakesBlock');
+
+const pageTitle = document.getElementById('pageTitle');
+
+// Store all buttons and blocks in arrays for easy iteration
+const allMenuButtons = [menuConcept, menuNaming, menuUsage, menuMistakes];
+const allContentBlocks = [conceptBlock, namingBlock, usageBlock, mistakesBlock];
+
+// --- Menu Logic ---
+
+// Main function to show/hide content blocks
+function showMenu(menu){
+  // Don't process if trying to show a disabled button (like mistakes)
+  if (menu === 'mistakes' && menuMistakes.hasAttribute('disabled')) return;
+
+  // 1. Hide all blocks, reset all buttons
+  allContentBlocks.forEach(block => {
+    if(block) block.style.display = 'none';
+  });
+  allMenuButtons.forEach(btn => {
+    if(btn) {
+      btn.classList.remove('active');
+      btn.setAttribute('aria-pressed', 'false');
+    }
+  });
+
+  // 2. Show the correct block and activate the correct button
+  let newTitle = '';
+  
+  if(menu === 'concept'){
+    menuConcept.classList.add('active');
+    menuConcept.setAttribute('aria-pressed','true');
+    conceptBlock.style.display = ''; // default display
+    newTitle = 'Events — Concept & Types';
+    
+    // This section is special, it needs to re-render the types
+    renderTypeBar(currentEvent);
+    selectType('Plain'); 
+  } else if (menu === 'naming') {
+    menuNaming.classList.add('active');
+    menuNaming.setAttribute('aria-pressed','true');
+    namingBlock.style.display = ''; 
+    newTitle = 'Events — Naming Convention';
+  } else if(menu === 'usage'){
+    menuUsage.classList.add('active');
+    menuUsage.setAttribute('aria-pressed','true');
+    usageBlock.style.display = ''; 
+    newTitle = 'Events — Usage';
+  } else if (menu === 'mistakes') {
+    menuMistakes.classList.add('active');
+    menuMistakes.setAttribute('aria-pressed','true');
+    mistakesBlock.style.display = ''; 
+    newTitle = 'Events — Common Mistakes';
+  }
+
+  if (pageTitle) pageTitle.innerText = newTitle;
+}
+
+menuConcept.addEventListener('click', () => showMenu('concept'));
+menuNaming.addEventListener('click', () => showMenu('naming'));
+menuUsage.addEventListener('click', () => showMenu('usage'));
+menuMistakes.addEventListener('click', () => showMenu('mistakes'));
+
+
+
 const model = {
   start: {
     label: 'Start Event',
@@ -235,45 +319,6 @@ const model = {
 
 let currentEvent = 'start';
 
-// show / hide main sections
-function showMenu(menu){
-  // Don't process if trying to show mistakes section (it's disabled)
-  if (menu === 'mistakes') return;
-
-  document.getElementById('menu-concept').classList.remove('active');
-  document.getElementById('menu-usage').classList.remove('active');
-  document.getElementById('menu-mistakes').classList.remove('active');
-  document.getElementById('menu-concept').setAttribute('aria-pressed','false');
-  document.getElementById('menu-usage').setAttribute('aria-pressed','false');
-  document.getElementById('menu-mistakes').setAttribute('aria-pressed','false');
-
-  if(menu === 'concept'){
-    document.getElementById('menu-concept').classList.add('active');
-    document.getElementById('menu-concept').setAttribute('aria-pressed','true');
-    document.getElementById('conceptBlock').style.display = '';
-    document.getElementById('usageBlock').style.display = 'none';
-    document.getElementById('mistakesBlock').style.display = 'none';
-    document.getElementById('pageTitle').innerText = 'Events — Concept & Types';
-    // render current event
-    renderTypeBar(currentEvent);
-    selectType('Plain'); // default
-  } else if(menu === 'usage'){
-    document.getElementById('menu-usage').classList.add('active');
-    document.getElementById('menu-usage').setAttribute('aria-pressed','true');
-    document.getElementById('conceptBlock').style.display = 'none';
-    document.getElementById('usageBlock').style.display = '';
-    document.getElementById('mistakesBlock').style.display = 'none';
-    document.getElementById('pageTitle').innerText = 'Events — Usage';
-  } else {
-    document.getElementById('menu-mistakes').classList.add('active');
-    document.getElementById('menu-mistakes').setAttribute('aria-pressed','true');
-    document.getElementById('conceptBlock').style.display = 'none';
-    document.getElementById('usageBlock').style.display = 'none';
-    document.getElementById('mistakesBlock').style.display = '';
-    document.getElementById('pageTitle').innerText = 'Events — Common Mistakes';
-  }
-}
-
 // event selection
 function selectEvent(key){
   currentEvent = key;
@@ -282,7 +327,6 @@ function selectEvent(key){
   selectType('Plain');
 }
 
-// render the type bar for the selected event (keeps UI static but updates counts if needed)
 function renderTypeBar(eventKey){
   const bar = document.getElementById('typeBar');
   bar.querySelectorAll('.type-tab').forEach(tab => {
@@ -345,7 +389,7 @@ function selectType(typeName){
   }
 }
 
-// zoom overlay
+// --- Zoom Logic ---
 function openZoom(src){
   if(!src) return;
   document.getElementById('zoomedImage').src = src;
@@ -360,7 +404,7 @@ function closeZoom(){
 document.getElementById('zoomOverlay').addEventListener('click', e => { if(e.target.id === 'zoomOverlay') closeZoom(); });
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeZoom(); });
 
-// init
+// --- Init ---
 showMenu('concept');
 selectEvent('start');
 selectType('Plain');
