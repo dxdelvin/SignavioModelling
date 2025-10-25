@@ -9,11 +9,15 @@
 <body>
   <div class="container">
     <div class="header">
-      <div class="logo">BSH</div>
-      <div>
-        <div class="h-title">Signavio BPMN</div>
-        <div class="h-sub">Process Modeling and Designing</div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="logo">BSH</div>
+        <div>
+          <div class="h-title">Signavio BPMN</div>
+          <div class="h-sub">Process Modeling and Designing</div>
+        </div>
       </div>
+      
+      <button class="updates-btn" id="openUpdatesBtn">🔔 Updates</button>
     </div>
 
     <div class="grid">
@@ -88,9 +92,7 @@
     </div>
     </div>
 
-    <!-- BPMN.io Integration -->
-    
-  </div>
+    </div>
 
   <style>
     .bpmn-section {
@@ -130,5 +132,57 @@
       }
     }
   </style>
+
+  <div class="updates-overlay" id="updatesOverlay">
+    <div class="updates-modal">
+      <button class="updates-close" id="closeUpdatesBtn">&times;</button>
+      <h2>Changelog / Updates</h2>
+      <ul class="changelog-list">
+       <li>
+          <strong>Oct 25th, 2025:<span class="new-badge">NEW</span> </strong>
+          <p> - Added the Changelog Button to Review Updates</p>
+        </li>
+        <li>
+          <strong>Oct 20th, 2025:</strong>
+          <p> - Added the new Interactive BPMN Modeler to the homepage. (BPMN.io)</p>
+          <p> - Locked Data Artifacts, and Common Mistakes (Built in Progress)</p>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // --- Updates Modal ---
+    const openBtn = document.getElementById('openUpdatesBtn');
+    const closeBtn = document.getElementById('closeUpdatesBtn');
+    const overlay = document.getElementById('updatesOverlay');
+
+    function openUpdatesModal() {
+      if (overlay) overlay.classList.add('active');
+    }
+
+    function closeUpdatesModal() {
+      if (overlay) overlay.classList.remove('active');
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openUpdatesModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeUpdatesModal);
+    
+    // Optional: Close when clicking the background
+    if (overlay) {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          closeUpdatesModal();
+        }
+      });
+    }
+    
+    // Optional: Close with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay && overlay.classList.contains('active')) {
+        closeUpdatesModal();
+      }
+    });
+  </script>
 </body>
 </html>
