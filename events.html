@@ -5,15 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>         
             <title>Module — Events (Concept & Types)</title>
   <link rel="stylesheet" href="styles.css">
-  <style>
-    .hidden { display:none !important; }
-    .type-tab.active { outline: none; }
-    button[disabled] {
-      opacity: 0.5;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-  </style>
+
 </head>
 <body>
   <div class="container events-layout" role="main">
@@ -109,7 +101,7 @@
             <div style="display:flex;justify-content:space-between;align-items:center">
               <div style="font-weight:800">Naming Guideline </div>
               <div>
-                <button class="btn" onclick="openZoom('img/namingconv2.png')">Zoom</button>
+                <button class="zoom-btn" onclick="openZoom('img/namingconv2.png')">Zoom</button>
               </div>
             </div>
 
@@ -136,7 +128,7 @@
               <div style="display:flex;justify-content:space-between;align-items:center">
                 <div style="font-weight:800">Usage Diagram</div>
                 <div>
-                  <button class="btn" onclick="openZoom('img/usage_diagram.png')">Zoom</button>
+                  <button class="zoom-btn" onclick="openZoom('img/usage_diagram.png')">Zoom</button>
                 </div>
               </div>
 
@@ -165,14 +157,14 @@
                   <img src="img/events_wrong_intermediate.png" alt="Wrong example: overused intermediate events" style="width: 100%; margin-bottom: 8px;">
                   <div style="display:flex;justify-content:space-between;align-items:center">
                     <div class="caption" style="color: #dc2626; font-weight: 600;">Wrong</div>
-                    <button class="btn" onclick="openZoom('img/events_wrong_intermediate.png')">Zoom</button>
+                    <button class="zoom-btn" onclick="openZoom('img/events_wrong_intermediate.png')">Zoom</button>
                   </div>
                 </div>
                 <div class="right" style="border: 2px solid #16a34a; border-radius: 8px; padding: 12px;">
                   <img src="img/events_right_intermediate.png" alt="Right example: proper intermediate events" style="width: 100%; margin-bottom: 8px;">
                   <div style="display:flex;justify-content:space-between;align-items:center">
                     <div class="caption" style="color: #16a34a; font-weight: 600;">Correct</div>
-                    <button class="btn" onclick="openZoom('img/events_right_intermediate.png')">Zoom</button>
+                    <button class="zoom-btn" onclick="openZoom('img/events_right_intermediate.png')">Zoom</button>
                   </div>
                 </div>
               </div>
@@ -186,14 +178,14 @@
                   <img src="img/events_wrong_end.png" alt="Wrong example: missing end events" style="width: 100%; margin-bottom: 8px;">
                   <div style="display:flex;justify-content:space-between;align-items:center">
                     <div class="caption" style="color: #dc2626; font-weight: 600;">Wrong</div>
-                    <button class="btn" onclick="openZoom('img/events_wrong_end.png')">Zoom</button>
+                    <button class="zoom-btn" onclick="openZoom('img/events_wrong_end.png')">Zoom</button>
                   </div>
                 </div>
                 <div class="right" style="border: 2px solid #16a34a; border-radius: 8px; padding: 12px;">
                   <img src="img/events_right_end.png" alt="Right example: proper end events" style="width: 100%; margin-bottom: 8px;">
                   <div style="display:flex;justify-content:space-between;align-items:center">
                     <div class="caption" style="color: #16a34a; font-weight: 600;">Correct</div>
-                    <button class="btn" onclick="openZoom('img/events_right_end.png')">Zoom</button>
+                    <button class="zoom-btn" onclick="openZoom('img/events_right_end.png')">Zoom</button>
                   </div>
                 </div>
               </div>
