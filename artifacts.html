@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>         
+  <title>Module — Data & Artifacts</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container events-layout" role="main">
+    <aside class="sidebar" aria-label="Navigation">
+      <div class="brand">
+        <div class="logo">BSH</div>
+        <div>
+          <div class="title">Signavio BPMN</div>
+          <div class="small" style="color:var(--muted)">Artifacts Module</div>
+        </div>
+      </div>
+
+      <nav class="menu" aria-label="Module menu">
+        <button id="menu-concept" class="active" aria-pressed="true">Concept &amp; Types</button>
+        <button id="menu-usage" aria-pressed="false">Usage</button>
+        <button id="menu-mistakes" disabled aria-pressed="false" aria-disabled="true" tabindex="-1">Common Mistakes  <span class="badge">Inprogress</span></button>
+      </nav>
+    </aside>
+
+    <section class="main" aria-live="polite">
+      <header class="header">
+        <div class="h-left">
+          <a href="index.html" title="Back to Home" style="text-decoration:none">
+            <div class="logo" style="width:44px;height:44px;border-radius:8px;font-size:16px">←</div>
+          </a>
+          <div>
+            <div id="pageTitle" class="h-title">Artifacts — Concept &amp; Types</div>
+            <div class="h-sub">Click an artifact on the left to view its description and example</div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content" id="conceptBlock" role="region" aria-label="Artifacts concept area">
+        <div class="content-left" id="contentLeft">
+          <div style="font-weight:800">Artifact Types</div>
+          <div class="event-list" role="list" aria-label="Artifact types">
+            
+            <div class="event-card" role="listitem" tabindex="0" data-artifact="data-object" aria-selected="true" onclick="selectArtifact('data-object')">
+              <div class="event-icon" aria-hidden>
+                <svg width="36" height="36" viewBox="0 0 60 60" aria-hidden>
+                  <path d="M15 10 H40 L50 20 V50 H15 Z" stroke="#1f2937" stroke-width="3" fill="transparent"/>
+                  <path d="M40 10 V20 H50" stroke="#1f2937" stroke-width="3" fill="transparent"/>
+                </svg>
+              </div>
+              <div>
+                <div class="event-title">File</div>
+                <div class="event-desc">Represents data used or created by tasks (e.g., 'Invoice').</div>
+              </div>
+            </div>
+
+            <div class="event-card" role="listitem" tabindex="0" data-artifact="data-store" aria-selected="false" onclick="selectArtifact('data-store')">
+              <div class="event-icon" aria-hidden>
+                <svg width="36" height="36" viewBox="0 0 60 60" aria-hidden>
+                   <path d="M15 15 H45 V45 H15 Z" stroke="#1f2937" stroke-width="3" fill="transparent" />
+                   <path d="M15 22 H45 M15 29 H45 M15 36 H45" stroke="#1f2937" stroke-width="2" fill="transparent" />
+                </svg>
+              </div>
+              <div>
+                <div class="event-title">Data Store</div>
+                <div class="event-desc">Represents a database or system where data is stored.</div>
+              </div>
+            </div>
+
+            <div class="event-card" role="listitem" tabindex="0" data-artifact="annotation" aria-selected="false" onclick="selectArtifact('annotation')">
+              <div class="event-icon" aria-hidden>
+                <svg width="36" height="36" viewBox="0 0 60 60" aria-hidden>
+                  <path d="M20 15 H45 V45 H20 Z" stroke="#1f2937" stroke-width="3" fill="transparent"/>
+                  <path d="M20 15 L15 15 M20 25 L10 25 M20 35 L15 35 M20 45 L10 45" stroke="#1f2937" stroke-width="3" fill="transparent"/>
+                </svg>
+              </div>
+              <div>
+                <div class="event-title">Annotation</div>
+                <div class="event-desc">A text note to provide extra clarification to the modeler.</div>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+
+        <div class="content-right" id="contentRight">
+          <div class="type-content" id="typeContent" aria-live="polite">
+             </div>
+        </div>
+      </div>
+
+      <div class="content" id="usageBlock" style="display:none;">
+        <div style="flex:1">
+          <div style="font-weight:800;margin-bottom:8px">Artifact Usage</div>
+
+          <div class="usage-large" aria-label="Usage large diagram">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:800">Usage Diagram</div>
+              <div>
+                <button class="btn" onclick="openZoom('img/artifacts_usage.png')">Zoom</button>
+              </div>
+            </div>
+            <div class="img-wrap" id="usageImageWrap">
+              <img id="usageImage" src="img/artifacts_usage.png" alt="Artifacts usage diagram placeholder">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content" id="mistakesBlock" style="display:none;">
+        <div style="flex:1">
+          <div style="font-weight:800;margin-bottom:8px">Common Mistakes — Things to Avoid</div>
+
+          <div class="mistakes-list" aria-label="Common mistakes list">
+            <div class="mistake-box" style="margin-bottom: 40px; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="color: #dc2626; margin-bottom: 12px;">❌ Confusing Files and Data Stores</h3>
+              <p style="color: var(--muted); margin-bottom: 20px;">A File represents information (e.g., 'Invoice'), while a Data Store represents the system that holds it (e.g., 'ERP System').</p>
+            </div>
+            <div class="mistake-box" style="margin-bottom: 40px; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="color: #dc2626; margin-bottom: 12px;">❌ Connecting Artifacts with Sequence Flows</h3>
+              <p style="color: var(--muted); margin-bottom: 20px;">Artifacts (like Files or Annotations) must connect to flow objects (like Tasks) using an **Association** (dotted line), not a Sequence Flow (solid line).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <div class="zoom-overlay" id="zoomOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <button class="zoom-close" id="zoomClose" onclick="closeZoom()">Close ✕</button>
+    <img id="zoomedImage" src="" alt="Zoomed diagram">
+  </div>
+
+<script>
+
+// --- Model Data ---
+const artifactModel = {
+  'data-object': {
+    title: 'File',
+    desc: "A <strong>File</strong> represents information or data that is used or created during a process. It shows what data is required for a task or what data a task produces. It is connected to tasks via a dotted-line <strong>Association</strong>.<em> </br> </br>(It is not neccessary to make this in Signavio, You can Mention File Input and File Output in Attributes Section itself).",
+    file: 'img/data_object.png'
+  },
+  'data-store': {
+    title: 'Data Store',
+    desc: "A <strong>Data Store</strong> represents a place where data is stored and persisted, such as a database, a filing cabinet, or an external system (e.g., 'CRM' or 'ERP System'). Tasks can read from or write to a Data Store.",
+    file: 'img/data_store.png'
+  },
+  'annotation': {
+    title: 'Annotation',
+    desc: "An <strong>Annotation</strong> is a text note that can be added to the diagram to provide extra clarification or comments for the person reading the model. It has no effect on the process flow and is connected with an <strong>Association</strong>.",
+    file: 'img/annotation.png'
+  },
+};
+
+let currentArtifact = 'data-object';
+
+// --- Menu Buttons ---
+const menuConcept = document.getElementById('menu-concept');
+const menuUsage = document.getElementById('menu-usage');
+const menuMistakes = document.getElementById('menu-mistakes');
+
+const conceptBlock = document.getElementById('conceptBlock');
+const usageBlock = document.getElementById('usageBlock');
+const mistakesBlock = document.getElementById('mistakesBlock');
+
+const pageTitle = document.getElementById('pageTitle');
+
+const allMenuButtons = [menuConcept, menuUsage, menuMistakes];
+const allContentBlocks = [conceptBlock, usageBlock, mistakesBlock];
+
+// --- Menu Logic ---
+function showMenu(menu){
+  if (menu === 'mistakes' && menuMistakes.hasAttribute('disabled')) return;
+
+  allContentBlocks.forEach(block => {
+    if(block) block.style.display = 'none';
+  });
+  allMenuButtons.forEach(btn => {
+    if(btn) {
+      btn.classList.remove('active');
+      btn.setAttribute('aria-pressed', 'false');
+    }
+  });
+
+  let newTitle = '';
+  
+  if(menu === 'concept'){
+    menuConcept.classList.add('active');
+    menuConcept.setAttribute('aria-pressed','true');
+    conceptBlock.style.display = ''; // default display
+    newTitle = 'Artifacts — Concept & Types';
+    selectArtifact(currentArtifact); // Re-render the selected artifact
+  } else if (menu === 'usage') {
+    menuUsage.classList.add('active');
+    menuUsage.setAttribute('aria-pressed','true');
+    usageBlock.style.display = ''; 
+    newTitle = 'Artifacts — Usage';
+  } else if (menu === 'mistakes') {
+    menuMistakes.classList.add('active');
+    menuMistakes.setAttribute('aria-pressed','true');
+    mistakesBlock.style.display = ''; 
+    newTitle = 'Artifacts — Common Mistakes';
+  }
+
+  if (pageTitle) pageTitle.innerText = newTitle;
+}
+
+menuConcept.addEventListener('click', () => showMenu('concept'));
+menuUsage.addEventListener('click', () => showMenu('usage'));
+menuMistakes.addEventListener('click', () => showMenu('mistakes'));
+
+// --- Artifact Selection Logic ---
+function selectArtifact(key) {
+  currentArtifact = key;
+  document.querySelectorAll('.event-card').forEach(c => c.setAttribute('aria-selected', c.dataset.artifact === key ? 'true' : 'false'));
+  
+  const data = artifactModel[key];
+  const container = document.getElementById('typeContent');
+  container.innerHTML = ''; // Clear previous content
+
+  if (!data) {
+    container.innerHTML = `<div class="small">Artifact not found.</div>`;
+    return;
+  }
+
+  const intro = document.createElement('div');
+  intro.className = 'small';
+  intro.innerHTML = data.desc; // Use innerHTML to allow <strong> tags
+  container.appendChild(intro);
+
+  const v = document.createElement('div');
+  v.className = 'variant';
+  
+  const title = document.createElement('div');
+  title.className = 'v-title';
+  title.innerText = data.title;
+  
+  const thumb = document.createElement('div');
+  thumb.className = 'thumb';
+  
+  const img = document.createElement('img');
+  img.src = data.file;
+  img.alt = `${data.title} diagram placeholder`;
+  thumb.appendChild(img);
+  
+  v.appendChild(title);
+  v.appendChild(thumb);
+  container.appendChild(v);
+}
+
+// --- Zoom Logic ---
+function openZoom(src){
+  if(!src) return;
+  document.getElementById('zoomedImage').src = src;
+  document.getElementById('zoomOverlay').classList.add('active');
+  document.getElementById('zoomOverlay').setAttribute('aria-hidden','false');
+}
+function closeZoom(){
+  document.getElementById('zoomOverlay').classList.remove('active');
+  document.getElementById('zoomOverlay').setAttribute('aria-hidden','true');
+  document.getElementById('zoomedImage').src = '';
+}
+document.getElementById('zoomOverlay').addEventListener('click', e => { if(e.target.id === 'zoomOverlay') closeZoom(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeZoom(); });
+
+// --- Init ---
+showMenu('concept');
+selectArtifact('data-object');
+
+</script>
+</body>
+</html>
