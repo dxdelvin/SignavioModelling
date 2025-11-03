@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>         
-            <title>Module — Events (Concept & Types)</title>
+  <title>Module — Events (Concept & Types)</title>
   <link rel="stylesheet" href="styles.css">
-
 </head>
 <body>
   <div class="container events-layout" role="main">
+    <!-- LEFT Sidebar -->
     <aside class="sidebar" aria-label="Navigation">
       <div class="brand">
         <div class="logo">BSH</div>
@@ -22,10 +22,13 @@
         <button id="menu-concept" class="active" aria-pressed="true">Concept &amp; Types</button>
         <button id="menu-naming" aria-pressed="false">Naming Convention</button>
         <button id="menu-usage" aria-pressed="false">Usage</button>
+        <!-- New Challenge Button -->
+        <button id="menu-challenge" aria-pressed="false">Learn It <span class="new-badge">NEW</span></button>
         <button id="menu-mistakes" disabled aria-pressed="false" aria-disabled="true" tabindex="-1">Common Mistakes  <span class="badge">Inprogress</span></button>
       </nav>
     </aside>
 
+    <!-- MAIN Content Section -->
     <section class="main" aria-live="polite">
       <header class="header">
         <div class="h-left">
@@ -39,6 +42,7 @@
         </div>
       </header>
 
+      <!-- 1. CONCEPT Block -->
       <div class="content" id="conceptBlock" role="region" aria-label="Events concept area">
         <div class="content-left" id="contentLeft">
           <div style="font-weight:800">Events</div>
@@ -93,6 +97,7 @@
         </div>
       </div>
 
+      <!-- 2. NAMING CONVENTION Block -->
       <div class="content" id="namingBlock" style="display:none;">
         <div style="flex:1">
           <div style="font-weight:800;margin-bottom:8px">Event Naming Conventions</div>
@@ -112,84 +117,91 @@
         </div>
       </div>
 
+      <!-- 3. USAGE Block -->
       <div class="content" id="usageBlock" style="display:none;">
         <div style="flex:1">
           <div style="font-weight:800;margin-bottom:8px">Usage</div>
 
           <div class="special" id="specialTopicIntro">
             <h3>Special Topic: Attached Intermediate Events</h3>
-            <p>Attached intermediate events are commonly used as <strong>cancel conditions</strong> on tasks (e.g., an attached timer cancels a waiting task and takes an alternative path).</p>
+            <p>Attached intermediate events are commonly used as <strong>cancel conditions</strong> or <strong>boundary events</strong> on tasks (e.g., an attached timer triggers an alternative 'Escalation' path if a task isn't completed in time).</p>
           </div>
 
           <div class="special" id="specialTopicExamples" style="margin-top:12px">
             <h3>Examples</h3>
-
             <div class="usage-large" aria-label="Usage large diagram">
               <div style="display:flex;justify-content:space-between;align-items:center">
-                <div style="font-weight:800">Usage Diagram</div>
+                <div style="font-weight:800">Usage Diagram (All Events)</div>
                 <div>
                   <button class="zoom-btn" onclick="openZoom('img/usage_diagram.png')">Zoom</button>
                 </div>
               </div>
-
               <div class="img-wrap" id="usageImageWrap">
                 <img id="usageImage" src="img/usage_diagram.png" alt="Usage diagram placeholder">
               </div>
-
-             
             </div>
           </div>
         </div>
       </div>
 
+      <!-- 4. NEW CHALLENGE Block -->
+      <div class="content" id="challengeBlock" style="display:none; flex-direction:column;">
+        <div style="flex:1">
+          <div style="font-weight:800; margin-bottom:12px;">Events: Build & Compare Challenge</div>
+          
+          <!-- Difficulty Tabs -->
+          <div class="challenge-diff-bar" id="challengeDiffBar" role="tablist" aria-label="Challenge difficulty">
+            <button class="diff-tab active" id="diff-easy" data-diff="easy">Easy</button>
+            <button class="diff-tab" id="diff-medium" data-diff="medium">Medium</button>
+            <button class="diff-tab hard" id="diff-hard" data-diff="hard">Hard</button>
+          </div>
+
+          <!-- Challenge Content Area -->
+          <div id="challenge-content-area">
+            <!-- Scenario Box -->
+            <div class="challenge-scenario-box">
+              <h3 id="challenge-title">Easy: Message Start</h3>
+              <p id="challenge-scenario-text">Model a process that starts *only* when a 'Supplier Confirmation Received' message arrives. This trigger should immediately start the 'Validate Supplier Confirmation Data' task.</p>
+              
+              <!-- Hint Button & Tooltip -->
+              <div class="hint-area">
+                <button class="hint-btn" id="hintBtn">Show Hints</button>
+                <div class="hint-tooltip" id="hintTooltip">
+                  <strong id="hint-title">Elements Needed:</strong>
+                  <ul id="hint-list">
+                    <li>1x Start Message Event</li>
+                    <li>1x Task</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <!-- BPMN Modeler -->
+            <div class="bpmn-container-challenge">
+              <iframe
+                src="https://demo.bpmn.io/new"
+                title="BPMN.io Modeler"
+                class="bpmn-frame"
+                id="bpmnFrame"
+              ></iframe>
+            </div>
+
+            <!-- Solution Button -->
+            <button class="btn" id="solutionBtn" data-solution-src="img/start_message.png" style="width:100%; padding: 12px; font-size: 15px;">
+              Show Solution
+            </button>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. COMMON MISTAKES Block -->
       <div class="content" id="mistakesBlock" style="display:none;">
         <div style="flex:1">
           <div style="font-weight:800;margin-bottom:8px">Common Mistakes — Things to Avoid</div>
-
+          <!-- (Your existing mistakes content would go here) -->
           <div class="mistakes-list" aria-label="Common mistakes list">
-          
-
-            <div class="mistake-box" style="margin-bottom: 40px; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-              <h3 style="color: #dc2626; margin-bottom: 12px;">❌ Misused Intermediate Events</h3>
-              <p style="color: var(--muted); margin-bottom: 20px;">Using intermediate events when simple sequence flows would suffice creates unnecessary complexity.</p>
-              <div class="mistake-pair" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div class="wrong" style="border: 2px solid #dc2626; border-radius: 8px; padding: 12px;">
-                  <img src="img/events_wrong_intermediate.png" alt="Wrong example: overused intermediate events" style="width: 100%; margin-bottom: 8px;">
-                  <div style="display:flex;justify-content:space-between;align-items:center">
-                    <div class="caption" style="color: #dc2626; font-weight: 600;">Wrong</div>
-                    <button class="zoom-btn" onclick="openZoom('img/events_wrong_intermediate.png')">Zoom</button>
-                  </div>
-                </div>
-                <div class="right" style="border: 2px solid #16a34a; border-radius: 8px; padding: 12px;">
-                  <img src="img/events_right_intermediate.png" alt="Right example: proper intermediate events" style="width: 100%; margin-bottom: 8px;">
-                  <div style="display:flex;justify-content:space-between;align-items:center">
-                    <div class="caption" style="color: #16a34a; font-weight: 600;">Correct</div>
-                    <button class="zoom-btn" onclick="openZoom('img/events_right_intermediate.png')">Zoom</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="mistake-box" style="margin-bottom: 40px; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-              <h3 style="color: #dc2626; margin-bottom: 12px;">❌ Missing End Events</h3>
-              <p style="color: var(--muted); margin-bottom: 20px;">Leaving process paths without proper end events makes it unclear where the process terminates.</p>
-              <div class="mistake-pair" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div class="wrong" style="border: 2px solid #dc2626; border-radius: 8px; padding: 12px;">
-                  <img src="img/events_wrong_end.png" alt="Wrong example: missing end events" style="width: 100%; margin-bottom: 8px;">
-                  <div style="display:flex;justify-content:space-between;align-items:center">
-                    <div class="caption" style="color: #dc2626; font-weight: 600;">Wrong</div>
-                    <button class="zoom-btn" onclick="openZoom('img/events_wrong_end.png')">Zoom</button>
-                  </div>
-                </div>
-                <div class="right" style="border: 2px solid #16a34a; border-radius: 8px; padding: 12px;">
-                  <img src="img/events_right_end.png" alt="Right example: proper end events" style="width: 100%; margin-bottom: 8px;">
-                  <div style="display:flex;justify-content:space-between;align-items:center">
-                    <div class="caption" style="color: #16a34a; font-weight: 600;">Correct</div>
-                    <button class="zoom-btn" onclick="openZoom('img/events_right_end.png')">Zoom</button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <p>...(Content In Progress)...</p>
           </div>
         </div>
       </div>
@@ -197,87 +209,14 @@
     </section>
   </div>
 
+  <!-- ZOOM OVERLAY -->
   <div class="zoom-overlay" id="zoomOverlay" role="dialog" aria-modal="true" aria-hidden="true">
     <button class="zoom-close" id="zoomClose" onclick="closeZoom()">Close ✕</button>
     <img id="zoomedImage" src="" alt="Zoomed diagram">
   </div>
 
 <script>
-
-// Menu Buttons
-const menuConcept = document.getElementById('menu-concept');
-const menuNaming = document.getElementById('menu-naming');
-const menuUsage = document.getElementById('menu-usage');
-const menuMistakes = document.getElementById('menu-mistakes');
-
-const conceptBlock = document.getElementById('conceptBlock');
-const namingBlock = document.getElementById('namingBlock');
-const usageBlock = document.getElementById('usageBlock');
-const mistakesBlock = document.getElementById('mistakesBlock');
-
-const pageTitle = document.getElementById('pageTitle');
-
-// Store all buttons and blocks in arrays for easy iteration
-const allMenuButtons = [menuConcept, menuNaming, menuUsage, menuMistakes];
-const allContentBlocks = [conceptBlock, namingBlock, usageBlock, mistakesBlock];
-
-// --- Menu Logic ---
-
-// Main function to show/hide content blocks
-function showMenu(menu){
-  // Don't process if trying to show a disabled button (like mistakes)
-  if (menu === 'mistakes' && menuMistakes.hasAttribute('disabled')) return;
-
-  // 1. Hide all blocks, reset all buttons
-  allContentBlocks.forEach(block => {
-    if(block) block.style.display = 'none';
-  });
-  allMenuButtons.forEach(btn => {
-    if(btn) {
-      btn.classList.remove('active');
-      btn.setAttribute('aria-pressed', 'false');
-    }
-  });
-
-  // 2. Show the correct block and activate the correct button
-  let newTitle = '';
-  
-  if(menu === 'concept'){
-    menuConcept.classList.add('active');
-    menuConcept.setAttribute('aria-pressed','true');
-    conceptBlock.style.display = ''; // default display
-    newTitle = 'Events — Concept & Types';
-    
-    // This section is special, it needs to re-render the types
-    renderTypeBar(currentEvent);
-    selectType('Plain'); 
-  } else if (menu === 'naming') {
-    menuNaming.classList.add('active');
-    menuNaming.setAttribute('aria-pressed','true');
-    namingBlock.style.display = ''; 
-    newTitle = 'Events — Naming Convention';
-  } else if(menu === 'usage'){
-    menuUsage.classList.add('active');
-    menuUsage.setAttribute('aria-pressed','true');
-    usageBlock.style.display = ''; 
-    newTitle = 'Events — Usage';
-  } else if (menu === 'mistakes') {
-    menuMistakes.classList.add('active');
-    menuMistakes.setAttribute('aria-pressed','true');
-    mistakesBlock.style.display = ''; 
-    newTitle = 'Events — Common Mistakes';
-  }
-
-  if (pageTitle) pageTitle.innerText = newTitle;
-}
-
-menuConcept.addEventListener('click', () => showMenu('concept'));
-menuNaming.addEventListener('click', () => showMenu('naming'));
-menuUsage.addEventListener('click', () => showMenu('usage'));
-menuMistakes.addEventListener('click', () => showMenu('mistakes'));
-
-
-
+// --- Model Data (for concepts) ---
 const model = {
   start: {
     label: 'Start Event',
@@ -308,9 +247,135 @@ const model = {
   }
 };
 
+// --- Model Data (for challenges) ---
+const challengeData = {
+  easy: {
+    title: "Easy: Message Start",
+    scenario: "Model a process that starts *only* when a 'Supplier Confirmation Received' message arrives from an external supplier. This trigger should immediately start the 'Validate Supplier Confirmation Data' task.",
+    hints: [
+      "1x Start Message Event",
+      "1x Task"
+    ],
+    solution: "img/start_message.png"
+  },
+  medium: {
+    title: "Medium: Intermediate Timer",
+    scenario: "A supply chain process starts with 'Prepare BOM Data'. Before this data can be sent to the factory system, the process must 'Wait for System Availability Window' (a timed delay). After the wait, the 'Push BOM Data' task runs.",
+    hints: [
+      "1x Start Event (Plain)",
+      "2x Tasks",
+      "1x Intermediate Timer Event (Catching)"
+    ],
+    solution: "img/intermediate_timer.png"
+  },
+  hard: {
+    title: "Hard: Full Replenishment Process",
+    scenario: "Model a full 'Inventory Replenishment' process. The process can be started in two ways: EITHER a 'Daily 02:00 AM' timer OR a 'Stock Level Critical' message is received. Both lead to 'Check Inventory Levels'. After a 'Plan Created' milestone, 'Send Purchase Order to Supplier'. The process must 'Wait for Supplier Confirmation'. If no confirmation arrives after 'Wait 24 Hours' (boundary timer), 'Escalate to Backup Supplier' and 'Inform Error Message' (end message). If confirmation *is* received, 'Validate Confirmation Data'. Once 'Stock Received = TRUE' (a condition), 'Book Goods in System' which leads to the 'Purchase Order Created' end.",
+    hints: [
+      "2x Start Events (Timer, Message)",
+      "1x Event-Based Gateway",
+      "5x Tasks",
+      "1x Intermediate Event (Plain)",
+      "1x Intermediate Message Event (Catching)",
+      "1x Intermediate Timer Event (Attached/Boundary)",
+      "1x Intermediate Conditional Event",
+      "1x End Event (Plain)",
+      "1x End Message Event (Throwing)"
+    ],
+    solution: "img/usage_diagram.png"
+  }
+};
+
+// --- Element References ---
+// Menu Buttons
+const menuConcept = document.getElementById('menu-concept');
+const menuNaming = document.getElementById('menu-naming');
+const menuUsage = document.getElementById('menu-usage');
+const menuChallenge = document.getElementById('menu-challenge'); 
+const menuMistakes = document.getElementById('menu-mistakes');
+
+// Content Blocks
+const conceptBlock = document.getElementById('conceptBlock');
+const namingBlock = document.getElementById('namingBlock');
+const usageBlock = document.getElementById('usageBlock');
+const challengeBlock = document.getElementById('challengeBlock'); 
+const mistakesBlock = document.getElementById('mistakesBlock');
+
+const pageTitle = document.getElementById('pageTitle');
+
+const allMenuButtons = [menuConcept, menuNaming, menuUsage, menuChallenge, menuMistakes];
+const allContentBlocks = [conceptBlock, namingBlock, usageBlock, challengeBlock, mistakesBlock];
+
+// Challenge Elements
+const diffBar = document.getElementById('challengeDiffBar');
+const challengeTitle = document.getElementById('challenge-title');
+const challengeScenarioText = document.getElementById('challenge-scenario-text');
+const hintBtn = document.getElementById('hintBtn');
+const hintTooltip = document.getElementById('hintTooltip');
+const hintList = document.getElementById('hint-list');
+const solutionBtn = document.getElementById('solutionBtn');
+const bpmnFrame = document.getElementById('bpmnFrame');
+
+// --- Menu Logic ---
+function showMenu(menu){
+  if (menu === 'mistakes' && menuMistakes.hasAttribute('disabled')) return;
+
+  allContentBlocks.forEach(block => {
+    if(block) block.style.display = 'none';
+  });
+  allMenuButtons.forEach(btn => {
+    if(btn) {
+      btn.classList.remove('active');
+      btn.setAttribute('aria-pressed', 'false');
+    }
+  });
+
+  let newTitle = '';
+  
+  if(menu === 'concept'){
+    menuConcept.classList.add('active');
+    menuConcept.setAttribute('aria-pressed','true');
+    conceptBlock.style.display = ''; // default flex display
+    newTitle = 'Events — Concept & Types';
+    renderTypeBar(currentEvent);
+    selectType('Plain'); 
+  } else if (menu === 'naming') {
+    menuNaming.classList.add('active');
+    menuNaming.setAttribute('aria-pressed','true');
+    namingBlock.style.display = ''; // default flex display
+    newTitle = 'Events — Naming Convention';
+  } else if(menu === 'usage'){
+    menuUsage.classList.add('active');
+    menuUsage.setAttribute('aria-pressed','true');
+    usageBlock.style.display = ''; // default flex display
+    newTitle = 'Events — Usage';
+  } else if (menu === 'challenge') { // New
+    menuChallenge.classList.add('active');
+    menuChallenge.setAttribute('aria-pressed','true');
+    challengeBlock.style.display = 'flex'; // Use flex for column layout
+    newTitle = 'Events — Practice Challenge';
+    // Load default challenge (easy)
+    selectChallenge('easy');
+  } else if (menu === 'mistakes') {
+    menuMistakes.classList.add('active');
+    menuMistakes.setAttribute('aria-pressed','true');
+    mistakesBlock.style.display = ''; // default flex display
+    newTitle = 'Events — Common Mistakes';
+  }
+
+  if (pageTitle) pageTitle.innerText = newTitle;
+}
+
+// Add listeners for all menu buttons
+menuConcept.addEventListener('click', () => showMenu('concept'));
+menuNaming.addEventListener('click', () => showMenu('naming'));
+menuUsage.addEventListener('click', () => showMenu('usage'));
+menuChallenge.addEventListener('click', () => showMenu('challenge')); // New
+menuMistakes.addEventListener('click', () => showMenu('mistakes'));
+
+// --- Concept Tab Logic ---
 let currentEvent = 'start';
 
-// event selection
 function selectEvent(key){
   currentEvent = key;
   document.querySelectorAll('.event-card').forEach(c => c.setAttribute('aria-selected', c.dataset.event === key ? 'true' : 'false'));
@@ -324,7 +389,6 @@ function renderTypeBar(eventKey){
     const t = tab.dataset.type;
     const count = model[eventKey].types[t] ? model[eventKey].types[t].count : 0;
     tab.querySelector('.count').innerText = `(${count})`;
-    // visually disable if count 0
     if(count === 0){
       tab.style.opacity = '0.5';
       tab.style.cursor = 'not-allowed';
@@ -337,9 +401,7 @@ function renderTypeBar(eventKey){
   });
 }
 
-// show selected type panel (renders HTML into #typeContent — uses static imgs from img/)
 function selectType(typeName){
-  // set active tab
   document.querySelectorAll('.type-tab').forEach(t => t.classList.toggle('active', t.dataset.type === typeName));
   const data = model[currentEvent].types[typeName];
   const container = document.getElementById('typeContent');
@@ -354,13 +416,11 @@ function selectType(typeName){
   intro.innerText = `${model[currentEvent].label} — ${typeName} — ${data.desc}`;
   container.appendChild(intro);
 
-  // single-column variants: data.count panels, but for most types count is 1
   for(let i=1;i<=data.count;i++){
     const v = document.createElement('div');
     v.className = 'variant';
     const title = document.createElement('div');
     title.className = 'v-title';
-    // Set specific titles based on event type and variant
     if (typeName === 'Plain') {
       title.innerText = `${model[currentEvent].label} (Plain)`;
     } else {
@@ -369,7 +429,6 @@ function selectType(typeName){
     const thumb = document.createElement('div');
     thumb.className = 'thumb';
     const img = document.createElement('img');
-    // choose file: model file is generic; if you had multiple variants you'd follow naming pattern
     img.src = data.file;
     img.alt = `${title.innerText} diagram placeholder`;
     thumb.appendChild(img);
@@ -380,7 +439,59 @@ function selectType(typeName){
   }
 }
 
-// --- Zoom Logic ---
+// --- Challenge Tab Logic ---
+function selectChallenge(diff) {
+  // Set active tab
+  diffBar.querySelectorAll('.diff-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.diff === diff);
+  });
+  
+  // Get data
+  const data = challengeData[diff];
+  if (!data) return;
+
+  // Populate content
+  challengeTitle.innerText = data.title;
+  challengeScenarioText.innerText = data.scenario;
+  
+  // Populate hints
+  hintList.innerHTML = ''; // Clear old hints
+  data.hints.forEach(hintText => {
+    const li = document.createElement('li');
+    li.innerText = hintText;
+    hintList.appendChild(li);
+  });
+  hintTooltip.classList.remove('active'); // Hide hint tooltip
+
+  // Set solution button data
+  solutionBtn.setAttribute('data-solution-src', data.solution);
+
+  // Reset BPMN.io iframe by reloading it
+  // This gives the user a fresh canvas for each challenge
+  bpmnFrame.src = "https://demo.bpmn.io/new";
+}
+
+// Listener for difficulty tabs
+diffBar.addEventListener('click', e => {
+  if (e.target.classList.contains('diff-tab')) {
+    selectChallenge(e.target.dataset.diff);
+  }
+});
+
+// Listener for hint button
+hintBtn.addEventListener('click', () => {
+  hintTooltip.classList.toggle('active');
+});
+
+// Listener for solution button
+solutionBtn.addEventListener('click', () => {
+  const imgSrc = solutionBtn.getAttribute('data-solution-src');
+  if (imgSrc) {
+    openZoom(imgSrc);
+  }
+});
+
+// --- Zoom Logic (Global) ---
 function openZoom(src){
   if(!src) return;
   document.getElementById('zoomedImage').src = src;

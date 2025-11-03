@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Module — Tasks, Collapsed Process & Guidelines</title>
   <link rel="stylesheet" href="styles.css">
-
 </head>
 <body>
   <div class="container events-layout" role="main">
@@ -24,6 +23,9 @@
         <button id="menu-naming" aria-pressed="false">Naming Convention</button>
         <button id="menu-collapsed" aria-pressed="false">Collapsed Process</button>
         <button id="menu-expanded" aria-pressed="false">Expanded Process</button>
+        <!-- New Buttons -->
+        <button id="menu-challenge" aria-pressed="false">Learn It <span class="new-badge">NEW</span></button>
+        <button id="menu-mistakes" disabled aria-pressed="false" aria-disabled="true" tabindex="-1">Common Mistakes  <span class="badge">Inprogress</span></button>
       </nav>
     </aside>
 
@@ -35,16 +37,16 @@
             <div class="logo" style="width:44px;height:44px;border-radius:8px;font-size:16px">←</div>
           </a>
           <div>
-            <div class="h-title">Tasks, Collapsed Process & General Guidelines</div>
+            <div id="pageTitle" class="h-title">Task Types</div>
             <div class="h-sub">Learn about different task types and collapsed processes</div>
           </div>
         </div>
       </header>
 
       <div class="content" role="region" aria-label="Tasks and guidelines content">
+        <!-- 1. TASKS Section -->
         <div id="tasksSection">
           <h2>Task in BPMN</h2>
-
           <div class="task-box">
             <div class="definition">
               <p>Tasks represent atomic units of work in a process. Keep tasks focused on a single responsibility.</p>
@@ -55,7 +57,6 @@
               </ul>
             </div>
           </div>
-
           <div class="task-box">
             <h3>Task Examples</h3>
             <div class="img-wrap">
@@ -63,10 +64,9 @@
               <img src="img/task_examples.png" alt="Task Examples in BPMN" style="max-width:100%">
             </div>
           </div>
-
         </div>
 
-        <!-- Naming Convention Section -->
+        <!-- 2. NAMING CONVENTION Section -->
         <div id="namingSection" class="hidden">
           <h2>Naming Convention</h2>
           <div class="task-box">
@@ -75,24 +75,20 @@
               <button class="zoom-btn" onclick="openZoom('img/namingconv1.png')">🔍 Zoom</button>
               <img src="img/namingconv1.png" alt="Task Naming Convention Part 1" style="max-width:100%">
             </div>
-            
           </div>
         </div>
 
-        <!-- Collapsed Process Section -->
+        <!-- 3. COLLAPSED PROCESS Section -->
         <div id="collapsedSection" class="hidden">
           <h2>Collapsed Processes</h2>
-          
           <div class="task-box">
             <h3>When to Use Collapsed Processes</h3>
             <p>Collapsed processes (also called Sub-processes) are used to encapsulate related activities into a single, manageable unit.</p>
-            
             <div class="img-wrap">
               <button class="zoom-btn" onclick="openZoom('img/collapsed_process2.png')">🔍 Zoom</button>
               <img src="img/collapsed_process2.png" alt="Collapsed Process Example" style="max-width:100%">
               <div class="small-note">Example: A collapsed process containing Different Process</div>
             </div>
-
             <div style="margin-top: 20px">
               <video width="100%" controls muted>
                 <source src="img/collapsedprocess_clip.mp4">
@@ -101,7 +97,6 @@
               <div class="small-note">Video demonstration of collapsed process </div>
             </div>
           </div>
-
           <div class="task-box">
             <h3>Benefits & Best Practices</h3>
             <div class="benefits-grid">
@@ -121,16 +116,14 @@
           </div>
         </div>
 
-        <!-- Expanded Process Section -->
+        <!-- 4. EXPANDED PROCESS Section -->
         <div id="expandedSection" class="hidden">
           <h2>Expanded Processes</h2>
-          
           <div class="task-box">
             <h3>What is an Expanded Process?</h3>
             <p>An expanded process shows all the details of a subprocess directly within the main process diagram. It's useful when you want to display the internal workflow without having to navigate to a separate diagram.</p>
             <p>This approach provides immediate visibility into subprocess activities, making it easier to understand the overall process flow at a glance.</p>
           </div>
-
           <div class="task-box">
             <h3>When to Use Expanded Process</h3>
             <div class="naming-convention-box">
@@ -140,7 +133,6 @@
                 <li>Also Triggering Other Flows If Certain Conditions are Met During a Subprocess Stage</li>
               </ul>
             </div>
-
             <div class="img-wrap">
               <button class="zoom-btn" onclick="openZoom('img/expandedprocess.png')">🔍 Zoom</button>
               <img src="img/expandedprocess.png" alt="Expanded Process Example" style="max-width:100%">
@@ -148,7 +140,69 @@
             </div>
           </div>
         </div>
-      </div>
+
+        <!-- 5. NEW CHALLENGE BLOCK -->
+        <div id="challengeBlock" class="hidden" style="flex-direction:column;">
+          <div style="flex:1">
+            <div style="font-weight:800; margin-bottom:12px;">Tasks: Build & Compare Challenge</div>
+            
+            <!-- Difficulty Tabs -->
+            <div class="challenge-diff-bar" id="challengeDiffBar" role="tablist" aria-label="Challenge difficulty">
+              <button class="diff-tab active" id="diff-easy" data-diff="easy">Easy</button>
+              <button class="diff-tab" id="diff-medium" data-diff="medium">Medium</button>
+              <button class="diff-tab hard" id="diff-hard" data-diff="hard">Hard</button>
+            </div>
+
+            <!-- Challenge Content Area -->
+            <div id="challenge-content-area">
+              <!-- Scenario Box -->
+              <div class="challenge-scenario-box">
+                <h3 id="challenge-title">Easy: Task Naming</h3>
+                <p id="challenge-scenario-text">Model a single task for creating an invoice. Pay attention to the correct naming convention (active voice, verb + noun).</p>
+                
+                <!-- Hint Button & Tooltip -->
+                <div class="hint-area">
+                  <button class="hint-btn" id="hintBtn">Show Hints</button>
+                  <div class="hint-tooltip" id="hintTooltip">
+                    <strong id="hint-title">Elements Needed:</strong>
+                    <ul id="hint-list">
+                      <li>1x Task</li>
+                      <li>Should be named "Create Invoice", not "Invoice Creation" or "Invoice Created".</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- BPMN Modeler -->
+              <div class="bpmn-container-challenge">
+                <iframe
+                  src="https://demo.bpmn.io/new"
+                  title="BPMN.io Modeler"
+                  class="bpmn-frame"
+                  id="bpmnFrame"
+                ></iframe>
+              </div>
+
+              <!-- Solution Button -->
+              <button class="btn" id="solutionBtn" data-solution-src="img/namingconv1.png" style="width:100%; padding: 12px; font-size: 15px;">
+                Show Solution
+              </button>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. NEW COMMON MISTAKES BLOCK (Locked) -->
+        <div id="mistakesSection" class="hidden">
+          <h2>Common Mistakes</h2>
+          <div class="task-box">
+            <div class="definition">
+              <p>This section is currently in progress. Check back later for updates!</p>
+            </div>
+          </div>
+        </div>
+      </div> <!-- End of .content -->
+
     </section>
   </div>
 <div class="zoom-overlay" id="zoomOverlay" role="dialog" aria-modal="true" aria-hidden="true">
@@ -156,60 +210,202 @@
     <img id="zoomedImage" src="" alt="Zoomed diagram">
   </div>
   <script>
+    // --- Model Data (for challenges) ---
+    const challengeData = {
+      easy: {
+        title: "Easy: Task Naming",
+        scenario: "Model a single task for creating an invoice. Pay attention to the correct naming convention (active voice, verb + noun). How should it be named?",
+        hints: [
+          "1x Task",
+          "Correct: 'Create Invoice'",
+          "Incorrect: 'Invoice Creation'",
+          "Incorrect: 'Invoice Created'"
+        ],
+        solution: "img/namingconv1.png"
+      },
+      medium: {
+        title: "Medium: Simple Task Flow",
+        scenario: "Model a simple procurement process. It 'Initiates Process', then must 'Verify Supplier Confirmation'. Next, 'Send Reminder to Supplier'. Finally, 'Create Goods Receipt' and 'End Process'.",
+        hints: [
+          "1x Start Event (Plain)",
+          "3x Tasks",
+          "1x End Event (Plain)"
+        ],
+        solution: "img/task_examples.png"
+      },
+      hard: {
+        title: "Hard: Expanded Sub-process",
+        scenario: "Model a customer order process. It starts when a 'Customer Order Received'. The first step is 'Verify Supplier Confirmation'. This leads to an expanded sub-process called 'Updating and Confirming Stocks'. Inside this sub-process, the flow is: 'Send Reminder to Supplier', then 'Check the Stocks', then 'Send Back Updated Info to System'. The sub-process then ends. After the sub-process, the main flow continues to 'Confirm Delivery Plan'.",
+        hints: [
+          "1x Start Event (Plain)",
+          "2x Tasks (outside sub-process)",
+          "1x Expanded Sub-process",
+          "3x Tasks (inside sub-process)",
+          "Remember the sub-process needs its own (internal) start and end."
+        ],
+        solution: "img/expandedprocess.png"
+      }
+    };
+
+    // --- Element References ---
     const menuTasks = document.getElementById('menu-tasks');
     const menuNaming = document.getElementById('menu-naming');
     const menuCollapsed = document.getElementById('menu-collapsed');
     const menuExpanded = document.getElementById('menu-expanded');
+    const menuChallenge = document.getElementById('menu-challenge'); // New
+    const menuMistakes = document.getElementById('menu-mistakes'); // New
 
     const tasksSection = document.getElementById('tasksSection');
     const namingSection = document.getElementById('namingSection');
     const collapsedSection = document.getElementById('collapsedSection');
     const expandedSection = document.getElementById('expandedSection');
+    const challengeBlock = document.getElementById('challengeBlock'); // New
+    const mistakesSection = document.getElementById('mistakesSection'); // New
 
-    namingSection.classList.add('hidden');
-    collapsedSection.classList.add('hidden');
-    expandedSection.classList.add('hidden');
+    const pageTitle = document.getElementById('pageTitle');
+
+    // Store all buttons and blocks in arrays for easy iteration
+    const allMenuButtons = [menuTasks, menuNaming, menuCollapsed, menuExpanded, menuChallenge, menuMistakes];
+    const allContentBlocks = [tasksSection, namingSection, collapsedSection, expandedSection, challengeBlock, mistakesSection];
+
+    // Challenge Elements
+    const diffBar = document.getElementById('challengeDiffBar');
+    const challengeTitle = document.getElementById('challenge-title');
+    const challengeScenarioText = document.getElementById('challenge-scenario-text');
+    const hintBtn = document.getElementById('hintBtn');
+    const hintTooltip = document.getElementById('hintTooltip');
+    const hintList = document.getElementById('hint-list');
+    const solutionBtn = document.getElementById('solutionBtn');
+    const bpmnFrame = document.getElementById('bpmnFrame');
 
     function setActiveMenu(btn) {
-      [menuTasks, menuNaming, menuCollapsed, menuExpanded].forEach(b => {
+      // Don't process if the button is disabled
+      if (btn.hasAttribute('disabled')) return;
+
+      allMenuButtons.forEach(b => {
         b.classList.remove('active');
         b.setAttribute('aria-pressed', 'false');
       });
       btn.classList.add('active');
       btn.setAttribute('aria-pressed', 'true');
 
-      tasksSection.classList.add('hidden');
-      namingSection.classList.add('hidden');
-      collapsedSection.classList.add('hidden');
-      expandedSection.classList.add('hidden');
+      allContentBlocks.forEach(section => {
+        section.classList.add('hidden');
+      });
 
-      if (btn === menuTasks) tasksSection.classList.remove('hidden');
-      if (btn === menuNaming) namingSection.classList.remove('hidden');
-      if (btn === menuCollapsed) collapsedSection.classList.remove('hidden');
-      if (btn === menuExpanded) expandedSection.classList.remove('hidden');
+      let newTitle = '';
+
+      if (btn === menuTasks) {
+        tasksSection.classList.remove('hidden');
+        newTitle = 'Task Types';
+      }
+      if (btn === menuNaming) {
+        namingSection.classList.remove('hidden');
+        newTitle = 'Naming Convention';
+      }
+      if (btn === menuCollapsed) {
+        collapsedSection.classList.remove('hidden');
+        newTitle = 'Collapsed Processes';
+      }
+      if (btn === menuExpanded) {
+        expandedSection.classList.remove('hidden');
+        newTitle = 'Expanded Processes';
+      }
+      if (btn === menuChallenge) { // New
+        challengeBlock.classList.remove('hidden');
+        newTitle = 'Practice Challenge';
+        selectChallenge('easy'); // Load default challenge
+      }
+      if (btn === menuMistakes) { // New
+        mistakesSection.classList.remove('hidden');
+        newTitle = 'Common Mistakes';
+      }
+
+      pageTitle.innerText = newTitle;
     }
 
     menuTasks.addEventListener('click', () => setActiveMenu(menuTasks));
     menuNaming.addEventListener('click', () => setActiveMenu(menuNaming));
     menuCollapsed.addEventListener('click', () => setActiveMenu(menuCollapsed));
     menuExpanded.addEventListener('click', () => setActiveMenu(menuExpanded));
+    menuChallenge.addEventListener('click', () => setActiveMenu(menuChallenge)); // New
+    menuMistakes.addEventListener('click', () => setActiveMenu(menuMistakes)); // New
 
+    // --- Challenge Tab Logic ---
+    function selectChallenge(diff) {
+      // Set active tab
+      diffBar.querySelectorAll('.diff-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.diff === diff);
+      });
+      
+      const data = challengeData[diff];
+      if (!data) return;
+
+      // Populate content
+      challengeTitle.innerText = data.title;
+      challengeScenarioText.innerText = data.scenario;
+      
+      // Populate hints
+      hintList.innerHTML = ''; // Clear old hints
+      data.hints.forEach(hintText => {
+        const li = document.createElement('li');
+        li.innerText = hintText;
+        hintList.appendChild(li);
+      });
+      hintTooltip.classList.remove('active'); // Hide hint tooltip
+
+      // Set solution button data
+      solutionBtn.setAttribute('data-solution-src', data.solution);
+
+      // Reset BPMN.io iframe by reloading it
+      if (bpmnFrame) {
+        bpmnFrame.src = "https://demo.bpmn.io/new";
+      }
+    }
+
+    // Listener for difficulty tabs
+    if (diffBar) {
+      diffBar.addEventListener('click', e => {
+        if (e.target.classList.contains('diff-tab')) {
+          selectChallenge(e.target.dataset.diff);
+        }
+      });
+    }
+
+    // Listener for hint button
+    if (hintBtn) {
+      hintBtn.addEventListener('click', () => {
+        hintTooltip.classList.toggle('active');
+      });
+    }
+
+    // Listener for solution button
+    if (solutionBtn) {
+      solutionBtn.addEventListener('click', () => {
+        const imgSrc = solutionBtn.getAttribute('data-solution-src');
+        if (imgSrc) {
+          openZoom(imgSrc);
+        }
+      });
+    }
+
+    // --- Init ---
     setActiveMenu(menuTasks);
 
     // zoom overlay
-function openZoom(src){
-  if(!src) return;
-  document.getElementById('zoomedImage').src = src;
-  document.getElementById('zoomOverlay').classList.add('active');
-  document.getElementById('zoomOverlay').setAttribute('aria-hidden','false');
-}
-function closeZoom(){
-  document.getElementById('zoomOverlay').classList.remove('active');
-  document.getElementById('zoomOverlay').setAttribute('aria-hidden','true');
-  document.getElementById('zoomedImage').src = '';
-}
-document.getElementById('zoomOverlay').addEventListener('click', e => { if(e.target.id === 'zoomOverlay') closeZoom(); });
-document.addEventListener('keydown', e => { if(e.key === 'Escape') closeZoom(); });
+    function openZoom(src){
+      if(!src) return;
+      document.getElementById('zoomedImage').src = src;
+      document.getElementById('zoomOverlay').classList.add('active');
+      document.getElementById('zoomOverlay').setAttribute('aria-hidden','false');
+    }
+    function closeZoom(){
+      document.getElementById('zoomOverlay').classList.remove('active');
+      document.getElementById('zoomOverlay').setAttribute('aria-hidden','true');
+      document.getElementById('zoomedImage').src = '';
+    }
+    document.getElementById('zoomOverlay').addEventListener('click', e => { if(e.target.id === 'zoomOverlay') closeZoom(); });
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') closeZoom(); });
 
   </script>
 </body>

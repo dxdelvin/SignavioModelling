@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Module — Pools & Sequence Flows</title>
   <link rel="stylesheet" href="styles.css">
-
 </head>
 <body>
   <div class="container events-layout" role="main">
@@ -23,6 +22,7 @@
         <button id="menu-pools" class="active" aria-pressed="true">Pools & Lanes</button>
         <button id="menu-naming" aria-pressed="false">Naming Conventions</button>
         <button id="menu-flows" aria-pressed="false">Sequence Flows</button>
+        <button id="menu-challenge" aria-pressed="false">Practice Challenge <span class="new-badge">NEW</span></button>
         <button id="menu-mistakes" disabled aria-pressed="false" aria-disabled="true" tabindex="-1">Common Mistakes <span class="badge">Inprogress</span></button>
       </nav>
     </aside>
@@ -35,8 +35,8 @@
             <div class="logo" style="width:44px;height:44px;border-radius:8px;font-size:16px">←</div>
           </a>
           <div>
-            <div class="h-title">Pools & Sequence Flows</div>
-            <div class="h-sub">Learn about process organization and connections</div>
+            <div id="pageTitle" class="h-title">Pools & Lanes</div>
+            <div id="pageSub" class="h-sub">Learn about process organization and connections</div>
           </div>
         </div>
       </header>
@@ -45,7 +45,6 @@
         <!-- Pools & Lanes Section -->
         <div id="poolsSection">
           <h2>Pools & Lanes</h2>
-
           <div class="example-grid">
             <div class="definition-box">
               <h3>What is a Pool?</h3>
@@ -57,7 +56,6 @@
                 <li>Can be <b>collapsed</b> or <b>expanded</b></li>
               </ul>
             </div>
-
             <div class="definition-box">
               <h3>What are Lanes?</h3>
               <p><b>Lanes</b> are <b>sub-partitions</b> within a pool that extend the entire length of the pool. They represent different <b>roles</b> or <b>departments</b> within an organization.</p>
@@ -68,7 +66,6 @@
               </ul>
             </div>
           </div>
-
           <div class="example-">
             <div class="example-box">
               <div class="example-title">Lane and Pool</div>
@@ -84,12 +81,10 @@
         <!-- Sequence Flows Section -->
         <div id="flowsSection" class="hidden">
           <h2>Sequence Flows</h2>
-
           <div class="definition-box">
             <h3>Types of Flows</h3>
             <p>Flows connect elements in a process and show the sequence of activities.</p>
           </div>
-
           <div class="example-grid">
             <div class="example-box">
               <div class="example-title">Normal Flow</div>
@@ -108,7 +103,6 @@
               </div>
             </div>
           </div>
-
           <div class="example-box" style="margin-top: 20px">
             <div class="example-title">Usage</div>
             <div class="example-desc">Sequence Flow for Normal Flow Within the Pool </br> Message Flow is for external Pool and also for throwing and catching message events</div>
@@ -122,13 +116,10 @@
         <!-- Naming Conventions Section -->
         <div id="namingSection" class="hidden">
           <h2>Naming Conventions</h2>
-
           <div class="definition-box">
             <h3>Naming Guidelines</h3>
           </div>
-
           <div class="example-grid">
-            
             </div>
             <div class="example-box">
               <div class="example-title">Sequence Flow Naming</div>
@@ -140,31 +131,63 @@
             </div>
           </div>
         </div>
+        
+        <!-- NEW CHALLENGE BLOCK -->
+        <div id="challengeBlock" class="hidden" style="flex-direction:column;">
+          <div style="flex:1">
+            <div style="font-weight:800; margin-bottom:12px;">Pools & Flows: Build & Compare Challenge</div>
+            
+            <!-- Difficulty Tabs -->
+            <div class="challenge-diff-bar" id="challengeDiffBar" role="tablist" aria-label="Challenge difficulty">
+              <button class="diff-tab active" id="diff-easy" data-diff="easy">Easy (Lane Naming)</button>
+              <button class="diff-tab" id="diff-medium" data-diff="medium">Medium (Flows)</button>
+            </div>
 
-        <!-- Common Mistakes Section -->
+            <!-- Challenge Content Area -->
+            <div id="challenge-content-area">
+              <!-- Scenario Box -->
+              <div class="challenge-scenario-box">
+                <h3 id="challenge-title">Easy: Lane Naming</h3>
+                <p id="challenge-scenario-text">Model a process for an 'Organisation' that has three departments: 'Finances', 'Sales', and 'Logistics'. How should these be represented as lanes?</p>
+                
+                <!-- Hint Button & Tooltip -->
+                <div class="hint-area">
+                  <button class="hint-btn" id="hintBtn">Show Hints</button>
+                  <div class="hint-tooltip" id="hintTooltip">
+                    <strong id="hint-title">Elements Needed:</strong>
+                    <ul id="hint-list">
+                      <li>1x Pool (for the 'Organisation')</li>
+                      <li>3x Lanes (one for each department)</li>
+                      <li>This tests your knowledge of Lane setup, which can be named after Organizational Units.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- BPMN Modeler -->
+              <div class="bpmn-container-challenge">
+                <iframe
+                  src="https://demo.bpmn.io/new"
+                  title="BPMN.io Modeler"
+                  class="bpmn-frame"
+                  id="bpmnFrame"
+                ></iframe>
+              </div>
+
+              <!-- Solution Button -->
+              <button class="btn" id="solutionBtn" data-solution-src="img/namingsequence.png" style="width:100%; padding: 12px; font-size: 15px;">
+                Show Solution
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Common Mistakes Section (Locked) -->
         <div id="mistakesSection" class="hidden">
           <h2>Common Mistakes</h2>
-
-          <div class="definition-box">
-            <h3>According to Signavio Best Practices</h3>
-            <ul>
-              <li>Using message flows within the same pool</li>
-              <li>Crossing sequence flows between lanes</li>
-              <li>Missing pool names or unclear participant roles</li>
-              <li>Inconsistent lane usage across processes</li>
-            </ul>
-          </div>
-
-          <div  class="example-grid">
-            <div class="example-box">
-              <div class="example-title">Incorrect Message Flows</div>
-              <div class="example-desc">Common mistake in message flow usage</div>
-              <img src="img/placeholder.png" alt="Message Flow Mistakes">
-            </div>
-            <div class="example-box">
-              <div class="example-title">Lane Misuse</div>
-              <div class="example-desc">Incorrect lane organization and flow crossing</div>
-              <img src="img/placeholder.png" alt="Lane Usage Mistakes">
+          <div class="task-box">
+            <div class="definition">
+              <p>This section is currently in progress. Check back later for updates!</p>
             </div>
           </div>
         </div>
@@ -172,50 +195,178 @@
     </section>
   </div>
 
+  <!-- Zoom Overlay -->
+  <div class="zoom-overlay" id="zoomOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <button class="zoom-close" id="zoomClose" onclick="closeZoom()">Close ✕</button>
+    <img id="zoomedImage" src="" alt="Zoomed diagram">
+  </div>
+  
   <script>
+    // --- Model Data (for challenges) ---
+    const challengeData = {
+      easy: {
+        title: "Easy: Lane Naming",
+        scenario: "Model a process for an 'Organisation' that has three departments: 'Finances', 'Sales', and 'Logistics'. How should these be represented as lanes?",
+        hints: [
+          "1x Pool (for the 'Organisation')",
+          "3x Lanes (one for each department)",
+          "This tests your knowledge of Lane setup, which can be named after Organizational Units."
+        ],
+        solution: "img/namingsequence.png"
+      },
+      medium: {
+        title: "Medium: Sequence vs. Message Flow",
+        scenario: "Model a process for two roommates, 'Tim' and 'Robert', in a shared pool called 'Shared Accommodation'. Tim 'Selects Pizza' and then 'Asks flatmate' (Robert). Robert then 'Selects Pizza' and 'Orders Pizza'. The 'Order Pizza' task sends a message to an external 'Pizza' participant (a collapsed pool).",
+        hints: [
+          "1x Pool ('Shared Accommodation')",
+          "2x Lanes ('Tim', 'Robert')",
+          "1x Collapsed Pool ('Pizza')",
+          "4x Tasks",
+          "1x Sequence Flow (Tim to Robert)",
+          "1x Message Flow (Robert to Pizza)"
+        ],
+        solution: "img/seqandmesflow.png"
+      }
+    };
+    
+    // --- Element References ---
     const menuPools = document.getElementById('menu-pools');
     const menuFlows = document.getElementById('menu-flows');
     const menuNaming = document.getElementById('menu-naming');
+    const menuChallenge = document.getElementById('menu-challenge'); 
     const menuMistakes = document.getElementById('menu-mistakes');
 
     const poolsSection = document.getElementById('poolsSection');
     const flowsSection = document.getElementById('flowsSection');
     const namingSection = document.getElementById('namingSection');
+    const challengeBlock = document.getElementById('challengeBlock'); 
     const mistakesSection = document.getElementById('mistakesSection');
 
+    const pageTitle = document.getElementById('pageTitle');
+    const pageSub = document.getElementById('pageSub');
+
+    const allMenuButtons = [menuPools, menuFlows, menuNaming, menuChallenge, menuMistakes];
+    const allContentBlocks = [poolsSection, flowsSection, namingSection, challengeBlock, mistakesSection];
+    
+    // Challenge Elements
+    const diffBar = document.getElementById('challengeDiffBar');
+    const challengeTitle = document.getElementById('challenge-title');
+    const challengeScenarioText = document.getElementById('challenge-scenario-text');
+    const hintBtn = document.getElementById('hintBtn');
+    const hintTooltip = document.getElementById('hintTooltip');
+    const hintList = document.getElementById('hint-list');
+    const solutionBtn = document.getElementById('solutionBtn');
+    const bpmnFrame = document.getElementById('bpmnFrame');
+
     function setActiveMenu(btn) {
-      // Don't process if the button is disabled
       if (btn.hasAttribute('disabled')) return;
 
-      [menuPools, menuFlows, menuNaming, menuMistakes].forEach(b => {
+      allMenuButtons.forEach(b => {
         b.classList.remove('active');
         b.setAttribute('aria-pressed', 'false');
       });
       btn.classList.add('active');
       btn.setAttribute('aria-pressed', 'true');
 
-      [poolsSection, flowsSection, namingSection, mistakesSection].forEach(section => {
+      allContentBlocks.forEach(section => {
         section.classList.add('hidden');
       });
 
-      if (btn === menuPools) poolsSection.classList.remove('hidden');
-      if (btn === menuFlows) flowsSection.classList.remove('hidden');
-      if (btn === menuNaming) namingSection.classList.remove('hidden');
-      if (btn === menuMistakes) mistakesSection.classList.remove('hidden');
+      let newTitle = 'Pools & Lanes';
+      let newSub = 'Learn about process organization and connections';
+
+      if (btn === menuPools) {
+        poolsSection.classList.remove('hidden');
+        newTitle = 'Pools & Lanes';
+      }
+      if (btn === menuFlows) {
+        flowsSection.classList.remove('hidden');
+        newTitle = 'Sequence Flows';
+      }
+      if (btn === menuNaming) {
+        namingSection.classList.remove('hidden');
+        newTitle = 'Naming Conventions';
+      }
+      if (btn === menuChallenge) {
+        challengeBlock.classList.remove('hidden');
+        newTitle = 'Practice Challenge';
+        newSub = 'Read the scenario, build the process, then check your work.';
+        selectChallenge('easy'); 
+      }
+      if (btn === menuMistakes) {
+        mistakesSection.classList.remove('hidden');
+        newTitle = 'Common Mistakes';
+        newSub = 'Learn what to avoid when modeling pools and flows.';
+      }
+      
+      pageTitle.innerText = newTitle;
+      pageSub.innerText = newSub;
     }
 
     menuPools.addEventListener('click', () => setActiveMenu(menuPools));
     menuFlows.addEventListener('click', () => setActiveMenu(menuFlows));
     menuNaming.addEventListener('click', () => setActiveMenu(menuNaming));
+    menuChallenge.addEventListener('click', () => setActiveMenu(menuChallenge));
     menuMistakes.addEventListener('click', () => setActiveMenu(menuMistakes));
 
-    // Initialize - hide all sections except Pools & Lanes
-    flowsSection.classList.add('hidden');
-    namingSection.classList.add('hidden');
-    mistakesSection.classList.add('hidden');
-    setActiveMenu(menuPools);
+    function selectChallenge(diff) {
+      if(diffBar) {
+        diffBar.querySelectorAll('.diff-tab').forEach(tab => {
+          tab.classList.toggle('active', tab.dataset.diff === diff);
+        });
+      }
+      
+      const data = challengeData[diff];
+      if (!data) return;
 
-    // Zoom functionality
+      if (challengeTitle) challengeTitle.innerText = data.title;
+      if (challengeScenarioText) challengeScenarioText.innerText = data.scenario;
+      
+      if (hintList) {
+        hintList.innerHTML = ''; // Clear old hints
+        data.hints.forEach(hintText => {
+          const li = document.createElement('li');
+          li.innerText = hintText;
+          hintList.appendChild(li);
+        });
+      }
+      if (hintTooltip) hintTooltip.classList.remove('active'); // Hide hint tooltip
+
+      if (solutionBtn) solutionBtn.setAttribute('data-solution-src', data.solution);
+
+      // Reset BPMN.io iframe by reloading it
+      if (bpmnFrame) {
+        bpmnFrame.src = "https://demo.bpmn.io/new";
+      }
+    }
+
+    // Listener for difficulty tabs
+    if (diffBar) {
+      diffBar.addEventListener('click', e => {
+        if (e.target.classList.contains('diff-tab')) {
+          selectChallenge(e.target.dataset.diff);
+        }
+      });
+    }
+
+    // Listener for hint button
+    if (hintBtn) {
+      hintBtn.addEventListener('click', () => {
+        if (hintTooltip) hintTooltip.classList.toggle('active');
+      });
+    }
+
+    // Listener for solution button
+    if (solutionBtn) {
+      solutionBtn.addEventListener('click', () => {
+        const imgSrc = solutionBtn.getAttribute('data-solution-src');
+        if (imgSrc) {
+          openZoom(imgSrc);
+        }
+      });
+    }
+    
+    // --- Zoom functionality (from original file) ---
     function openZoom(src) {
       if(!src) return;
       document.getElementById('zoomedImage').src = src;
@@ -235,12 +386,14 @@
     document.addEventListener('keydown', e => {
       if(e.key === 'Escape') closeZoom();
     });
-  </script>
 
-  <!-- Zoom Overlay -->
-  <div class="zoom-overlay" id="zoomOverlay" role="dialog" aria-modal="true" aria-hidden="true">
-    <button class="zoom-close" id="zoomClose" onclick="closeZoom()">Close ✕</button>
-    <img id="zoomedImage" src="" alt="Zoomed diagram">
-  </div>
+    // --- Init ---
+    // Initialize - hide all sections except Pools & Lanes
+    flowsSection.classList.add('hidden');
+    namingSection.classList.add('hidden');
+    challengeBlock.classList.add('hidden');
+    mistakesSection.classList.add('hidden');
+    setActiveMenu(menuPools);
+  </script>
 </body>
 </html>

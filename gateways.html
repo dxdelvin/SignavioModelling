@@ -1,12 +1,12 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="utf-t"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Module — Gateways (XOR • AND • OR)</title>
 
   <link rel="stylesheet" href="styles.css">
-
+ 
 </head>
 <body>
   <div class="container events-layout" role="main">
@@ -23,6 +23,8 @@
       <nav class="menu" aria-label="Module menu">
         <button id="menu-concept" class="active" aria-pressed="true">Concept &amp; Types</button>
         <button id="menu-usage" aria-pressed="false">Usage</button>
+        <!-- New Buttons -->
+        <button id="menu-challenge" aria-pressed="false"> Learn It<span class="new-badge">NEW</span></button>
         <button id="menu-mistakes" disabled aria-pressed="false" aria-disabled="true" tabindex="-1">Common Mistakes  <span class="badge">Inprogress</span></button>
       </nav>
     </aside>
@@ -35,13 +37,14 @@
             <div class="logo" style="width:44px;height:44px;border-radius:8px;font-size:16px">←</div>
           </a>
           <div>
-            <div class="h-title">Gateways — XOR (Exclusive) • AND (Parallel) • OR (Inclusive)</div>
+            <div id="pageTitle" class="h-title">Gateways — Concept & Types</div>
             <div class="h-sub">Top bar selects the gateway demo; press <strong>Step</strong> to emit a token and demonstrate routing</div>
           </div>
         </div>
       </header>
 
-      <div class="content demo-area" role="region" aria-label="Gateways demo area">
+      <!-- 1. CONCEPT & USAGE Block -->
+      <div class="content demo-area" id="conceptAndUsageBlock" role="region" aria-label="Gateways demo area">
         <!-- LEFT: animation stage + controls + explanation (Concept view) -->
         <div class="demo-left" id="conceptColumn">
           <div style="font-weight:800">Gateways demo</div>
@@ -55,40 +58,31 @@
 
           <!-- SVG stage -->
           <svg id="stage" class="svg-stage" viewBox="0 0 900 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gateway animation stage" preserveAspectRatio="xMidYMid meet">
-            <!-- incoming -->
+            <!-- (Original SVG content for the demo) -->
             <g id="incomingBox" transform="translate(20,150)">
               <rect class="task-box" width="140" height="44" rx="8" ry="8"/>
               <text x="16" y="30" font-family="Inter, Arial" font-size="12" fill="#0f1724">Incoming Order</text>
             </g>
-
-            <!-- path into gateway - extended to reach diamond head edge -->
             <path id="p_in" d="M160 172 L220 172" stroke="rgba(7,18,40,0.12)" stroke-width="4" fill="none" stroke-linecap="round"/>
-
-            <!-- gateway diamond (split) -->
             <g id="gateway" transform="translate(220,172)">
               <path d="M -16 0 L 0 -16 L 16 0 L 0 16 Z" fill="#fff" stroke="rgba(7,18,40,0.14)" stroke-width="2"/>
               <text x="-6" y="5" font-family="Inter, Arial" font-size="12" fill="#0f1724">⊗</text>
             </g>
-
-            <!-- outgoing paths (start close to gateway so there's no big whitespace) -->
             <path id="pA" d="M236 154 C300 130, 380 120, 480 108" stroke="rgba(7,18,40,0.12)" stroke-width="4" fill="none" stroke-linecap="round"/>
             <g id="outA" transform="translate(480,90)">
               <rect class="task-box" width="160" height="44" rx="8" ry="8"/>
               <text x="14" y="30" font-family="Inter, Arial" font-size="12" fill="#0f1724">Supplier Selection</text>
             </g>
-
             <path id="pB" d="M236 172 C340 172, 420 172, 480 172" stroke="rgba(7,18,40,0.12)" stroke-width="4" fill="none" stroke-linecap="round"/>
             <g id="outB" transform="translate(480,150)">
               <rect class="task-box" width="160" height="44" rx="8" ry="8"/>
               <text x="14" y="30" font-family="Inter, Arial" font-size="12" fill="#0f1724">QA Check</text>
             </g>
-
             <path id="pC" d="M236 190 C300 210, 380 232, 480 264" stroke="rgba(7,18,40,0.12)" stroke-width="4" fill="none" stroke-linecap="round"/>
             <g id="outC" transform="translate(480,240)">
               <rect class="task-box" width="160" height="44" rx="8" ry="8"/>
               <text x="14" y="30" font-family="Inter, Arial" font-size="12" fill="#0f1724">Logistics Dispatch</text>
             </g>
-
             <g id="tokensLayer"></g>
           </svg>
 
@@ -113,18 +107,15 @@
                 <button class="btn" onclick="openZoom(document.getElementById('usageImg').src)">Zoom</button>
               </div>
             </div>
-
             <div class="img-wrap" style="height:200px;border-radius:8px;border:1px dashed rgba(7,18,40,0.04);display:flex;align-items:center;justify-content:center;margin-top:8px;">
               <img id="usageImg" src="img/gateways_xor.png" alt="XOR Gateway reference">
             </div>
           </div>
-
           <div class="small-note" style="margin-top:8px">When AND splits into parallel tokens, they move together and then merge at the join gateway. The merged token then activates "Book Goods".</div>
         </div>
 
-        <!-- RIGHT: Usage & Mistakes (hidden when Concept selected) -->
+        <!-- RIGHT: Usage -->
         <div class="demo-right">
-          <!-- FULL Usage (hidden until left menu selected) -->
           <div class="usage-large hidden" id="usageBlock">
             <div style="display:flex;justify-content:space-between;align-items:center">
               <div style="font-weight:800">Usage — Example diagram</div>
@@ -132,15 +123,74 @@
                 <button class="btn" onclick="openZoom('img/gateways_usage.png')">Zoom</button>
               </div>
             </div>
-
             <div class="img-wrap" style="height:340px;margin-top:8px">
               <img src="img/gateways_usage.png" alt="Gateways usage diagram" style="max-width:100%;max-height:100%;object-fit:contain">
             </div>
-
             <div class="small-note">Example: XOR selects a supplier; AND forks QA & Logistics in parallel; OR conditionally notifies extra suppliers.</div>
           </div>
+        </div>
+      </div>
 
-    
+      <!-- 2. NEW CHALLENGE BLOCK -->
+      <div class="content" id="challengeBlock" style="display:none; flex-direction:column;">
+        <div style="flex:1">
+          <div style="font-weight:800; margin-bottom:12px;">Gateways: Build & Compare Challenge</div>
+          
+          <!-- Difficulty Tabs -->
+          <div class="challenge-diff-bar" id="challengeDiffBar" role="tablist" aria-label="Challenge difficulty">
+            <button class="diff-tab active" id="diff-easy" data-diff="easy">Easy (XOR)</button>
+            <button class="diff-tab" id="diff-medium" data-diff="medium">Medium (AND)</button>
+            <button class="diff-tab hard" id="diff-hard" data-diff="hard">Hard (Combined)</button>
+          </div>
+
+          <!-- Challenge Content Area -->
+          <div id="challenge-content-area">
+            <!-- Scenario Box -->
+            <div class="challenge-scenario-box">
+              <h3 id="challenge-title">Easy: Exclusive (XOR) Split</h3>
+              <p id="challenge-scenario-text">Model a process that starts with "Verify Purchase Order Status". After this, a decision is needed: "Supplier Confirmation Received?". If YES, the process must "Generate Goods Receipt". If NO, the process must "Send Reminder Email". Both paths then merge and lead to "Update ERP System".</p>
+              
+              <!-- Hint Button & Tooltip -->
+              <div class="hint-area">
+                <button class="hint-btn" id="hintBtn">Show Hints</button>
+                <div class="hint-tooltip" id="hintTooltip">
+                  <strong id="hint-title">Elements Needed:</strong>
+                  <ul id="hint-list">
+                    <li>1x Start Event</li>
+                    <li>4x Tasks</li>
+                    <li>1x Exclusive (XOR) Gateway (for the split)</li>
+                    <li>1x Exclusive (XOR) Gateway (for the merge)</li>
+                    <li>Label the 'yes' and 'no' paths!</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <!-- BPMN Modeler -->
+            <div class="bpmn-container-challenge">
+              <iframe
+                src="https://demo.bpmn.io/new"
+                title="BPMN.io Modeler"
+                class="bpmn-frame"
+                id="bpmnFrame"
+              ></iframe>
+            </div>
+
+            <!-- Solution Button -->
+            <button class="btn" id="solutionBtn" data-solution-src="img/gateways_xor.png" style="width:100%; padding: 12px; font-size: 15px;">
+              Show Solution
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. NEW COMMON MISTAKES BLOCK (Locked) -->
+      <div class="content" id="mistakesBlock" style="display:none;">
+        <h2>Common Mistakes</h2>
+        <div class="task-box">
+          <div class="definition">
+            <p>This section is currently in progress. Check back later for updates!</p>
+          </div>
         </div>
       </div>
 
@@ -153,44 +203,201 @@
   </div>
 
 <script>
+// --- Model Data (for challenges) ---
+const challengeData = {
+  easy: {
+    title: "Easy: Exclusive (XOR) Split",
+    scenario: "Model a process that starts with 'Verify Purchase Order Status'. After this, a decision is needed: 'Supplier Confirmation Received?'. If YES, the process must 'Generate Goods Receipt'. If NO, the process must 'Send Reminder Email'. Both paths then merge and lead to 'Update ERP System'.",
+    hints: [
+      "1x Start Event",
+      "4x Tasks",
+      "1x Exclusive (XOR) Gateway (for the split)",
+      "1x Exclusive (XOR) Gateway (for the merge)",
+      "Label the 'yes' and 'no' paths!"
+    ],
+    solution: "img/gateways_xor.png"
+  },
+  medium: {
+    title: "Medium: Parallel (AND) Split",
+    scenario: "After a 'Complete Production Batch' task, the process must perform two tasks *at the same time*: 'Perform Quality Inspection' and 'Packaging & Labeling'. Both of these tasks must be finished before the process merges and moves on to a final 'Confirm Shipment' task.",
+    hints: [
+      "1x Start Event",
+      "4x Tasks",
+      "1x Parallel (AND) Gateway (to split)",
+      "1x Parallel (AND) Gateway (to merge)",
+      "1x End Event"
+    ],
+    solution: "img/gateways_and.png"
+  },
+  hard: {
+    title: "Hard: Combined Gateway Process",
+    scenario: "Model this full process: Start with 'Customer Order Received'. Then 'Verify Supplier Confirmation'. This is an XOR split: (Yes) -> 'Create Goods Receipt'; (No) -> 'Send Reminder'. Both merge. The process then splits in parallel (AND) to 'Check the Stocks' and 'Send Back Updated Info'. After both merge, 'Confirm Delivery Plan'. This is followed by an OR split based on conditions: (large volume) -> 'Notify Warehouse'; (urgent) -> 'Notify Customer'. Both paths (or just one) merge and the 'Order Cycle Closed'.",
+    hints: [
+      "1x Start Event, 1x End Event",
+      "Multiple Tasks",
+      "1x XOR Split (and 1x XOR Merge)",
+      "1x AND Split (and 1x AND Merge)",
+      "1x OR Split (and 1x OR Merge)"
+    ],
+    solution: "img/gateways_usage.png"
+  }
+};
 
 
-// Menu behavior
+// --- Element References ---
+// Menu Buttons
 const menuConcept = document.getElementById('menu-concept');
 const menuUsage = document.getElementById('menu-usage');
-const menuMistakes = document.getElementById('menu-mistakes');
+const menuChallenge = document.getElementById('menu-challenge'); // New
+const menuMistakes = document.getElementById('menu-mistakes'); // New
 
-const conceptColumn = document.getElementById('conceptColumn');
-const usageBlock = document.getElementById('usageBlock');
-const mistakesBlock = document.getElementById('mistakesBlock');
-const conceptImageRef = document.getElementById('conceptImageRef');
+// Content Blocks
+const conceptAndUsageBlock = document.getElementById('conceptAndUsageBlock'); // The main content div
+const challengeBlock = document.getElementById('challengeBlock'); // New
+const mistakesBlock = document.getElementById('mistakesBlock'); // New
 
+const pageTitle = document.getElementById('pageTitle');
+
+const allMenuButtons = [menuConcept, menuUsage, menuChallenge, menuMistakes];
+const allContentBlocks = [conceptAndUsageBlock, challengeBlock, mistakesBlock];
+
+// Challenge Elements
+const diffBar = document.getElementById('challengeDiffBar');
+const challengeTitle = document.getElementById('challenge-title');
+const challengeScenarioText = document.getElementById('challenge-scenario-text');
+const hintBtn = document.getElementById('hintBtn');
+const hintTooltip = document.getElementById('hintTooltip');
+const hintList = document.getElementById('hint-list');
+const solutionBtn = document.getElementById('solutionBtn');
+const bpmnFrame = document.getElementById('bpmnFrame');
+
+// --- Menu Logic ---
 function setActiveMenu(btn){
-  [menuConcept, menuUsage, menuMistakes].forEach(b=>{
-    b.classList.remove('active');
-    b.setAttribute('aria-pressed','false');
-  });
-  btn.classList.add('active');
-  btn.setAttribute('aria-pressed','true');
+  if (btn.hasAttribute('disabled')) return;
 
+  // Reset all buttons
+  allMenuButtons.forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-pressed', 'false');
+  });
+  // Activate clicked button
+  btn.classList.add('active');
+  btn.setAttribute('aria-pressed', 'true');
+
+  // Hide all main content blocks
+  allContentBlocks.forEach(block => {
+    if(block) block.style.display = 'none';
+  });
+
+  // Show the correct content block
+  let newTitle = '';
+  let newSub = '';
+
+  if(btn === menuConcept || btn === menuUsage){
+    conceptAndUsageBlock.style.display = ''; // Show the demo/usage block
+    newTitle = 'Gateways — Concept & Types';
+    newSub = 'Top bar selects the gateway demo; press Step to emit a token';
+  } else if (btn === menuChallenge) {
+    challengeBlock.style.display = 'flex'; // Show challenge block
+    selectChallenge('easy'); // Load default
+    newTitle = 'Gateways — Practice Challenge';
+    newSub = 'Read the scenario, build the process, then check your work.';
+  } else if (btn === menuMistakes) {
+    mistakesBlock.style.display = ''; // Show mistakes block
+    newTitle = 'Gateways — Common Mistakes';
+    newSub = 'Learn what to avoid when modeling gateways.';
+  }
+
+  // --- Handle the *internal* tabs of the 'concept/usage' block ---
+  // This logic is from the original gateways.html, now nested
+  const conceptColumn = document.getElementById('conceptColumn');
+  const usageBlock = document.getElementById('usageBlock');
+  
   if(btn === menuConcept){
     conceptColumn.style.display = '';
     usageBlock.classList.add('hidden');
-    mistakesBlock.classList.add('hidden');
-  } else if(btn === menuUsage){
+  } else if (btn === menuUsage) {
     conceptColumn.style.display = 'none';
     usageBlock.classList.remove('hidden');
-    mistakesBlock.classList.add('hidden');
-  } else {
-    conceptColumn.style.display = 'none';
-    usageBlock.classList.add('hidden');
-    mistakesBlock.classList.remove('hidden');
+    newTitle = 'Gateways — Usage'; // Overwrite title for Usage
+    newSub = 'See how different gateways are used in a complete process.';
+  }
+
+  // Update header text
+  if (pageTitle) pageTitle.innerText = newTitle;
+  if (pageTitle && pageTitle.nextElementSibling) {
+    pageTitle.nextElementSibling.innerText = newSub;
   }
 }
 
 menuConcept.addEventListener('click', ()=> setActiveMenu(menuConcept));
 menuUsage.addEventListener('click', ()=> setActiveMenu(menuUsage));
+menuChallenge.addEventListener('click', ()=> setActiveMenu(menuChallenge));
 menuMistakes.addEventListener('click', ()=> setActiveMenu(menuMistakes));
+
+// --- Challenge Tab Logic ---
+function selectChallenge(diff) {
+  // Set active tab
+  if(diffBar) {
+    diffBar.querySelectorAll('.diff-tab').forEach(tab => {
+      tab.classList.toggle('active', tab.dataset.diff === diff);
+    });
+  }
+  
+  const data = challengeData[diff];
+  if (!data) return;
+
+  // Populate content
+  if (challengeTitle) challengeTitle.innerText = data.title;
+  if (challengeScenarioText) challengeScenarioText.innerText = data.scenario;
+  
+  // Populate hints
+  if (hintList) {
+    hintList.innerHTML = ''; // Clear old hints
+    data.hints.forEach(hintText => {
+      const li = document.createElement('li');
+      li.innerText = hintText;
+      hintList.appendChild(li);
+    });
+  }
+  if (hintTooltip) hintTooltip.classList.remove('active'); // Hide hint tooltip
+
+  // Set solution button data
+  if (solutionBtn) solutionBtn.setAttribute('data-solution-src', data.solution);
+
+  // Reset BPMN.io iframe by reloading it
+  if (bpmnFrame) {
+    bpmnFrame.src = "https://demo.bpmn.io/new";
+  }
+}
+
+// Listener for difficulty tabs
+if (diffBar) {
+  diffBar.addEventListener('click', e => {
+    if (e.target.classList.contains('diff-tab')) {
+      selectChallenge(e.target.dataset.diff);
+    }
+  });
+}
+
+// Listener for hint button
+if (hintBtn) {
+  hintBtn.addEventListener('click', () => {
+    if (hintTooltip) hintTooltip.classList.toggle('active');
+  });
+}
+
+// Listener for solution button
+if (solutionBtn) {
+  solutionBtn.addEventListener('click', () => {
+    const imgSrc = solutionBtn.getAttribute('data-solution-src');
+    if (imgSrc) {
+      openZoom(imgSrc);
+    }
+  });
+}
+
+// --- Original gateways.html JS (for demo) ---
 
 // Explanation area
 const explainTitle = document.getElementById('explainTitle');
@@ -232,19 +439,16 @@ function updateExplanation(){
     gateway.textContent = 'o';
   }
 
-  // update reference caption and image source
   usageCaption.innerText = `${mode} Gateway Reference`;
   const modeKey = mode.toLowerCase();
   const newSrc = `img/gateways_${modeKey}.png`;
-  // Only update if the src is different to avoid unnecessary reloads
   if (usageImg.src !== newSrc) {
     usageImg.src = newSrc;
   }
-  // Update the alt text to be more descriptive
   usageImg.alt = `${mode} Gateway reference diagram`;
 }
 
-// SVG token/animation logic (same merge/sync behavior)
+// SVG token/animation logic
 const tokensLayer = document.getElementById('tokensLayer');
 const pathIn = document.getElementById('p_in');
 const pathA = document.getElementById('pA');
@@ -253,7 +457,6 @@ const pathC = document.getElementById('pC');
 const outA = document.getElementById('outA');
 const outB = document.getElementById('outB');
 const outC = document.getElementById('outC');
-
 const stepBtn = document.getElementById('stepBtn');
 const resetBtn = document.getElementById('resetBtn');
 
@@ -274,7 +477,6 @@ function createToken(color = 'var(--bsh-accent)'){
   const id = 'tk-' + tokenSeq;
   const g = document.createElementNS('http://www.w3.org/2000/svg','g');
   g.setAttribute('id', id);
-  // initial position sits at incoming rect's right edge (match p_in start)
   g.setAttribute('transform', 'translate(160,170)');
   g.classList.add('token');
   const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
@@ -335,7 +537,6 @@ function routeAtGateway(tok){
   const mode = btnXor.classList.contains('active') ? 'XOR' : (btnAnd.classList.contains('active') ? 'AND' : 'OR');
   if(mode === 'XOR'){
     const pickArray = ['A','B','C'];
-    // distribute picks to look varied
     const pick = pickArray[tokenSeq % pickArray.length];
     const p = pick === 'A' ? pathA : (pick === 'B' ? pathB : pathC);
     setTokenPath(tok, p);
@@ -350,7 +551,6 @@ function routeAtGateway(tok){
       tk.prog = 0;
     });
   } else {
-    // OR - some conditional picks; ensure at least one path is chosen
     const choices = [];
     if(Math.random() < 0.5) choices.push('B');
     if(Math.random() < 0.4) choices.push('C');
@@ -405,7 +605,7 @@ setActiveMenu(menuConcept);
 updateExplanation();
 // Set initial image on load
 document.addEventListener('DOMContentLoaded', function() {
-    usageImg.src = 'img/gateways_xor.png';
+    if(usageImg) usageImg.src = 'img/gateways_xor.png';
 });
 </script>
 </body>
