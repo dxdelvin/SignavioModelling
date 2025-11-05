@@ -105,15 +105,12 @@
       transition: all 0.3s ease;
     }
     
-    /* When .solution-mode is added to the container: */
-    .diagram-container.solution-mode {
-      box-shadow: 0 0 20px rgba(22, 163, 74, 0.5);
-      border-color: rgba(22, 163, 74, 0.5);
-    }
+    /* FIX: Removed stray characters/spaces from this CSS block */
     .diagram-container.solution-mode .correct-element {
       /* Show the green-glowing correct elements */
-      filter: drop-shadow(0 0 10px rgba(22, 163, 74, 1));
+      filter: drop-shadow(0 0 5px rgba(22, 163, 74, 1));
     }
+
 
     
     /* Game Modal (for the quiz) */
@@ -204,7 +201,8 @@
     <!-- 1. The Header -->
     <header class="header">
       <div class="h-left">
-        <a href="../game-start-page.html" title="Back to Home" style="text-decoration:none">
+        <!-- Make sure this path is correct for your setup -->
+        <a href="../index.html" title="Back to Home" style="text-decoration:none">
           <div class="logo" style="width:44px;height:44px;border-radius:8px;font-size:16px">←</div>
         </a>
         <div>
@@ -295,16 +293,74 @@
           }
         }
       },
+      // --- UPDATED LEVEL 2 with all 5 errors ---
       level2: {
-        // You can add your next level here
-        title: "Case File #2: (Coming Soon)",
+        title: "Case File #2: The Data Flow Nightmare",
+        description: "This Data Analytics process is a total mess, Doctor. Decisions are unlabeled, data is flowing *backwards*, tasks are duplicated, and the logic is broken. Find all 5 errors.",
+        svgFile: "level-2.svg", // The new disaster SVG
+        solutionFile: "level-2-solution.svg", // The new solution SVG
+        totalErrors: 5,
+        errors: {
+          'err-2-gateway-labels': {
+            question: "This XOR Gateway has no question or 'yes'/'no' labels. What's the error?",
+            options: [
+              "This is a major error. Gateways MUST have labels to be understood.",
+              "This is fine. The labels are optional and not important."
+            ],
+            correctAnswer: 0,
+            feedback: "Correct! An unlabeled gateway is a critical error. No one knows what the decision is or which path to follow. It must have a question (e.g., 'Is Data Valid?') and labeled paths.",
+            found: false
+          },
+          'err-2-arrow-1': {
+            question: "This flow arrow is going from right-to-left to an End Event. What's the error?",
+            options: [
+              "This is a 'Spaghetti' flow. Process flow should always be top-to-bottom and left-to-right.",
+              "The arrow should be dotted (a Message Flow)."
+            ],
+            correctAnswer: 0,
+            feedback: "Correct! This is a classic modeling error. To keep diagrams readable, the flow must *always* go from left-to-right and top-to-bottom. This backward-flowing arrow is confusing.",
+            found: false
+          },
+          'err-2-arrow-2': {
+            question: "This flow arrow is also going backward (up and left). What's the error?",
+            options: [
+              "This flow is also breaking the 'left-to-right' rule, making it hard to read.",
+              "This flow should be an 'AND' gateway."
+            ],
+            correctAnswer: 0,
+            feedback: "Correct! Just like the other arrow, this breaks the fundamental rule of process readability. All flows should move left-to-right and top-to-bottom.",
+            found: false
+          },
+          'err-2-tasks-duplicate': {
+            question: "There are two tasks named 'Clean & Transform Data'. What's the error?",
+            options: [
+              "This is inefficient. If it's the *same* task, it should appear once. If they are *different* tasks, one must be renamed.",
+              "It's fine to have duplicate names."
+            ],
+            correctAnswer: 0,
+            feedback: "Correct! In BPMN, you can't have two identical tasks. One of them (the one in the 'Data Analyst' lane) should be renamed, for example 'Load Data into Analytics Database'.",
+            found: false
+          },
+          'err-2-gateway-type': {
+            question: "This final gateway is an 'AND' (+), but it should be an 'XOR' (X). Why is this 'AND' wrong?",
+            options: [
+              "This 'AND' gateway would wait *forever* for a token from the 'Data Analyst' lane, which might never come.",
+              "This 'AND' gateway is correct. All paths must merge."
+            ],
+            correctAnswer: 0,
+            feedback: "Correct! The 'Data Analyst' and 'Data Engineer' paths are separate. An 'AND' gateway would try to merge them, but they might not run at the same time, causing a 'deadlock'. An 'XOR' (X) gateway correctly merges any path that arrives.",
+            found: false
+          }
+        }
+      },
+      level3: {
+        title: "Case File #3: (Coming Soon)",
         description: "More challenges are on the way!",
-        svgFile: "level-1.svg", // Placeholder
-        solutionFile: "level-1-solution.svg", // Placeholder
+        svgFile: "level-1.svg", 
+        solutionFile: "level-1-solution.svg", 
         totalErrors: 3,
         errors: {}
       }
-      // You can add level3, level4, etc. here
     };
 
     // --- GAME STATE ---
@@ -348,16 +404,21 @@
       score = 0;
       Object.keys(currentLevelData.errors).forEach(k => currentLevelData.errors[k].found = false);
       diagramContainer.classList.remove('solution-mode');
+      
+      // Remove any old "Next Level" buttons
+      const oldBtn = document.getElementById('next-level-btn');
+      if (oldBtn) oldBtn.remove();
 
       // Update UI
       caseTitle.innerText = currentLevelData.title;
       caseDesc.innerText = currentLevelData.description;
-      levelTitle.innerText = `Level ${levelId.replace('level', '')} / ${Object.keys(gameLevels).length}`;
-      updateGameUI();
+      levelTitle.innerText = `Level ${levelId.replace('level', '')} / ${Object.keys(gameLevels).length - 1}`; // -1 for "Coming Soon"
+      scoreDisplay.textContent = `0 / ${currentLevelData.totalErrors}`;
+      progressBar.style.width = `0%`;
+
 
       // Load SVG
       try {
-        // FIX: Prepend './' to the file path to ensure correct relative path resolution
         const response = await fetch('./' + currentLevelData.svgFile);
         if (!response.ok) throw new Error(`Network response was not ok: ${currentLevelData.svgFile}`);
         const svgText = await response.text();
@@ -365,7 +426,7 @@
         initHotspots();
       } catch (error) {
         console.error('Failed to load SVG:', error);
-        diagramContainer.innerHTML = `<div style="padding: 100px; text-align: center; color: #b91c1c;"><b>Error:</b> Could not load level file: ${currentLevelData.svgFile}</div>`;
+        diagramContainer.innerHTML = `<div style="padding: 100px; text-align: center; color: #b91c1c;"><b>Error:</b> Could not load level file: ${currentLevelData.svgFile}. Make sure ${currentLevelData.svgFile} is in the same folder as play-bpmn.html.</div>`;
       }
     }
 
@@ -468,7 +529,6 @@
      */
     async function showSolution() {
       try {
-        // FIX: Prepend './' to the file path to ensure correct relative path resolution
         const response = await fetch('./' + currentLevelData.solutionFile);
         if (!response.ok) throw new Error(`Network response was not ok: ${currentLevelData.solutionFile}`);
         const svgText = await response.text();
@@ -479,11 +539,12 @@
         setTimeout(() => {
           const btn = document.createElement('button');
           btn.className = 'btn';
+          btn.id = 'next-level-btn';
           btn.innerText = "Next Case File";
           btn.style = "width: 100%; margin-top: 20px; padding: 15px; font-size: 16px;";
           btn.onclick = goToNextLevel;
           diagramContainer.appendChild(btn);
-        }, 2000); // 2-second glow before button appears
+        }, 3000); // 3-second glow before button appears
 
       } catch (error) {
         console.error('Failed to load Solution SVG:', error);
@@ -522,4 +583,3 @@
   </script>
 </body>
 </html>
-
