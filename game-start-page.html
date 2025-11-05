@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Process Games — Start</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { padding: 28px; }
+    .game-hero {
+      max-width: 1200px;
+      margin: 0 auto 18px;
+      display:flex;
+      align-items:center;
+      gap:16px;
+      justify-content:space-between;
+    }
+    .hero-left { display:flex; gap:12px; align-items:center; }
+    .game-logo {
+      width:72px; height:72px; border-radius:14px;
+      background: linear-gradient(135deg,var(--bsh-accent),var(--accent-600));
+      display:flex; align-items:center; justify-content:center; color:#fff;
+      font-weight:900; font-size:20px; box-shadow:var(--shadow-1);
+    }
+    .hero-title { font-size:20px; margin:0; font-weight:800; }
+    .hero-sub { color:var(--muted); font-size:13px; margin-top:4px; }
+
+    .games-grid { margin-top: 18px; display:grid; grid-template-columns:repeat(3,1fr); gap:20px; max-width:1200px; margin-left:auto; margin-right:auto; }
+
+    .module-btn .meta { display:flex; flex-direction:column; align-items:flex-start; gap:4px; margin-left:8px; flex:1; text-align:left; }
+    .module-btn .title { font-weight:800; font-size:16px; }
+    .module-btn .desc { font-size:13px; color:var(--muted); }
+
+    .lock-badge {
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:rgba(7,18,40,0.03);
+      padding:6px 10px;
+      border-radius:999px;
+      font-weight:800;
+      color:var(--muted-2);
+      font-size:13px;
+    }
+
+    /* little glowing pulse for active cards */
+    .module-btn.active-effect { position:relative; overflow:visible; }
+    .module-btn.active-effect::after {
+      content:""; position:absolute; inset: -6px;
+      border-radius:14px; filter: blur(18px);
+      background: radial-gradient(closest-side, rgba(255,104,65,0.12), transparent 40%);
+      opacity:0; transition:opacity .35s ease;
+      pointer-events:none;
+    }
+    .module-btn:hover.active-effect::after { opacity:1; }
+
+    /* locked look */
+    .module-btn.locked {
+      pointer-events: auto; /* anchor click blocked via JS; show cursor-help */
+      cursor:grab;
+      background: linear-gradient(180deg, rgba(7,18,40,0.02), transparent);
+      border-color: rgba(7,18,40,0.04);
+    }
+    .module-btn.locked .num { filter: grayscale(80%); }
+    .module-btn.locked .title { opacity:0.85; }
+    .module-btn.locked .desc { color:var(--muted); opacity:0.8; }
+
+    /* small modal for locked explanation */
+    .locked-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2,6,23,0.6);
+      z-index: 9999;
+    }
+    .locked-modal.active { display:flex; }
+    .locked-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 20px;
+      width: 92%;
+      max-width: 420px;
+      box-shadow: var(--shadow-1);
+      text-align:center;
+    }
+    .locked-card h3 { margin-top:0; color:var(--bsh-accent); }
+    .locked-card p { color:var(--muted); margin-bottom:18px; }
+    .close-locked { background:transparent; border:1px solid rgba(7,18,40,0.06); padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700; }
+
+    @media (max-width:980px){
+      .games-grid { grid-template-columns: 1fr; }
+      .game-hero { flex-direction:column; align-items:flex-start; gap:8px; }
+    }
+  </style>
+</head>
+<body class="layout-index">
+  <div class="container">
+    <div class="game-hero">
+      <div class="hero-left">
+        
+        <a href="index.html" title="Back to Home" style="text-decoration:none">
+        <div class="game-logo">BSH ←</div>
+          </a>
+        <div>
+          <h1 class="hero-title">Process Games Hub</h1>
+          <div class="hero-sub">Choose a game to practice process thinking — fun, bite-sized, and interactive.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="updates-btn" id="changelogBtn">Dia Brain</button>
+      </div>
+    </div>
+
+    <div class="grid games-grid" role="list" aria-label="Available games">
+      <!-- Game 1 -->
+      <a class="card module-btn active-effect" href="games/game1.html" role="listitem" aria-label="Open The Process Doctor">
+        <div class="num" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 7h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="14" r="6" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+        <div class="meta">
+          <div class="title">The Process Doctor</div>
+          <div class="desc small">Diagnose, identify bottlenecks and prescribe process fixes in quick scenarios.</div>
+        </div>
+        <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+          <div class="small">Play · Quick</div>
+          <div class="new-badge">New</div>
+        </div>
+      </a>
+
+      <!-- Game 2 -->
+      <a class="card module-btn active-effect" href="games/game2.html" role="listitem" aria-label="Open The Flow Simulator">
+        <div class="num" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h10M4 17h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="meta">
+          <div class="title">The Flow Simulator</div>
+          <div class="desc small">Build and tune flows with dynamic tokens — see performance live.</div>
+        </div>
+        <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+          <div class="small">Play · Practice</div>
+          <div class="new-badge">New</div>
+        </div>
+      </a>
+
+      <!-- Game 3 (Locked) -->
+      <a class="card module-btn locked" href="games/game3.html" id="lockedGame" role="listitem" aria-label="Process Adventure (Locked)" aria-disabled="true">
+        <div class="num" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 17a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="currentColor" stroke-width="1.6"/><path d="M21 12c0 4.97-4.03 9-9 9S3 16.97 3 12 7.03 3 12 3s9 4.03 9 9z" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+        <div class="meta">
+          <div class="title">The Process Adventure</div>
+          <div class="desc small">A larger narrative-driven experience. Currently under development.</div>
+        </div>
+        <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+          <div class="small">Locked</div>
+          <div class="lock-badge" style="padding:6px 8px">In progress</div>
+        </div>
+      </a>
+    </div>
+
+    <p class="small-note">Tip: Start with short scenarios to warm up. Track badges to improve faster.</p>
+  </div>
+
+  <!-- locked modal -->
+  <div class="locked-modal" id="lockedModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="locked-card" role="document">
+      <h3>Coming soon — The Process Adventure</h3>
+      <p>We're building a narrative-packed, multi-level experience that will introduce branching choices, challenges and rewards. It's currently in progress — stay tuned!</p>
+      <button class="close-locked" id="closeLocked">Got it</button>
+    </div>
+  </div>
+
+  <!-- small Changelog modal (re-uses styles from your CSS updates-overlay if present) -->
+  <div class="updates-overlay" id="updatesOverlay" aria-hidden="true">
+    <div class="updates-modal" role="dialog" aria-modal="true" aria-labelledby="updatesTitle">
+      <button class="updates-close" id="closeUpdates" title="Close">✕</button>
+      <h2 id="updatesTitle">The BPMN AI Generator</h2>
+      <ul class="changelog-list">
+        <li><strong>Flow Simulator — new scenarios</strong><p>Added three micro-scenarios to practice throughput tuning.</p></li>
+        <li><strong>The Process Doctor — improvements</strong><p>Better hints and faster feedback loop on diagnosis.</p></li>
+        <li><strong>Process Adventure</strong><p>Game design in progress — expected: branching story + achievements.</p></li>
+      </ul>
+      <div style="text-align:right"><button class="btn ghost" id="closeUpdates2">Visit Dia Brain</button></div>
+    </div>
+  </div>
+
+  <script>
+    // handle locked card click to show modal and prevent navigation
+    (function () {
+      const locked = document.getElementById('lockedGame');
+      const modal = document.getElementById('lockedModal');
+      const closeLocked = document.getElementById('closeLocked');
+
+      locked.addEventListener('click', function (e) {
+        // prevent following the href
+        e.preventDefault();
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+      });
+
+      closeLocked.addEventListener('click', function () {
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+      });
+
+      // close when clicking overlay background
+      modal.addEventListener('click', function (ev) {
+        if (ev.target === modal) {
+          modal.classList.remove('active');
+          modal.setAttribute('aria-hidden', 'true');
+        }
+      });
+
+      // Changelog overlay handlers
+      const changelogBtn = document.getElementById('changelogBtn');
+      const updatesOverlay = document.getElementById('updatesOverlay');
+      const closeUpdates = document.getElementById('closeUpdates');
+      const closeUpdates2 = document.getElementById('closeUpdates2');
+
+      changelogBtn.addEventListener('click', function () {
+        updatesOverlay.classList.add('active');
+        updatesOverlay.setAttribute('aria-hidden', 'false');
+      });
+      function hideUpdates() {
+        updatesOverlay.classList.remove('active');
+        updatesOverlay.setAttribute('aria-hidden', 'true');
+      }
+      closeUpdates.addEventListener('click', hideUpdates);
+      closeUpdates2.addEventListener('click', hideUpdates);
+      updatesOverlay.addEventListener('click', function (ev) {
+        if (ev.target === updatesOverlay) hideUpdates();
+      });
+
+      // Accessibility: keyboard close for modals (Esc)
+      window.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Escape') {
+          if (modal.classList.contains('active')) { modal.classList.remove('active'); modal.setAttribute('aria-hidden','true'); }
+          if (updatesOverlay.classList.contains('active')) { updatesOverlay.classList.remove('active'); updatesOverlay.setAttribute('aria-hidden','true'); }
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

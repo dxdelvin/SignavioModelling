@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Play BPMN! - The Process Doctor</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    /* Custom styles for the game */
+    .game-container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    .case-file {
+      background: var(--card);
+      border-radius: var(--round);
+      padding: 24px;
+      margin-bottom: 20px;
+      margin-top: 20px;
+      box-shadow: var(--shadow-1);
+      border-left: 4px solid var(--bsh-accent);
+    }
+    .case-file h3 {
+      margin-top: 0;
+      color: var(--bsh-accent);
+    }
+    
+    /* Gamification UI */
+    .game-ui-bar {
+      background: var(--card);
+      border-radius: var(--round);
+      padding: 16px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .game-ui-bar .level-title {
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--bsh-accent);
+    }
+    .progress-bar-container {
+      flex-grow: 1;
+      height: 20px;
+      background: rgba(15,23,42,0.06);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(15,23,42,0.04);
+    }
+    .progress-bar {
+      width: 0%; /* Starts at 0 */
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-600), var(--bsh-accent));
+      transition: width 0.5s ease-out;
+      border-radius: 10px;
+    }
+    .game-ui-bar .score {
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--muted);
+      min-width: 60px;
+      text-align: right;
+    }
+
+    /* Diagram Area */
+    .diagram-container {
+      background: var(--card);
+      border-radius: var(--round);
+      padding: 20px;
+      box-shadow: var(--shadow-1);
+      overflow-x: auto; /* Allow horizontal scroll if needed */
+      transition: box-shadow 0.3s ease;
+    }
+    .diagram-container svg {
+      width: 100%;
+      min-width: 1000px; /* Force SVG to be large */
+      height: auto;
+    }
+
+    /* --- GHOST Error Hotspot Styling --- */
+    .error-hotspot {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .error-hotspot:hover {
+      /* BSH Orange Glow on Hover */
+      filter: drop-shadow(0 0 10px rgba(255, 104, 65, 0.9));
+    }
+    .error-found {
+      /* Red "Found" Glow */
+      filter: drop-shadow(0 0 12px rgba(220, 38, 38, 1));
+      cursor: not-allowed;
+    }
+    .error-found:hover {
+      filter: drop-shadow(0 0 12px rgba(220, 38, 38, 1));
+    }
+    
+    /* --- Solution State Styling --- */
+    .correct-element {
+      /* This class is IN the solution SVG */
+      transition: all 0.3s ease;
+    }
+    
+    /* When .solution-mode is added to the container: */
+    .diagram-container.solution-mode {
+      box-shadow: 0 0 20px rgba(22, 163, 74, 0.5);
+      border-color: rgba(22, 163, 74, 0.5);
+    }
+    .diagram-container.solution-mode .correct-element {
+      /* Show the green-glowing correct elements */
+      filter: drop-shadow(0 0 10px rgba(22, 163, 74, 1));
+    }
+
+    
+    /* Game Modal (for the quiz) */
+    .game-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2,6,23,0.8);
+      backdrop-filter: blur(4px);
+      display: none; /* Hidden by default */
+      align-items: center;
+      justify-content: center;
+      z-index: 9990;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .game-modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+    .game-modal {
+      background: var(--card);
+      border-radius: var(--round);
+      padding: 24px 28px;
+      box-shadow: var(--shadow-1);
+      width: 90%;
+      max-width: 500px;
+      position: relative;
+    }
+    .game-modal h2 {
+      margin-top: 0;
+      color: var(--bsh-accent);
+    }
+    .quiz-question {
+      font-size: 16px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .quiz-options .btn {
+      width: 100%;
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 14px;
+      background: var(--glass);
+      color: #071028;
+      border: 1px solid rgba(15,23,42,0.1);
+      transition: all 0.2s ease;
+    }
+    .quiz-options .btn:hover {
+      background: rgba(255, 104, 65, 0.1);
+      border-color: var(--bsh-accent);
+      color: var(--bsh-accent);
+    }
+    .quiz-feedback {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      line-height: 1.4;
+      display: none; /* Hidden until answer */
+    }
+    .quiz-feedback.correct {
+      background: rgba(22, 163, 74, 0.1);
+      color: #15803d;
+      border: 1px solid rgba(22, 163, 74, 0.2);
+    }
+    .quiz-feedback.incorrect {
+      background: rgba(220, 38, 38, 0.1);
+      color: #b91c1c;
+      border: 1px solid rgba(220, 38, 38, 0.2);
+    }
+    .quiz-next-btn {
+      margin-top: 20px;
+      display: none; /* Hidden until answer */
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="container game-container">
+    
+    <!-- 1. The Header -->
+    <header class="header">
+      <div class="h-left">
+        <a href="../game-start-page.html" title="Back to Home" style="text-decoration:none">
+          <div class="logo" style="width:44px;height:44px;border-radius:8px;font-size:16px">←</div>
+        </a>
+        <div>
+          <div class="h-title" id="game-title">Play BPMN: The Process Doctor</div>
+          <div class="h-sub" id="game-subtitle">Find and diagnose all the errors in the process model.</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 2. The Case File -->
+    <div class="case-file">
+      <h3 id="case-file-title">Case File #1: The Confused Invoice</h3>
+      <p class="small" id="case-file-desc">Welcome, Doctor. Our first case is a simple invoicing process that's failing. The team reports that tasks are named incorrectly and events are... "weird". Find all 3 errors to fix this process.</p>
+    </div>
+
+    <!-- 3. The Gamification UI -->
+    <div class="game-ui-bar">
+      <div class="level-title" id="level-title">Level 1 / 7</div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="game-progress-bar"></div>
+      </div>
+      <div class="score"><span id="game-score">0</span> / 3</div>
+    </div>
+
+    <!-- 4. The Diagram Container (SVG will be loaded here) -->
+    <div class="diagram-container" id="diagram-container">
+      <!-- SVG will be loaded by JavaScript -->
+      <div style="padding: 100px; text-align: center; color: var(--muted);">Loading Diagram...</div>
+    </div>
+
+  </div>
+
+  <!-- 5. The Game Modal (Quiz) -->
+  <div class="game-modal-overlay" id="game-modal-overlay">
+    <div class="game-modal">
+      <h2 id="quiz-title">Error Found!</h2>
+      <p class="quiz-question" id="quiz-question">What's wrong with this element?</p>
+      <div class="quiz-options" id="quiz-options">
+        <!-- Options will be generated by JS -->
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback">
+        <!-- Feedback will be generated by JS -->
+      </div>
+      <button class="btn quiz-next-btn" id="quiz-next-btn">Continue</button>
+    </div>
+  </div>
+
+
+  <script>
+    // --- GAME DATA ---
+    const gameLevels = {
+      level1: {
+        title: "Case File #1: The Supply Chain Merge",
+        description: "Doctor, this Digital Supply Chain process is a mess. The process starts, but the name is missing. Then, two parallel tasks merge incorrectly, and the process just... stops. Find all 3 errors.",
+        svgFile: "level-1.svg", // The "disaster" SVG
+        solutionFile: "level-1-solution.svg", // The "fixed" SVG
+        totalErrors: 3,
+        errors: {
+          'err-1-name': {
+            question: "This Start Event is unlabeled. What's the correct naming convention for this trigger?",
+            options: [
+              "It should be an active name, like 'Start Process'.",
+              "It should be a passive name, like 'Order Received'."
+            ],
+            correctAnswer: 1,
+            feedback: "Correct! Start Events describe a trigger that happened. A passive name like 'Order Received' or 'PO Created' is the standard.",
+            found: false
+          },
+          'err-2-gateway': {
+            question: "Both 'Create PO' and 'Initiate Inspection' must be finished before 'Approve Vendor' can begin. What's the error here?",
+            options: [
+              "A Gateway is missing. Both flows must first merge into an 'AND' (+) Gateway.",
+              "The arrows are wrong. 'Approve Vendor' should point to the other two tasks."
+            ],
+            correctAnswer: 0,
+            feedback: "Exactly! You can't merge two parallel flows into one task without a Gateway. An 'AND' Gateway (+) is required to synchronize the paths.",
+            found: false
+          },
+          'err-3-missing-end': {
+            question: "The process just stops after 'Approve Vendor'. What's missing?",
+            options: [
+              "An End Event is missing to mark the process completion.",
+              "An Intermediate Event is missing to show a milestone."
+            ],
+            correctAnswer: 0,
+            feedback: "Correct! Every process path must terminate at an End Event. This process is 'hanging' and would never complete in the system.",
+            found: false
+          }
+        }
+      },
+      level2: {
+        // You can add your next level here
+        title: "Case File #2: (Coming Soon)",
+        description: "More challenges are on the way!",
+        svgFile: "level-1.svg", // Placeholder
+        solutionFile: "level-1-solution.svg", // Placeholder
+        totalErrors: 3,
+        errors: {}
+      }
+      // You can add level3, level4, etc. here
+    };
+
+    // --- GAME STATE ---
+    let currentLevelId = 'level1';
+    let currentLevelData = gameLevels[currentLevelId];
+    let score = 0;
+    let currentErrorId = null;
+
+    // --- DOM ELEMENTS ---
+    const diagramContainer = document.getElementById('diagram-container');
+    const caseTitle = document.getElementById('case-file-title');
+    const caseDesc = document.getElementById('case-file-desc');
+    const levelTitle = document.getElementById('level-title');
+    const scoreDisplay = document.getElementById('game-score');
+    const progressBar = document.getElementById('game-progress-bar');
+    
+    const modalOverlay = document.getElementById('game-modal-overlay');
+    const quizQuestion = document.getElementById('quiz-question');
+    const quizOptions = document.getElementById('quiz-options');
+    const quizFeedback = document.getElementById('quiz-feedback');
+    const quizNextBtn = document.getElementById('quiz-next-btn');
+    const gameTitle = document.getElementById('game-title');
+
+
+    /**
+     * Loads a new level
+     */
+    async function loadLevel(levelId) {
+      currentLevelId = levelId;
+      currentLevelData = gameLevels[levelId];
+      if (!currentLevelData || Object.keys(currentLevelData.errors).length === 0) {
+        console.error("Level not found or is empty:", levelId);
+        gameTitle.innerText = "Congratulations! All Cases Solved!";
+        caseTitle.innerText = "You are a BPMN Master!";
+        caseDesc.innerText = "You have found all the errors and fixed all the processes.";
+        diagramContainer.innerHTML = `<div style="padding: 100px; text-align: center; font-size: 24px; color: var(--bsh-accent);">🎉 You Win! 🎉</div>`;
+        return;
+      }
+
+      // Reset state
+      score = 0;
+      Object.keys(currentLevelData.errors).forEach(k => currentLevelData.errors[k].found = false);
+      diagramContainer.classList.remove('solution-mode');
+
+      // Update UI
+      caseTitle.innerText = currentLevelData.title;
+      caseDesc.innerText = currentLevelData.description;
+      levelTitle.innerText = `Level ${levelId.replace('level', '')} / ${Object.keys(gameLevels).length}`;
+      updateGameUI();
+
+      // Load SVG
+      try {
+        // FIX: Prepend './' to the file path to ensure correct relative path resolution
+        const response = await fetch('./' + currentLevelData.svgFile);
+        if (!response.ok) throw new Error(`Network response was not ok: ${currentLevelData.svgFile}`);
+        const svgText = await response.text();
+        diagramContainer.innerHTML = svgText;
+        initHotspots();
+      } catch (error) {
+        console.error('Failed to load SVG:', error);
+        diagramContainer.innerHTML = `<div style="padding: 100px; text-align: center; color: #b91c1c;"><b>Error:</b> Could not load level file: ${currentLevelData.svgFile}</div>`;
+      }
+    }
+
+    /**
+     * Attaches click listeners to all error hotspots in the loaded SVG
+     */
+    function initHotspots() {
+      if (!currentLevelData || !currentLevelData.errors) return;
+      Object.keys(currentLevelData.errors).forEach(errorId => {
+        const el = document.getElementById(errorId);
+        if (el) {
+          el.classList.add('error-hotspot');
+          el.addEventListener('click', () => openQuiz(errorId));
+        } else {
+          console.warn(`Hotspot ID "${errorId}" not found in SVG.`);
+        }
+      });
+    }
+
+    /**
+     * Opens the quiz modal for a specific error
+     */
+    function openQuiz(errorId) {
+      if (currentLevelData.errors[errorId].found) return; // Already found
+
+      currentErrorId = errorId;
+      const data = currentLevelData.errors[errorId];
+
+      // Populate modal
+      quizQuestion.textContent = data.question;
+      quizOptions.innerHTML = '';
+      quizFeedback.style.display = 'none';
+      quizFeedback.className = 'quiz-feedback';
+      quizNextBtn.style.display = 'none';
+
+      data.options.forEach((optionText, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.innerHTML = `<span style="font-weight: 800; margin-right: 8px;">${String.fromCharCode(65 + index)}:</span> ${optionText}`;
+        btn.addEventListener('click', () => checkAnswer(index, data));
+        quizOptions.appendChild(btn);
+      });
+
+      modalOverlay.classList.add('active');
+    }
+
+    /**
+     * Checks the user's answer
+     */
+    function checkAnswer(selectedIndex, data) {
+      // Disable all buttons
+      quizOptions.querySelectorAll('button').forEach(btn => {
+        btn.disabled = true;
+      });
+
+      // Show "Continue" or "Next Level" button
+      quizNextBtn.style.display = 'block';
+
+      if (selectedIndex === data.correctAnswer) {
+        // --- CORRECT ---
+        data.found = true;
+        score++;
+        
+        quizFeedback.innerHTML = `<strong>Correct!</strong> ${data.feedback}`;
+        quizFeedback.classList.add('correct');
+        
+        // Mark element as found (red glow)
+        const el = document.getElementById(currentErrorId);
+        if (el) {
+          el.classList.remove('error-hotspot');
+          el.classList.add('error-found');
+        }
+        
+        // Check for level complete
+        if (score === currentLevelData.totalErrors) {
+          quizNextBtn.innerText = "Show Solution";
+          quizNextBtn.onclick = () => {
+            closeQuiz();
+            showSolution(); 
+          };
+        } else {
+          quizNextBtn.innerText = "Continue Diagnosis";
+          quizNextBtn.onclick = closeQuiz;
+        }
+        
+      } else {
+        // --- INCORRECT ---
+        quizFeedback.innerHTML = `<strong>Not quite...</strong> That's not the right diagnosis. Try looking at the element again.`;
+        quizFeedback.classList.add('incorrect');
+        quizNextBtn.innerText = "Try Again";
+        quizNextBtn.onclick = closeQuiz;
+      }
+
+      quizFeedback.style.display = 'block';
+      updateGameUI();
+    }
+    
+    /**
+     * Loads the solution SVG and applies the green glow
+     */
+    async function showSolution() {
+      try {
+        // FIX: Prepend './' to the file path to ensure correct relative path resolution
+        const response = await fetch('./' + currentLevelData.solutionFile);
+        if (!response.ok) throw new Error(`Network response was not ok: ${currentLevelData.solutionFile}`);
+        const svgText = await response.text();
+        diagramContainer.innerHTML = svgText;
+        diagramContainer.classList.add('solution-mode');
+
+        // Show "Next Level" button after a delay
+        setTimeout(() => {
+          const btn = document.createElement('button');
+          btn.className = 'btn';
+          btn.innerText = "Next Case File";
+          btn.style = "width: 100%; margin-top: 20px; padding: 15px; font-size: 16px;";
+          btn.onclick = goToNextLevel;
+          diagramContainer.appendChild(btn);
+        }, 2000); // 2-second glow before button appears
+
+      } catch (error) {
+        console.error('Failed to load Solution SVG:', error);
+        diagramContainer.innerHTML = `<div style="padding: 100px; text-align: center; color: #b91c1c;"><b>Error:</b> Could not load solution file: ${currentLevelData.solutionFile}</div>`;
+      }
+    }
+    
+    /**
+     * Updates the score and progress bar
+     */
+    function updateGameUI() {
+      scoreDisplay.textContent = `${score} / ${currentLevelData.totalErrors}`;
+      const progressPercent = (score / currentLevelData.totalErrors) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+    }
+    
+    function goToNextLevel() {
+        const currentNum = parseInt(currentLevelId.replace('level', ''));
+        loadLevel(`level${currentNum + 1}`);
+    }
+    
+    /**
+     * Closes the quiz modal
+     */
+    function closeQuiz() {
+      modalOverlay.classList.remove('active');
+      // Re-enable quiz buttons for next time
+      quizOptions.querySelectorAll('button').forEach(btn => {
+        btn.disabled = false;
+      });
+    }
+    
+    // Start the game when the page is loaded
+    document.addEventListener('DOMContentLoaded', () => loadLevel('level1'));
+
+  </script>
+</body>
+</html>
+
