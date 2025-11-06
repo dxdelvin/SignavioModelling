@@ -138,9 +138,9 @@
           
           <!-- Difficulty Tabs -->
           <div class="challenge-diff-bar" id="challengeDiffBar" role="tablist" aria-label="Challenge difficulty">
-            <button class="diff-tab active" id="diff-easy" data-diff="easy">Easy (XOR)</button>
-            <button class="diff-tab" id="diff-medium" data-diff="medium">Medium (AND)</button>
-            <button class="diff-tab hard" id="diff-hard" data-diff="hard">Hard (Combined)</button>
+            <button class="diff-tab active" id="diff-easy" data-diff="easy">Easy </button>
+            <button class="diff-tab" id="diff-medium" data-diff="medium">Medium </button>
+            <button class="diff-tab hard" id="diff-hard" data-diff="hard">Hard </button>
           </div>
 
           <!-- Challenge Content Area -->
@@ -206,42 +206,42 @@
 // --- Model Data (for challenges) ---
 const challengeData = {
   easy: {
-    title: "Easy: Exclusive (XOR) Split",
-    scenario: "Model a process that starts with 'Verify Purchase Order Status'. After this, a decision is needed: 'Supplier Confirmation Received?'. If YES, the process must 'Generate Goods Receipt'. If NO, the process must 'Send Reminder Email'. Both paths then merge and lead to 'Update ERP System'.",
+    title: "Easy: Simple XOR Decision",
+    scenario: "Start with 'Order Arrived', run 'Verify Order', then use an Exclusive (XOR) Gateway to check 'Order Valid?'. If YES, go to 'Order Logged' and end. If NO, go to 'Send Correction Request' and then end. This keeps the flow short while teaching a basic decision split.",
     hints: [
       "1x Start Event",
-      "4x Tasks",
-      "1x Exclusive (XOR) Gateway (for the split)",
-      "1x Exclusive (XOR) Gateway (for the merge)",
-      "Label the 'yes' and 'no' paths!"
+      "3x Task",
+      "2x Exclusive (XOR) Gateway",
+      "1x End Events"
     ],
-    solution: "img/gateways_xor.png"
+    solution: "img/GatewaySolution1.png"
   },
+
   medium: {
-    title: "Medium: Parallel (AND) Split",
-    scenario: "After a 'Complete Production Batch' task, the process must perform two tasks *at the same time*: 'Perform Quality Inspection' and 'Packaging & Labeling'. Both of these tasks must be finished before the process merges and moves on to a final 'Confirm Shipment' task.",
+    title: "Medium: Triple Starts → Merge → Parallel → XOR → Two Ends",
+    scenario: "The process may be triggered three ways: a plain Start 'Order Received', a Message Start 'Supplier Ack', or a Timer Start 'Daily Batch'. All three feed into a single merge (use a gateway that accepts whichever trigger arrives) that leads to 'Consolidate Trigger'. From there use a Parallel (AND) split to run 'Prepare Shipment' and 'Notify Billing' concurrently. After both complete, use an XOR to decide (based on check if its available or not) whether to 'Release Order' or 'Hold for Audit' — each path ends separately ('Order Released' and 'Order On Hold').",
     hints: [
-      "1x Start Event",
-      "4x Tasks",
-      "1x Parallel (AND) Gateway (to split)",
-      "1x Parallel (AND) Gateway (to merge)",
-      "1x End Event"
+      "3x Start Events (Plain, Message, Timer) that converge",
+      "2x XOR gateway ",
+      "5x Task",
+      "2x Parallel (AND) split/merge",
+      "2x End Events (Order Released, Order On Hold)"
     ],
-    solution: "img/gateways_and.png"
+    solution: "img/GatewaySolution2.png"
   },
+
   hard: {
-    title: "Hard: Combined Gateway Process",
-    scenario: "Model this full process: Start with 'Customer Order Received'. Then 'Verify Supplier Confirmation'. This is an XOR split: (Yes) -> 'Create Goods Receipt'; (No) -> 'Send Reminder'. Both merge. The process then splits in parallel (AND) to 'Check the Stocks' and 'Send Back Updated Info'. After both merge, 'Confirm Delivery Plan'. This is followed by an OR split based on conditions: (large volume) -> 'Notify Warehouse'; (urgent) -> 'Notify Customer'. Both paths (or just one) merge and the 'Order Cycle Closed'.",
+    title: "Hard: All-Gateways Workflow (XOR, AND, OR) with Merges",
+    scenario: "Start the process with a Message Start Event 'Order Notification'. Immediately split with a Parallel (AND) Gateway into three branches. Branch A goes into an XOR decision: depending on the Supplier Availability, it routes to either (yes) 'Request Supplier Confirm' or  (no) 'Bypass Supplier' and includes an Intermediate Message Catch event to 'Wait for supplier Reply' after Request Task. Branch B contains an OR (Inclusive) Gateway that may trigger one or both tasks 'Notify Warehouse' and 'Notify Finance' depending on Team Member?, and after those run it passes through an Intermediate Timer Event (Wait 1hr) before rejoining. Branch C runs a simple task 'Run Pre-Shipment Check' and then reaches an Intermediate Conditional Event that evaluates (ReadyForDispatch == TRUE). After all three parallel branches complete, use an AND join to merge them, continue to 'Finalize Shipment' and finish with a single Normal End Event 'Shipment Completed'." ,
     hints: [
-      "1x Start Event, 1x End Event",
-      "Multiple Tasks",
-      "1x XOR Split (and 1x XOR Merge)",
-      "1x AND Split (and 1x AND Merge)",
-      "1x OR Split (and 1x OR Merge)"
+      "Challenge with no hints!",
+      "Use all gateway types: XOR, AND, OR",
+      "Good Luck _😉_"
     ],
-    solution: "img/gateways_usage.png"
+    solution: "img/GatewaySolution3.png"
   }
 };
+
 
 
 // --- Element References ---
