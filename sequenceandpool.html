@@ -23,7 +23,7 @@
         <button id="menu-pools" class="active" aria-pressed="true">Pools & Lanes</button>
         <button id="menu-naming" aria-pressed="false">Naming Conventions</button>
         <button id="menu-flows" aria-pressed="false">Sequence Flows</button>
-        <button id="menu-challenge" aria-pressed="false">Practice Challenge <span class="new-badge">NEW</span></button>
+        <button id="menu-challenge" aria-pressed="false">Learn It <span class="new-badge">NEW</span></button>
         <button id="menu-mistakes" disabled aria-pressed="false" aria-disabled="true" tabindex="-1">Common Mistakes <span class="badge">Inprogress</span></button>
       </nav>
     </aside>
@@ -140,8 +140,8 @@
             
             <!-- Difficulty Tabs -->
             <div class="challenge-diff-bar" id="challengeDiffBar" role="tablist" aria-label="Challenge difficulty">
-              <button class="diff-tab active" id="diff-easy" data-diff="easy">Easy (Lane Naming)</button>
-              <button class="diff-tab" id="diff-medium" data-diff="medium">Medium (Flows)</button>
+              <button class="diff-tab active" id="diff-easy" data-diff="easy">Medium</button>
+              <button class="diff-tab" id="diff-hard" data-diff="medium">Hard</button>
             </div>
 
             <!-- Challenge Content Area -->
@@ -203,32 +203,37 @@
   </div>
   
   <script>
-    // --- Model Data (for challenges) ---
-    const challengeData = {
-      easy: {
-        title: "Easy: Lane Naming",
-        scenario: "Model a process for an 'Organisation' that has three departments: 'Finances', 'Sales', and 'Logistics'. How should these be represented as lanes?",
-        hints: [
-          "1x Pool (for the 'Organisation')",
-          "3x Lanes (one for each department)",
-          "This tests your knowledge of Lane setup, which can be named after Organizational Units."
-        ],
-        solution: "img/namingsequence.png"
-      },
-      medium: {
-        title: "Medium: Sequence vs. Message Flow",
-        scenario: "Model a process for two roommates, 'Tim' and 'Robert', in a shared pool called 'Shared Accommodation'. Tim 'Selects Pizza' and then 'Asks flatmate' (Robert). Robert then 'Selects Pizza' and 'Orders Pizza'. The 'Order Pizza' task sends a message to an external 'Pizza' participant (a collapsed pool).",
-        hints: [
-          "1x Pool ('Shared Accommodation')",
-          "2x Lanes ('Tim', 'Robert')",
-          "1x Collapsed Pool ('Pizza')",
-          "4x Tasks",
-          "1x Sequence Flow (Tim to Robert)",
-          "1x Message Flow (Robert to Pizza)"
-        ],
-        solution: "img/seqandmesflow.png"
-      }
-    };
+const challengeData = {
+  easy: {
+    title: "Easy: Lane Naming with OR Gateway & External Pool",
+    scenario: "Model one company pool 'BSH' with three lanes: Procurement, Production, and Logistics. Start in Procurement with 'Order Received'. Use an OR gateway so the flow can go to Production, Logistics, The Task Towards for Production is for partners only 'Create Special Packages'. And the Task towards Logistics is for customers 'Send Information about the Package' (Create a External Pool Customer and Send this Message Flow to the Customer) then the both gets end in the logistics saying 'Order is Completed'",
+    hints: [
+      "1x Pool (Company) + 1x External Pool (Customer)",
+      "3x Lanes (Procurement, Production, Logistics)",
+      "2x Inclusive (OR) Gateway for routing",
+      "Start Event and End Event"
+    ],
+    solution: "img/PoolSolution1.png"
+  },
+
+  medium: {
+    title: "Medium (Hard): DSCP Process with IT Sublanes & Events",
+    scenario: "In the DSCP pool use two lanes: Operations and IT Systems. Inside IT Systems create two sublanes named ERP and WMS. The process starts in the Operations lane with two triggers — a plain Start Event called ‘Inventory Status Requested’ and a Message Start Event called ‘Reorder Trigger’. Both start events merge at an XOR gateway, meaning either one can initiate the flow. The XOR leads to ‘Create Replenishment Plan’ (Task 1) in Operations and then to ‘Execute Order’ (Task 2), in the WMS lane. After executing the order, a Parallel Gateway splits the flow: one branch goes in Operations and ends with an End Message Event ‘Notify Vendor’, which connects to the external Vendor pool; the other branch passes into the IT Systems lane, where ERP performs the task ‘Update Internal Systems’. The flow then continues to the WMS sublane, which holds an Intermediate Conditional Event checking the condition (StockReceived == TRUE). When the condition is met, the sequence moves back to Operations for the task ‘Finalize Receipt’ and also receives some information from the Vendor and ends with a Normal End Event labeled ‘Order Completed’.",
+    hints: [
+      "1x Pool named 'DSCP' with 2 lanes ",
+      "IT Systems lane contains 2 sublanes",
+      "1x Message Start Event (Reorder Trigger)",
+      "1x Intermediate Conditionel Event",
+      "1x XOR Gateway ",
+      "1x Parallel Gateway ",
+      "4x Tasks",
+      "1x External Pool (Vendor)",
+      "1x Normal End and 1x Message End"
+    ],
+    solution: "img/PoolSolution2.png"
+  }
+};
+
     
     // --- Element References ---
     const menuPools = document.getElementById('menu-pools');
@@ -249,7 +254,6 @@
     const allMenuButtons = [menuPools, menuFlows, menuNaming, menuChallenge, menuMistakes];
     const allContentBlocks = [poolsSection, flowsSection, namingSection, challengeBlock, mistakesSection];
     
-    // Challenge Elements
     const diffBar = document.getElementById('challengeDiffBar');
     const challengeTitle = document.getElementById('challenge-title');
     const challengeScenarioText = document.getElementById('challenge-scenario-text');
