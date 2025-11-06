@@ -49,19 +49,32 @@
           <h2>Task in BPMN</h2>
           <div class="task-box">
             <div class="definition">
-              <p>Tasks represent atomic units of work in a process. Keep tasks focused on a single responsibility.</p>
+              <p><strong>Tasks</strong> in BPMN represent <strong>specific actions</strong> or <strong>units of work</strong> performed during a process. They are the fundamental building blocks of a BPMN diagram and should be designed to focus on a single, well-defined responsibility.</p>
+              <p>Tasks are typically represented as rectangles in BPMN diagrams and can include manual, automated, or user-driven activities.</p>
               <ul>
-                <li>Use verb-noun pairs for clarity (e.g., "Approve Invoice").</li>
-                <li>Limit scope — one logical action per task.</li>
-                <li>Document inputs, outputs, and responsible roles.</li>
+                <li><strong>Use verb-noun pairs</strong> for clarity and consistency (e.g., "Approve Invoice" or "Send Email").</li>
+                <li><strong>Limit scope</strong> — ensure each task represents one logical action to avoid confusion.</li>
+                <li><strong>Document inputs, outputs, and responsible roles in the attribute sections</strong> to provide context and accountability.</li>
+                <li>Always make sure One BPMN should<strong> not have more than 15 Tasks </strong>so that the process is readable</li>
               </ul>
             </div>
+          </div>
+          <div class="task-box">
+            <h3>Important Things to Note</h3>
+            <ul>
+              <li>Tasks should be <strong>actionable</strong> and clearly defined to avoid ambiguity.</li>
+              <li>Ensure tasks are <strong>sequenced logically</strong> to reflect the actual flow of the process.</li>
+              <li>Use <strong>consistent naming conventions</strong> across all tasks to maintain clarity.</li>
+              <li><strong>Tasks always have 1 Incoming Arrow and 1 Outgoing Arrow!</strong></li>
+            </ul>
           </div>
           <div class="task-box">
             <h3>Task Examples</h3>
             <div class="img-wrap">
               <button class="zoom-btn" onclick="openZoom('img/task_examples.png')">🔍 Zoom</button>
               <img src="img/task_examples.png" alt="Task Examples in BPMN" style="max-width:100%">
+              <div class="small-note">Example: Tasks like "Draft Invoice," "Review Invoice," and "Submit Invoice" demonstrate clear and actionable steps.</div>
+              <div class="small-note">Tasks Cannot have more than 1 incoming arrow and 1 outgoing arrow and Gateways should be used for that</div>
             </div>
           </div>
         </div>
@@ -82,20 +95,21 @@
         <div id="collapsedSection" class="hidden">
           <h2>Collapsed Processes</h2>
           <div class="task-box">
+            <h3>What is a Collapsed Process?</h3>
+            <ul>
+              <li>A collapsed process, also known as a sub-process, encapsulates related activities into a single, manageable unit.</li>
+              <li>It hides the internal details of the process, showing only its name and boundary.</li>
+              <li>Collapsed processes are represented by a rectangle with a small plus sign, indicating that more details are available.</li>
+            </ul>
+          </div>
+          <div class="task-box">
             <h3>When to Use Collapsed Processes</h3>
-            <p>Collapsed processes (also called Sub-processes) are used to encapsulate related activities into a single, manageable unit.</p>
-            <div class="img-wrap">
-              <button class="zoom-btn" onclick="openZoom('img/collapsed_process2.png')">🔍 Zoom</button>
-              <img src="img/collapsed_process2.png" alt="Collapsed Process Example" style="max-width:100%">
-              <div class="small-note">Example: A collapsed process containing Different Process</div>
-            </div>
-            <div style="margin-top: 20px">
-              <video width="100%" controls muted>
-                <source src="img/collapsedprocess_clip.mp4">
-                Your browser does not support the video tag.
-              </video>
-              <div class="small-note">Video demonstration of collapsed process </div>
-            </div>
+            <ul>
+              <li>To reduce visual complexity in the main process diagram.</li>
+              <li>When the internal details are not immediately relevant to the audience.</li>
+              <li>To improve maintainability and focus on high-level process flow.</li>
+              <li>For processes that are reused across multiple diagrams.</li>
+            </ul>
           </div>
           <div class="task-box">
             <h3>Benefits & Best Practices</h3>
@@ -112,6 +126,21 @@
                 <li>Document boundaries</li>
                 <li>Consider detail level needed</li>
               </ul>
+            </div>
+          </div>
+          <div class="task-box">
+            <h3>Example</h3>
+            <div class="img-wrap">
+              <button class="zoom-btn" onclick="openZoom('img/collapsed_process2.png')">🔍 Zoom</button>
+              <img src="img/collapsed_process2.png" alt="Collapsed Process Example" style="max-width:100%">
+              <div class="small-note">Example: A collapsed process containing different sub-processes</div>
+            </div>
+            <div style="margin-top: 20px">
+              <video width="100%" controls muted>
+                <source src="img/collapsedprocess_clip.mp4">
+                Your browser does not support the video tag.
+              </video>
+              <div class="small-note">Video demonstration of collapsed process</div>
             </div>
           </div>
         </div>
@@ -150,7 +179,6 @@
             <div class="challenge-diff-bar" id="challengeDiffBar" role="tablist" aria-label="Challenge difficulty">
               <button class="diff-tab active" id="diff-easy" data-diff="easy">Easy</button>
               <button class="diff-tab" id="diff-medium" data-diff="medium">Medium</button>
-              <button class="diff-tab hard" id="diff-hard" data-diff="hard">Hard</button>
             </div>
 
             <!-- Challenge Content Area -->
@@ -211,41 +239,32 @@
   </div>
   <script>
     // --- Model Data (for challenges) ---
-    const challengeData = {
-      easy: {
-        title: "Easy: Task Naming",
-        scenario: "Model a single task for creating an invoice. Pay attention to the correct naming convention (active voice, verb + noun). How should it be named?",
-        hints: [
-          "1x Task",
-          "Correct: 'Create Invoice'",
-          "Incorrect: 'Invoice Creation'",
-          "Incorrect: 'Invoice Created'"
-        ],
-        solution: "img/namingconv1.png"
-      },
-      medium: {
-        title: "Medium: Simple Task Flow",
-        scenario: "Model a simple procurement process. It 'Initiates Process', then must 'Verify Supplier Confirmation'. Next, 'Send Reminder to Supplier'. Finally, 'Create Goods Receipt' and 'End Process'.",
-        hints: [
-          "1x Start Event (Plain)",
-          "3x Tasks",
-          "1x End Event (Plain)"
-        ],
-        solution: "img/task_examples.png"
-      },
-      hard: {
-        title: "Hard: Expanded Sub-process",
-        scenario: "Model a customer order process. It starts when a 'Customer Order Received'. The first step is 'Verify Supplier Confirmation'. This leads to an expanded sub-process called 'Updating and Confirming Stocks'. Inside this sub-process, the flow is: 'Send Reminder to Supplier', then 'Check the Stocks', then 'Send Back Updated Info to System'. The sub-process then ends. After the sub-process, the main flow continues to 'Confirm Delivery Plan'.",
-        hints: [
-          "1x Start Event (Plain)",
-          "2x Tasks (outside sub-process)",
-          "1x Expanded Sub-process",
-          "3x Tasks (inside sub-process)",
-          "Remember the sub-process needs its own (internal) start and end."
-        ],
-        solution: "img/expandedprocess.png"
-      }
-    };
+   const challengeData = {
+  easy: {
+    title: "Easy: Clear Task Naming & Sequence",
+    scenario: "Model a mini-invoice flow where you have to first draft the invoice and then Review it. After Reviewing You have to submit the invoice to the department then you can end it. Use correct task naming (verb + noun) and keep each step as a single task.",
+    hints: [
+      "1x Start Event (plain)",
+      "4x Tasks in linear sequence",
+      "1x End Event (plain)",
+      "Naming rule: always use Active voice: Verb + Noun (e.g., 'Draft Invoice')"
+    ],
+    solution: "img/TaskSolution1.png"
+  },
+
+  medium: {
+    title: "Medium: Collapsed Sub-process (Supplier Coordination)",
+    scenario: "Model this: We have to Initate Purchase Order So First task ours is to to get the Purchase Request and then we have a lot of steps to follow up the Supplier, So We can Create another Process Model for it, So after following Up we Create the Purchase Order and end it with Purchase Order Created.",
+    hints: [
+      "1x Start", 
+      "2x Tasks",
+      "1x Collapsed Sub-process",
+      "1x End",
+    ],
+    solution: "img/TaskSolution2.png"
+  },
+};
+
 
     // --- Element References ---
     const menuTasks = document.getElementById('menu-tasks');

@@ -251,41 +251,42 @@ const model = {
 // --- Model Data (for challenges) ---
 const challengeData = {
   easy: {
-    title: "Easy: Message Start",
-    scenario: "Model a process that starts *only* when a 'Supplier Confirmation Received' message arrives from an external supplier. This trigger should immediately start the 'Validate Supplier Confirmation Data' task.",
+    title: "Easy: Message-Triggered Supplier Check ",
+    scenario: "Model a tiny process that starts *only* when an external supplier sends a 'Supplier Confirmation Received' message. The message start must immediately trigger a short automated verification task 'Validate Supplier Confirmation Data' and end the process saying 'Data is Confirmed'.",
     hints: [
-      "1x Start Message Event",
-      "1x Task"
+      "1x Message Start Event (catching)",
+      "1x User Task ",
+      "1x End Message Event"
     ],
-    solution: "img/start_message.png"
+    solution: "img/EventSolution1.png"
   },
   medium: {
-    title: "Medium: Intermediate Timer",
-    scenario: "A supply chain process starts with 'Prepare BOM Data'. Before this data can be sent to the factory system, the process must 'Wait for System Availability Window' (a timed delay). After the wait, the 'Push BOM Data' task runs.",
+    title: "Medium: BOM Push",
+    scenario: "Model a supply-chain process that begins with a event 'BOM Data is Available' and then after the start, the process will be delayed for a timed event and will 'Wait for System Availability Window'. Then it will move 'Prepare BOM Data' Task, after that the process waits to receive a 'System Backlog Cleared' message and proceed immediately to 'Push BOM Data'. After pushing, throw a Message Event to notify the factory system.",
     hints: [
-      "1x Start Event (Plain)",
-      "2x Tasks",
-      "1x Intermediate Timer Event (Catching)"
+      "1x Start Event",
+      "1x Intermediate Timer Event (catching)",
+      "1x Intermediate Message Catch Event",
+      "2x Tasks (Prepare BOM Data, Push BOM Data)",
+      "1x End Message Event (throwing)"
     ],
-    solution: "img/intermediate_timer.png"
+    solution: "img/EventSolution2.png"
   },
-  hard: {
-    title: "Hard: Full Replenishment Process",
-    scenario: "Model a full 'Inventory Replenishment' process. The process can be started in two ways: EITHER a 'Daily 02:00 AM' timer OR a 'Stock Level Critical' message is received. Both lead to 'Check Inventory Levels'. After a 'Plan Created' milestone, 'Send Purchase Order to Supplier'. The process must 'Wait for Supplier Confirmation'. If no confirmation arrives after 'Wait 24 Hours' (boundary timer), 'Escalate to Backup Supplier' and 'Inform Error Message' (end message). If confirmation *is* received, 'Validate Confirmation Data'. Once 'Stock Received = TRUE' (a condition), 'Book Goods in System' which leads to the 'Purchase Order Created' end.",
+   hard: {
+    title: "Hard: Compact eplenishment",
+    scenario: "Every night at 02:00 AM, a Timer Start Event triggers the process. The first task is 'Check Inventory Levels' to see if new orders are needed. Once confirmed, the system proceeds to 'Send Purchase Order to Supplier' task. A Intermediate Timer is attached to this task, waiting up to 24 hours for the supplier's confirmation. If a 'Supplier Confirmation Received' message arrives within that time, an Intermediate Event will create a milestone saying 'Book Goods in System', then it will move to task 'Inform Transport Team' and then completing with a Normal End event called 'Purchase Order Created'. However, if no confirmation is received within 24 hours, the boundary timer activates and ends the process through an Error Message End called 'Inform Error to Procurement'.",
     hints: [
-      "2x Start Events (Timer, Message)",
-      "1x Event-Based Gateway",
-      "5x Tasks",
-      "1x Intermediate Event (Plain)",
-      "1x Intermediate Message Event (Catching)",
-      "1x Intermediate Timer Event (Attached/Boundary)",
-      "1x Intermediate Conditional Event",
-      "1x End Event (Plain)",
-      "1x End Message Event (Throwing)"
+      "1x Start Event: Timer Start",
+      "1x Intermediate Event",
+      "1x Intermediate Catch Timer Event (attached to 'Send Purchase Order')",
+      "3x Tasks: Check Inventory Levels, Send Purchase Order to Supplier, Inform Transport Team",
+      "1x Normal End Event",
+      "1x Error Message End Event"
     ],
-    solution: "img/usage_diagram.png"
+    solution: "img/EventSolution3.png"
   }
 };
+
 
 // --- Element References ---
 // Menu Buttons
