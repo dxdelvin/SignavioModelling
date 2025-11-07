@@ -189,7 +189,7 @@
     }
     
     function validateLevel2(xmlString) {
-      const { findElementByName, getLaneNodeIds, isElementInLane } = parseXML(xmlString);
+      const { xmlDoc, findElementByName, getLaneNodeIds, isElementInLane } = parseXML(xmlString);
       
       // Check for Level 1 stuff first
       const level1Check = validateLevel1(xmlString);
@@ -234,7 +234,7 @@
     }
 
     function validateLevel3(xmlString) {
-      const { findElementByName, getLaneNodeIds, isElementInLane } = parseXML(xmlString);
+      const {xmlDoc, findElementByName, getLaneNodeIds, isElementInLane } = parseXML(xmlString);
 
       // Check for Level 2 stuff first
       const level2Check = validateLevel2(xmlString);
@@ -368,11 +368,7 @@
       levelNumEl.innerText = levelNum;
       storyTextEl.innerHTML = levelData.story;
       
-      // *** THIS IS THE KEY CHANGE ***
-      // We no longer clear the diagram. We only clear it ONCE at the very beginning.
-      // if (modeler) {
-      //  await modeler.importXML(emptyBpmn); // <-- THIS LINE IS REMOVED
-      // }
+
     }
 
     // Initialize the modeler when the page loads
