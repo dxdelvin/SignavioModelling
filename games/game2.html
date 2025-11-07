@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Game 2: The Process Adventure</title>
+  
+  <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" type="image/svg" href="../img/icon.svg"/>
+
+  <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.0.0/dist/assets/diagram-js.css">
+  <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.0.0/dist/assets/bpmn-js.css">
+  <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.0.0/dist/assets/bpmn-font/css/bpmn.css">
+  <script src="https://unpkg.com/bpmn-js@17.0.0/dist/bpmn-modeler.development.js"></script>
+
+  <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
+  
+  <style>
+    /* Basic styling for the modeler */
+    #canvas {
+      height: 600px;
+      width: 100%;
+      position: relative;
+      background: white;
+    }
+
+    body {
+      padding: 20px;
+      background: var(--bg);
+    }
+    .game-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .adventure-box {
+      background: var(--card);
+      border-radius: var(--round);
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-1);
+      border-left: 4px solid var(--bsh-accent);
+    }
+    .adventure-box h3 {
+      margin-top: 0;
+      color: var(--bsh-accent);
+    }
+    .adventure-box p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    #canvas {
+      width: 100%;
+      height: 600px;
+      border-radius: var(--round);
+      border: 1px solid rgba(7,18,40,0.06);
+      background: #fff;
+    }
+    #check-work-btn {
+      width: 100%;
+      padding: 16px;
+      font-size: 16px;
+      margin-top: 16px;
+    }
+    
+    /* Styles for the feedback modal */
+    #feedback-modal {
+      /* Uses zoom-overlay class from styles.css */
+      display: none; /* Hidden by default */
+      align-items: center;
+      justify-content: center;
+    }
+    #feedback-modal.active {
+      display: flex; /* Shown by JS */
+    }
+    .feedback-card {
+      /* Re-using updates-modal style from styles.css */
+      background: var(--card);
+      border-radius: var(--round);
+      padding: 24px 28px;
+      box-shadow: var(--shadow-1);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+    #modal-title {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-container">
+    
+    <a href="game-start-page.html" title="Back to Games Hub" style="text-decoration:none; display:inline-block; margin-bottom: 20px;">
+        <div class="logo" style="width:44px;height:44px;border-radius:8px;font-size:16px">←</div>
+    </a>
+  
+    <div class="adventure-box">
+      <h3>Level <span id="level-num">1</span>: <span id="level-title">The Grand Opening!</span></h3>
+      <p id="story-text">
+        Welcome, boss! You've opened 'BSH Pizza'. Before we hire anyone, let's set up the main departments. We'll need a 'Front Counter' for taking orders and a 'Kitchen' for making them.
+        <br><strong>Goal:</strong> Create one Pool named "BSH Pizza" and add two Lanes named "Front Counter" and "Kitchen".
+      </p>
+    </div>
+
+    <div id="canvas"></div>
+
+    <button id="check-work-btn" class="btn">Check My Work</button>
+
+  </div>
+
+  <div id="feedback-modal" class="zoom-overlay">
+     <div class="feedback-card">
+       <h2 id="modal-title">Success!</h2>
+       <p id="modal-message">Great job!</p>
+       <button id="close-modal-btn" class="btn">Continue</button>
+     </div>
+  </div>
+
+
+  <script>
+    // --- Global variable for the modeler ---
+    let modeler;
+
+    // Default empty BPMN diagram (for the very start)
+    const emptyBpmn = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Process_1" isExecutable="false">
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>`;
+
+    // --- Game State & Level Data ---
+    let currentLevel = 1;
+
+    // --- Helper function to parse XML and get elements ---
+    function parseXML(xmlString) {
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+      
+      // Helper to find an element by tag and name attribute
+      const findElementByName = (tagName, name) => {
+        const elements = xmlDoc.getElementsByTagName(tagName);
+        return Array.from(elements).find(el => el.getAttribute('name') === name);
+      };
+      
+      // Helper to get all node IDs within a specific lane
+      const getLaneNodeIds = (laneName) => {
+        const lane = findElementByName('bpmn:lane', laneName);
+        if (!lane) return [];
+        const flowNodes = lane.getElementsByTagName('bpmn:flowNodeRef');
+        return Array.from(flowNodes).map(node => node.textContent);
+      };
+      
+      // Helper to check if a specific element (by ID) is in a list of IDs
+      const isElementInLane = (element, laneNodeIds) => {
+          return element && laneNodeIds.includes(element.getAttribute('id'));
+      };
+
+      return { xmlDoc, findElementByName, getLaneNodeIds, isElementInLane };
+    }
+
+
+    // --- Validation Functions ---
+    
+    function validateLevel1(xmlString) {
+      const { findElementByName, getLaneNodeIds } = parseXML(xmlString);
+      
+      const pool = findElementByName("bpmn:participant", "BSH Pizza");
+      if (!pool) {
+        return { success: false, message: "We need a 'Pool' for our business! Name it 'BSH Pizza'." };
+      }
+      
+      const lane1 = findElementByName("bpmn:lane", "Front Counter");
+      if (!lane1) {
+        return { success: false, message: "Don't forget the 'Front Counter' lane!" };
+      }
+      
+      const lane2 = findElementByName("bpmn:lane", "Kitchen");
+      if (!lane2) {
+        return { success: false, message: "We need a 'Kitchen' lane, too!" };
+      }
+      
+      return { success: true, message: "Level 1 Complete! The shop is set up. Now let's get our first order." };
+    }
+    
+    function validateLevel2(xmlString) {
+      const { findElementByName, getLaneNodeIds, isElementInLane } = parseXML(xmlString);
+      
+      // Check for Level 1 stuff first
+      const level1Check = validateLevel1(xmlString);
+      if (!level1Check.success) return level1Check;
+      
+      // Find our new elements
+      const startEvent = findElementByName("bpmn:startEvent", "Order is Received");
+      const task = findElementByName("bpmn:task", "Make Pizza");
+      const endEvent = findElementByName("bpmn:endEvent", "Pizza Ready"); // Let's give the end a name!
+
+      if (!startEvent) {
+        return { success: false, message: "We need a Start Event named 'Order is Received' to begin the process." };
+      }
+      if (!task) {
+        return { success: false, message: "We need a Task named 'Make Pizza'." };
+      }
+      if (!endEvent) {
+        return { success: false, message: "We need an End Event. Let's name it 'Pizza Ready'." };
+      }
+
+      // Check if they are in the correct lanes
+      const frontCounterIds = getLaneNodeIds("Front Counter");
+      const kitchenIds = getLaneNodeIds("Kitchen");
+      
+      if (!isElementInLane(startEvent, frontCounterIds)) {
+        return { success: false, message: "Drag the 'Order is Received' Start Event into the 'Front Counter' lane." };
+      }
+      if (!isElementInLane(task, kitchenIds)) {
+        return { success: false, message: "Drag the 'Make Pizza' Task into the 'Kitchen' lane." };
+      }
+      if (!isElementInLane(endEvent, kitchenIds)) {
+        return { success: false, message: "Drag the 'Pizza Ready' End Event into the 'Kitchen' lane, too." };
+      }
+      
+      // Check for connections (a bit simpler)
+      const flows = xmlDoc.getElementsByTagName("bpmn:sequenceFlow");
+      if (flows.length < 2) {
+          return { success: false, message: "Connect your process! Make sure there is a line from Start -> Task -> End." };
+      }
+
+      return { success: true, message: "Level 2 Complete! We're in business! But now we're getting busy..." };
+    }
+
+    function validateLevel3(xmlString) {
+      const { findElementByName, getLaneNodeIds, isElementInLane } = parseXML(xmlString);
+
+      // Check for Level 2 stuff first
+      const level2Check = validateLevel2(xmlString);
+      if (!level2Check.success) return level2Check;
+      
+      // Find our new elements
+      const driverLane = findElementByName("bpmn:lane", "Driver");
+      const deliverTask = findElementByName("bpmn:task", "Deliver Pizza");
+      const endEvent = findElementByName("bpmn:endEvent", "Order Complete"); // New end event name
+
+      if (!driverLane) {
+        return { success: false, message: "We need to add a new Lane for our 'Driver'!" };
+      }
+      if (!deliverTask) {
+        return { success: false, message: "Add a new Task named 'Deliver Pizza'." };
+      }
+      
+      // Check if the task is in the new lane
+      const driverIds = getLaneNodeIds("Driver");
+      if (!isElementInLane(deliverTask, driverIds)) {
+        return { success: false, message: "Drag the 'Deliver Pizza' Task into the 'Driver' lane." };
+      }
+      
+      // Check if the End Event is now in the Driver lane
+      if (endEvent && !isElementInLane(endEvent, driverIds)) {
+         return { success: false, message: "Move the End Event to the 'Driver' lane and name it 'Order Complete'." };
+      }
+      
+      // Check for the new connection
+      const flows = Array.from(xmlDoc.getElementsByTagName("bpmn:sequenceFlow"));
+      const makePizzaTask = findElementByName("bpmn:task", "Make Pizza");
+      
+      const hasPizzaToDeliveryFlow = flows.some(flow => 
+        flow.getAttribute("sourceRef") === makePizzaTask.getAttribute("id") &&
+        flow.getAttribute("targetRef") === deliverTask.getAttribute("id")
+      );
+      
+      if (!hasPizzaToDeliveryFlow) {
+          return { success: false, message: "Make sure the process flows from 'Make Pizza' to 'Deliver Pizza'." };
+      }
+
+      return { success: true, message: "Level 3 Complete! Our team is working perfectly!" };
+    }
+
+    // --- Story Data ---
+    const adventureLevels = {
+      1: {
+        title: "The Grand Opening!",
+        story: "Welcome, boss! You've opened 'BSH Pizza'. Before we hire anyone, let's set up the main departments. We'll need a 'Front Counter' for taking orders and a 'Kitchen' for making them.<br><strong>Goal:</strong> Create one Pool named 'BSH Pizza' and add two Lanes named 'Front Counter' and 'Kitchen'.",
+        checkFunction: validateLevel1
+      },
+      2: {
+        title: "Your First Order!",
+        story: "A customer is here! We need a simple process. It should start at the 'Front Counter', then move to the 'Kitchen'.<br><strong>Goal:</strong> Add a Start Event named 'Order is Received' to the 'Front Counter' lane. Add a Task named 'Make Pizza' and an End Event named 'Pizza Ready' to the 'Kitchen' lane. Connect them all!",
+        checkFunction: validateLevel2
+      },
+      3: {
+        title: "Hired Help!",
+        story: "We're busy! You hired a 'Driver'. This is a new role! After the pizza is made, the driver needs to deliver it.<br><strong>Goal:</strong> Add a new Lane named 'Driver'. Add a Task named 'Deliver Pizza' to this lane. Make the process flow from 'Make Pizza' to 'Deliver Pizza'. Finally, move the End Event to the 'Driver' lane and name it 'Order Complete'.",
+        checkFunction: validateLevel3
+      }
+    };
+
+
+    // --- Feedback Modal ---
+    const modal = document.getElementById('feedback-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalMessage = document.getElementById('modal-message');
+    
+    function showFeedbackModal(title, message, isSuccess) {
+      modalTitle.innerText = title;
+      modalMessage.innerHTML = message;
+      modalTitle.style.color = isSuccess ? "#16a34a" : "#dc2626";
+      modal.classList.add('active');
+    }
+    
+    document.getElementById('close-modal-btn').addEventListener('click', () => {
+      modal.classList.remove('active');
+    });
+
+    // --- Button Click Logic ---
+    document.getElementById('check-work-btn').addEventListener('click', async () => {
+      try {
+        if (!modeler) {
+          console.error('Modeler not initialized');
+          return;
+        }
+
+        const result = await modeler.saveXML({ format: true });
+        
+        const levelData = adventureLevels[currentLevel];
+        if (!levelData || !levelData.checkFunction) {
+          console.error('Invalid level data');
+          return;
+        }
+        
+        // We pass the xmlDoc to the validation functions now
+        const validationResult = levelData.checkFunction(result.xml);
+        
+        if (validationResult.success) {
+          showFeedbackModal("Success!", validationResult.message, true);
+          currentLevel++;
+          loadLevel(currentLevel); // Load next level story, but DON'T clear diagram
+        } else {
+          showFeedbackModal("Not Quite...", validationResult.message, false);
+        }
+      } catch (error) {
+        console.error('Error checking work:', error);
+        showFeedbackModal("Error", "There was an error checking your work. Please try again.", false);
+      }
+    });
+    
+    // --- Load Level Function ---
+    async function loadLevel(levelNum) {
+      const levelTitleEl = document.getElementById('level-title');
+      const levelNumEl = document.getElementById('level-num');
+      const storyTextEl = document.getElementById('story-text');
+      const checkBtn = document.getElementById('check-work-btn');
+
+      if (!adventureLevels[levelNum]) {
+        levelTitleEl.innerText = "You Win!";
+        levelNumEl.innerText = "All";
+        storyTextEl.innerHTML = "<strong>You've completed the Pizza Adventure! You're a BPMN expert!</strong>";
+        checkBtn.innerText = "Game Completed!";
+        checkBtn.disabled = true;
+        return;
+      }
+      
+      const levelData = adventureLevels[levelNum];
+      levelTitleEl.innerText = levelData.title;
+      levelNumEl.innerText = levelNum;
+      storyTextEl.innerHTML = levelData.story;
+      
+      // *** THIS IS THE KEY CHANGE ***
+      // We no longer clear the diagram. We only clear it ONCE at the very beginning.
+      // if (modeler) {
+      //  await modeler.importXML(emptyBpmn); // <-- THIS LINE IS REMOVED
+      // }
+    }
+
+    // Initialize the modeler when the page loads
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const container = document.getElementById('canvas');
+        modeler = new BpmnJS({ container });
+
+        // We only load the empty diagram ONCE, when the game first starts.
+        await modeler.importXML(emptyBpmn); 
+        
+        const canvas = modeler.get('canvas');
+        if (canvas && typeof canvas.zoom === 'function') {
+          canvas.zoom('fit-viewport');
+        }
+        
+        loadLevel(currentLevel); // Load Level 1
+      } catch (err) {
+        console.error('Could not initialize BPMN Modeler:', err);
+        document.getElementById('story-text').innerText = 
+          'Error: Could not initialize the BPMN modeler. Please refresh the page.';
+      }
+    });
+</script>
+</body>
+</html>
