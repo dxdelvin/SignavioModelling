@@ -75,7 +75,45 @@
     </div>
   </div>
 
+  <div id="feedback-modal" class="overlay" role="dialog" aria-modal="true" aria-hidden="true">
+        </div>
+    </div> <div id="welcome-modal" class="overlay active" role="dialog" aria-modal="true" aria-hidden="false" style="z-index: 101;">
+      <div class="feedback-card" role="document">
+        <h2 id="welcome-title" style="color: var(--accent);">Welcome, BSH Pizzeria Owner!</h2>
+        <p id="welcome-message" style="line-height: 1.6; color: var(--muted);">
+          You're the new owner of <strong>BSH Pizzeria</strong>, and it's time to build your process from a simple shop to a full-blown delivery empire!
+          <br><br>
+          <strong>A Few Quick Tips:</strong>
+        </p>
+        <ul style="text-align: left; color: var(--muted); line-height: 1.6; margin: 16px 0; padding-left: 24px;">
+          <li>
+            <strong>ZOOM OUT:</strong> Use <strong>(Ctrl + Mouse Wheel)</strong> or <strong>(Ctrl + -)</strong>. Some levels get big! and You get a lot of space to work with.
+          </li>
+          <li style="margin-top: 8px;">
+            <strong>LOGIC over LOOKS:</strong> The game checks your <strong>process logic</strong> (correct elements, names, and connections), not how pretty your diagram is. But... a neat diagram is easier to debug!
+          </li>
+        </ul>
+        <div class="feedback-actions" style="margin-top: 16px;">
+          <button id="start-game-btn" class="btn">Start Building!</button>
+        </div>
+      </div>
+    </div>
+
 <script>
+
+const welcomeModal = document.getElementById('welcome-modal');
+    const startGameBtn = document.getElementById('start-game-btn');
+
+    if (welcomeModal && startGameBtn) {
+        startGameBtn.addEventListener('click', () => {
+            welcomeModal.classList.remove('active');
+            welcomeModal.setAttribute('aria-hidden', 'true');
+            // A nice extra: zoom-to-fit the canvas after closing the intro
+            safeFitViewport(100); 
+        });
+    }
+
+
 let modeler;
 let currentLevel = 1;
 const totalLevels = 5;
@@ -138,183 +176,545 @@ function parseXML(xmlString) {
       return { findElementByName, getLaneByName, getSubLaneNodeIds, getLaneNodeIds, isElementInLane, getIncomingFlows, getOutgoingFlows, getTargetOfFlow, getSourceOfFlow, getEventDefinition, getAttachedToRef, findMessageFlow, isParticipantCollapsed };
 }
 
-// --- Validation Functions (Improved Logic) ---
 function validateLevel1(xml) {
     const p = parseXML(xml);
-    if (!p.findElementByName("bpmn:participant", "BSH Pizzeria")) return { success: false, message: "The main Pool must be named 'BSH Pizzeria'." };
-    if (p.getLaneNodeIds("Order Desk") === null) return { success: false, message: "The 'Order Desk' lane is missing." };
-    if (!p.getLaneByName("Kitchen")) return { success: false, message: "The 'Kitchen' lane is missing." };
-    if (p.getSubLaneNodeIds("Kitchen", "Prep Station") === null) return { success: false, message: "The 'Prep Station' sub-lane is missing. Make sure it is inside the 'Kitchen' lane." };
-    if (p.getSubLaneNodeIds("Kitchen", "Oven Station") === null) return { success: false, message: "The 'Oven Station' sub-lane is missing. Make sure it is inside the 'Kitchen' lane." };
-    const start = p.findElementByName("bpmn:startEvent", "Order Received");
-    if (!start) return { success: false, message: "The Start Event named 'Order Received' is missing."};
-    const task1 = p.findElementByName("bpmn:task", "Take Payment");
-    if (!task1) return { success: false, message: "The Task named 'Take Payment' is missing."};
-    const task2 = p.findElementByName("bpmn:task", "Prepare Pizza");
-    if (!task2) return { success: false, message: "The Task named 'Prepare Pizza' is missing."};
-    const condEvent = p.findElementByName("bpmn:intermediateCatchEvent", "Quality Check Passed");
-    if (!condEvent) return { success: false, message: "The Intermediate Event named 'Quality Check Passed' is missing."};
-    const task3 = p.findElementByName("bpmn:task", "Bake Pizza");
-    if (!task3) return { success: false, message: "The Task named 'Bake Pizza' is missing."};
-    const end = p.findElementByName("bpmn:endEvent", "Pizza Ready");
-    if (!end) return { success: false, message: "The End Event named 'Pizza Ready' is missing."};
-    if (!p.getEventDefinition(condEvent, 'conditionalEventDefinition')) return { success: false, message: "'Quality Check Passed' must be a Conditional Event type." };
-    if(!p.isElementInLane(start, p.getLaneNodeIds("Order Desk"))) return { success: false, message: "'Order Received' must be in 'Order Desk'."};
-    if(!p.isElementInLane(task1, p.getLaneNodeIds("Order Desk"))) return { success: false, message: "'Take Payment' must be in 'Order Desk'."};
-    if(!p.isElementInLane(task2, p.getSubLaneNodeIds("Kitchen", "Prep Station"))) return { success: false, message: "'Prepare Pizza' must be in 'Prep Station'."};
-    if(!p.isElementInLane(condEvent, p.getSubLaneNodeIds("Kitchen", "Prep Station"))) return { success: false, message: "'Quality Check Passed' must be in 'Prep Station'."};
-    if(!p.isElementInLane(task3, p.getSubLaneNodeIds("Kitchen", "Oven Station"))) return { success: false, message: "'Bake Pizza' must be in 'Oven Station'."};
-    if(!p.isElementInLane(end, p.getSubLaneNodeIds("Kitchen", "Oven Station"))) return { success: false, message: "'Pizza Ready' must be in 'Oven Station'."};
-    if (p.getOutgoingFlows(start).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(start)[0]) !== task1) return { success: false, message: "'Order Received' must connect directly to 'Take Payment'." };
-    if (p.getOutgoingFlows(task1).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(task1)[0]) !== task2) return { success: false, message: "'Take Payment' must connect directly to 'Prepare Pizza'." };
-    if (p.getOutgoingFlows(task2).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(task2)[0]) !== condEvent) return { success: false, message: "'Prepare Pizza' must connect directly to 'Quality Check Passed'." };
-    if (p.getOutgoingFlows(condEvent).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(condEvent)[0]) !== task3) return { success: false, message: "'Quality Check Passed' must connect directly to 'Bake Pizza'." };
-    if (p.getOutgoingFlows(task3).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(task3)[0]) !== end) return { success: false, message: "'Bake Pizza' must connect directly to 'Pizza Ready'." };
+    const errors = [];
+    const get = (type, name) => p.findElementByName(type, name) || null;
+
+    // Phase 1: Check Participants, Lanes, and Sub-Lanes
+    const pool = get("bpmn:participant", "BSH Pizzeria");
+    if (!pool) errors.push("The main Pool must be named 'BSH Pizzeria'.");
+
+    const orderDeskLane = p.getLaneNodeIds("Order Desk");
+    if (orderDeskLane === null) errors.push("The 'Order Desk' lane is missing.");
+    
+    const kitchenLane = p.getLaneByName("Kitchen");
+    if (!kitchenLane) errors.push("The 'Kitchen' lane is missing.");
+
+    let prepStationLane = null;
+    let ovenStationLane = null;
+    if (kitchenLane) {
+        prepStationLane = p.getSubLaneNodeIds("Kitchen", "Prep Station");
+        if (prepStationLane === null) errors.push("The 'Prep Station' sub-lane is missing or not inside 'Kitchen'.");
+        
+        ovenStationLane = p.getSubLaneNodeIds("Kitchen", "Oven Station");
+        if (ovenStationLane === null) errors.push("The 'Oven Station' sub-lane is missing or not inside 'Kitchen'.");
+    } else {
+        errors.push("Cannot check sub-lanes because 'Kitchen' lane is missing.");
+    }
+
+    // Phase 2: Find all elements (or null)
+    const start = get("bpmn:startEvent", "Order Received");
+    const task1 = get("bpmn:task", "Take Payment");
+    const task2 = get("bpmn:task", "Prepare Pizza");
+    const condEvent = get("bpmn:intermediateCatchEvent", "Quality Check Passed");
+    const task3 = get("bpmn:task", "Bake Pizza");
+    const end = get("bpmn:endEvent", "Pizza Ready");
+
+    // Phase 2b: Check for element existence
+    if (!start) errors.push("The Start Event named 'Order Received' is missing.");
+    if (!task1) errors.push("The Task named 'Take Payment' is missing.");
+    if (!task2) errors.push("The Task named 'Prepare Pizza' is missing.");
+    if (!condEvent) errors.push("The Intermediate Event named 'Quality Check Passed' is missing.");
+    if (!task3) errors.push("The Task named 'Bake Pizza' is missing.");
+    if (!end) errors.push("The End Event named 'Pizza Ready' is missing.");
+
+    // Phase 3: Check types and placements (only if elements exist)
+    if (condEvent && !p.getEventDefinition(condEvent, 'conditionalEventDefinition')) {
+        errors.push("'Quality Check Passed' must be a Conditional Event type (use the wrench icon).");
+    }
+    if (start && orderDeskLane && !p.isElementInLane(start, orderDeskLane)) {
+        errors.push("'Order Received' must be in the 'Order Desk' lane.");
+    }
+    if (task1 && orderDeskLane && !p.isElementInLane(task1, orderDeskLane)) {
+        errors.push("'Take Payment' must be in the 'Order Desk' lane.");
+    }
+    if (task2 && prepStationLane && !p.isElementInLane(task2, prepStationLane)) {
+        errors.push("'Prepare Pizza' must be in the 'Prep Station' sub-lane.");
+    }
+    if (condEvent && prepStationLane && !p.isElementInLane(condEvent, prepStationLane)) {
+        errors.push("'Quality Check Passed' must be in the 'Prep Station' sub-lane.");
+    }
+    if (task3 && ovenStationLane && !p.isElementInLane(task3, ovenStationLane)) {
+        errors.push("'Bake Pizza' must be in the 'Oven Station' sub-lane.");
+    }
+    if (end && ovenStationLane && !p.isElementInLane(end, ovenStationLane)) {
+        errors.push("'Pizza Ready' must be in the 'Oven Station' sub-lane.");
+    }
+
+    // Phase 4: Check Sequencing (only if elements exist)
+    // --- Start Event ---
+    if (start) {
+        if (p.getIncomingFlows(start).length !== 0) errors.push("'Order Received' (Start Event) cannot have incoming flows.");
+        if (p.getOutgoingFlows(start).length !== 1) errors.push("'Order Received' (Start Event) must have exactly one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(start)[0]) !== task1) errors.push("'Order Received' must connect directly to 'Take Payment'.");
+    }
+    // --- Task 1 ---
+    if (task1) {
+        if (p.getIncomingFlows(task1).length !== 1) errors.push("'Take Payment' (Task) must have exactly one incoming flow.");
+        if (p.getOutgoingFlows(task1).length !== 1) errors.push("'Take Payment' (Task) must have exactly one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(task1)[0]) !== task2) errors.push("'Take Payment' must connect directly to 'Prepare Pizza'.");
+    }
+    // --- Task 2 ---
+    if (task2) {
+        if (p.getIncomingFlows(task2).length !== 1) errors.push("'Prepare Pizza' (Task) must have exactly one incoming flow.");
+        if (p.getOutgoingFlows(task2).length !== 1) errors.push("'Prepare Pizza' (Task) must have exactly one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(task2)[0]) !== condEvent) errors.push("'Prepare Pizza' must connect directly to 'Quality Check Passed'.");
+    }
+    // --- Intermediate Event ---
+    if (condEvent) {
+        if (p.getIncomingFlows(condEvent).length !== 1) errors.push("'Quality Check Passed' (Event) must have exactly one incoming flow.");
+        if (p.getOutgoingFlows(condEvent).length !== 1) errors.push("'Quality Check Passed' (Event) must have exactly one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(condEvent)[0]) !== task3) errors.push("'Quality Check Passed' must connect directly to 'Bake Pizza'.");
+    }
+    // --- Task 3 ---
+    if (task3) {
+        if (p.getIncomingFlows(task3).length !== 1) errors.push("'Bake Pizza' (Task) must have exactly one incoming flow.");
+        if (p.getOutgoingFlows(task3).length !== 1) errors.push("'Bake Pizza' (Task) must have exactly one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(task3)[0]) !== end) errors.push("'Bake Pizza' must connect directly to 'Pizza Ready'.");
+    }
+    // --- End Event ---
+    if (end) {
+        if (p.getIncomingFlows(end).length !== 1) errors.push("'Pizza Ready' (End Event) must have at least one incoming flow.");
+        if (p.getOutgoingFlows(end).length !== 0) errors.push("'Pizza Ready' (End Event) cannot have outgoing flows.");
+    }
+    
+    // Final check
+    if (errors.length > 0) {
+        const errorList = "<ul><li>" + errors.join("</li><li>") + "</li></ul>";
+        return { success: false, message: `Your diagram has ${errors.length} error(s):<br>${errorList}` };
+    }
+
     return { success: true, message: "Excellent! The foundational process is perfectly mapped." };
 }
+
 function validateLevel2(xml) {
     const p = parseXML(xml);
-    if (!p.findElementByName("bpmn:participant", "BSH Pizzeria")) return { success: false, message: "The 'BSH Pizzeria' Pool is missing." };
-    const bakePizza = p.findElementByName("bpmn:task", "Bake Pizza");
-    if (!bakePizza) return { success: false, message: "The 'Bake Pizza' task from Level 1 is missing." };
-    const parallelSplit = p.findElementByName("bpmn:parallelGateway", "Prep");
-    if (!parallelSplit) return { success: false, message: "The Parallel Gateway named 'Prep' is missing." };
-    const timerEvent = p.findElementByName("bpmn:intermediateCatchEvent", "Allow Cooling (30s)");
-    if (!timerEvent) return { success: false, message: "The Timer Event named 'Allow Cooling (30s)' is missing." };
-    const boxPizza = p.findElementByName("bpmn:task", "Box Pizza");
-    if (!boxPizza) return { success: false, message: "The Task named 'Box Pizza' is missing." };
-    const getDrinks = p.findElementByName("bpmn:task", "Get Drinks");
-    if (!getDrinks) return { success: false, message: "The Task named 'Get Drinks' is missing." };
-    const parallelJoin = p.findElementByName("bpmn:parallelGateway", "Package");
-    if (!parallelJoin) return { success: false, message: "The merging Parallel Gateway named 'Package' is missing." };
-    const endEvent = p.findElementByName("bpmn:endEvent", "Pizza Ready");
-    if (!endEvent) return { success: false, message: "The 'Pizza Ready' End Event is missing."};
-    if (!p.getEventDefinition(timerEvent, 'timerEventDefinition')) return { success: false, message: "'Allow Cooling (30s)' must be a Timer Event." };
-    if (!p.isElementInLane(boxPizza, p.getSubLaneNodeIds("Kitchen", "Oven Station"))) return { success: false, message: "'Box Pizza' must be in the 'Oven Station'." };
-    if (!p.isElementInLane(getDrinks, p.getLaneNodeIds("Order Desk"))) return { success: false, message: "'Get Drinks' must be in the 'Order Desk'." };
-    if (p.getOutgoingFlows(bakePizza).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(bakePizza)[0]) !== parallelSplit) return { success: false, message: "'Bake Pizza' must connect directly to the 'Prep' gateway." };
-    const splitOutTargets = p.getOutgoingFlows(parallelSplit).map(p.getTargetOfFlow);
-    if (splitOutTargets.length !== 2 || !splitOutTargets.includes(timerEvent) || !splitOutTargets.includes(getDrinks)) return { success: false, message: "The 'Prep' gateway must split into two paths: one to the timer, one to 'Get Drinks'." };
-    if (p.getOutgoingFlows(timerEvent).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(timerEvent)[0]) !== boxPizza) return { success: false, message: "The timer must connect directly to 'Box Pizza'." };
-    if (p.getOutgoingFlows(boxPizza).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(boxPizza)[0]) !== parallelJoin) return { success: false, message: "'Box Pizza' must connect directly to the 'Package' gateway." };
-    if (p.getOutgoingFlows(getDrinks).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(getDrinks)[0]) !== parallelJoin) return { success: false, message: "'Get Drinks' must connect directly to the 'Package' gateway." };
-    if (p.getOutgoingFlows(parallelJoin).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(parallelJoin)[0]) !== endEvent) return { success: false, message: "The 'Package' gateway must connect directly to the 'Pizza Ready' End Event." };
+    const errors = [];
+    const get = (type, name) => p.findElementByName(type, name) || null;
+
+    // Phase 1: Find all elements
+    const bakePizza = get("bpmn:task", "Bake Pizza");
+    const parallelSplit = get("bpmn:parallelGateway", "Prep");
+    const timerEvent = get("bpmn:intermediateCatchEvent", "Allow Cooling (30s)");
+    const boxPizza = get("bpmn:task", "Box Pizza");
+    const getDrinks = get("bpmn:task", "Get Drinks");
+    const parallelJoin = get("bpmn:parallelGateway", "Package");
+    const endEvent = get("bpmn:endEvent", "Pizza Ready");
+    
+    // Get Lanes
+    const ovenStationLane = p.getSubLaneNodeIds("Kitchen", "Oven Station");
+    const orderDeskLane = p.getLaneNodeIds("Order Desk");
+
+    // Phase 2: Check for element existence
+    if (!bakePizza) errors.push("The 'Bake Pizza' task from Level 1 is missing.");
+    if (!parallelSplit) errors.push("The Parallel Gateway named 'Prep' is missing.");
+    if (!timerEvent) errors.push("The Timer Event named 'Allow Cooling (30s)' is missing.");
+    if (!boxPizza) errors.push("The Task named 'Box Pizza' is missing.");
+    if (!getDrinks) errors.push("The Task named 'Get Drinks' is missing.");
+    if (!parallelJoin) errors.push("The merging Parallel Gateway named 'Package' is missing.");
+    if (!endEvent) errors.push("The 'Pizza Ready' End Event is missing.");
+
+    // Phase 3: Check types and placements
+    if (timerEvent && !p.getEventDefinition(timerEvent, 'timerEventDefinition')) {
+        errors.push("'Allow Cooling (30s)' must be a Timer Event.");
+    }
+    if (boxPizza && ovenStationLane && !p.isElementInLane(boxPizza, ovenStationLane)) {
+        errors.push("'Box Pizza' must be in the 'Oven Station'.");
+    }
+    if (getDrinks && orderDeskLane && !p.isElementInLane(getDrinks, orderDeskLane)) {
+        errors.push("'Get Drinks' must be in the 'Order Desk'.");
+    }
+
+    // Phase 4: Check Sequencing
+    if (bakePizza) {
+        if (p.getIncomingFlows(bakePizza).length !== 1) errors.push("'Bake Pizza' should have one incoming flow (from Level 1).");
+        if (p.getOutgoingFlows(bakePizza).length !== 1) errors.push("'Bake Pizza' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(bakePizza)[0]) !== parallelSplit) errors.push("'Bake Pizza' must connect directly to the 'Prep' gateway.");
+    }
+    if (parallelSplit) {
+        if (p.getIncomingFlows(parallelSplit).length !== 1) errors.push("'Prep' gateway must have one incoming flow.");
+        const splitOutTargets = p.getOutgoingFlows(parallelSplit).map(p.getTargetOfFlow);
+        if (splitOutTargets.length !== 2 || !splitOutTargets.includes(timerEvent) || !splitOutTargets.includes(getDrinks)) {
+            errors.push("The 'Prep' gateway must split into exactly two paths: one to 'Allow Cooling (30s)' and one to 'Get Drinks'.");
+        }
+    }
+    if (timerEvent) {
+        if (p.getIncomingFlows(timerEvent).length !== 1) errors.push("'Allow Cooling (30s)' must have one incoming flow.");
+        if (p.getOutgoingFlows(timerEvent).length !== 1) errors.push("'Allow Cooling (30s)' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(timerEvent)[0]) !== boxPizza) errors.push("The 'Allow Cooling (30s)' timer must connect directly to 'Box Pizza'.");
+    }
+    if (boxPizza) {
+        if (p.getIncomingFlows(boxPizza).length !== 1) errors.push("'Box Pizza' must have one incoming flow.");
+        if (p.getOutgoingFlows(boxPizza).length !== 1) errors.push("'Box Pizza' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(boxPizza)[0]) !== parallelJoin) errors.push("'Box Pizza' must connect directly to the 'Package' gateway.");
+    }
+    if (getDrinks) {
+        if (p.getIncomingFlows(getDrinks).length !== 1) errors.push("'Get Drinks' must have one incoming flow.");
+        if (p.getOutgoingFlows(getDrinks).length !== 1) errors.push("'Get Drinks' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(getDrinks)[0]) !== parallelJoin) errors.push("'Get Drinks' must connect directly to the 'Package' gateway.");
+    }
+    if (parallelJoin) {
+        if (p.getIncomingFlows(parallelJoin).length !== 2) {
+             errors.push("The 'Package' gateway must merge exactly two paths. Make sure both 'Box Pizza' and 'Get Drinks' connect to it.");
+        }
+        if (p.getOutgoingFlows(parallelJoin).length !== 1) errors.push("The 'Package' gateway must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(parallelJoin)[0]) !== endEvent) errors.push("The 'Package' gateway must connect directly to the 'Pizza Ready' End Event.");
+    }
+    if (endEvent) {
+         if (p.getIncomingFlows(endEvent).length !== 1) errors.push("'Pizza Ready' End Event should have one incoming flow (from 'Package').");
+         if (p.getOutgoingFlows(endEvent).length !== 0) errors.push("'Pizza Ready' End Event cannot have outgoing flows.");
+    }
+
+    // Final check
+    if (errors.length > 0) {
+        const errorList = "<ul><li>" + errors.join("</li><li>") + "</li></ul>";
+        return { success: false, message: `Your diagram has ${errors.length} error(s):<br>${errorList}` };
+    }
+
     return { success: true, message: "Fantastic! You've flawlessly modeled parallel processing." };
 }
+
 function validateLevel3(xml) {
     const p = parseXML(xml);
+    const errors = [];
+    const get = (type, name) => p.findElementByName(type, name) || null;
 
-    // --- Prerequisite Elements ---
-    if (p.isParticipantCollapsed("BSH Supplier") !== true) return { success: false, message: "A collapsed 'BSH Supplier' Pool is required. Use the wrench icon to toggle its state." };
-    if (!p.findElementByName("bpmn:participant", "Customer")) return { success: false, message: "The 'Customer' Pool is missing." };
-    const takePayment = p.findElementByName("bpmn:task", "Take Payment");
-    const preparePizza = p.findElementByName("bpmn:task", "Prepare Pizza");
-    if (!takePayment || !preparePizza) return { success: false, message: "Core tasks from previous levels are missing." };
+    // Phase 1: Find all elements
+    const supplierPool = get("bpmn:participant", "BSH Supplier");
+    const customerPool = get("bpmn:participant", "Customer");
+    const takePayment = get("bpmn:task", "Take Payment");
+    const preparePizza = get("bpmn:task", "Prepare Pizza");
+    const checkStock = get("bpmn:task", "Check Stock");
+    const splitGateway = get("bpmn:exclusiveGateway", "Stock OK?");
+    const placeOrder = get("bpmn:task", "Place Ingredient Order");
+    const receiveMsgEvent = get("bpmn:intermediateCatchEvent", "Receive Ingredients");
+    const restock = get("bpmn:task", "Restock Ingredients");
+    const attachedEvent = get("bpmn:boundaryEvent", "Shipment Delayed 15 Min");
+    const informCustomer = get("bpmn:task", "Inform Customer about Delay");
+    const delayEndEvent = get("bpmn:endEvent", "Delay Handled");
 
-    // --- Validate Rerouting and Splitting ---
-    const checkStock = p.findElementByName("bpmn:task", "Check Stock");
-    if (!checkStock) return { success: false, message: "The Task 'Check Stock' is missing." };
-    if (!p.isElementInLane(checkStock, p.getSubLaneNodeIds("Kitchen", "Prep Station"))) return { success: false, message: "'Check Stock' must be in the 'Prep Station'." };
-    if (p.getOutgoingFlows(takePayment).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(takePayment)[0]) !== checkStock) return { success: false, message: "The flow from 'Take Payment' must now connect directly to 'Check Stock'." };
+    // Get Lanes
+    const prepStationLane = p.getSubLaneNodeIds("Kitchen", "Prep Station");
+    const orderDeskLane = p.getLaneNodeIds("Order Desk");
 
-    const splitGateway = p.findElementByName("bpmn:exclusiveGateway", "Stock OK?");
-    if (!splitGateway) return { success: false, message: "The splitting Exclusive Gateway 'Stock OK?' is missing." };
-    if (p.getOutgoingFlows(checkStock).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(checkStock)[0]) !== splitGateway) return { success: false, message: "'Check Stock' must connect directly to the 'Stock OK?' gateway." };
-    if (p.getOutgoingFlows(splitGateway).length !== 2) return { success: false, message: "'Stock OK?' gateway must have exactly two outgoing paths." };
+    // Phase 2: Check existence and key properties
+    if (!supplierPool || p.isParticipantCollapsed("BSH Supplier") !== true) {
+        errors.push("A collapsed 'BSH Supplier' Pool is required. Use the wrench icon to toggle its state to collapsed.");
+    }
+    if (!customerPool) errors.push("The 'Customer' Pool is missing.");
+    if (!takePayment) errors.push("The 'Take Payment' task is missing.");
+    if (!preparePizza) errors.push("The 'Prepare Pizza' task is missing.");
+    if (!checkStock) errors.push("The Task 'Check Stock' is missing.");
+    if (!splitGateway) errors.push("The splitting Exclusive Gateway 'Stock OK?' is missing.");
+    if (!placeOrder) errors.push("The Task 'Place Ingredient Order' is missing.");
+    if (!receiveMsgEvent) errors.push("The Message Event 'Receive Ingredients' is missing.");
+    if (!restock) errors.push("The Task 'Restock Ingredients' is missing.");
+    if (!attachedEvent) errors.push("The Boundary Event 'Shipment Delayed 15 Min' is missing.");
+    if (!informCustomer) errors.push("The Task 'Inform Customer about Delay' is missing.");
+    if (!delayEndEvent) errors.push("The exception path is a dead end! Add an End Event named 'Delay Handled' after 'Inform Customer'.");
 
-    // --- Validate the Full "Out of Stock" Path ---
-    const placeOrder = p.findElementByName("bpmn:task", "Place Ingredient Order");
-    if (!placeOrder) return { success: false, message: "The Task 'Place Ingredient Order' is missing." };
-    const receiveMsgEvent = p.findElementByName("bpmn:intermediateCatchEvent", "Receive Ingredients");
-    if (!receiveMsgEvent) return { success: false, message: "The Message Event 'Receive Ingredients' is missing." };
-    const restock = p.findElementByName("bpmn:task", "Restock Ingredients");
-    if (!restock) return { success: false, message: "The Task 'Restock Ingredients' is missing." };
+    // Phase 3: Check types and placements
+    if (checkStock && prepStationLane && !p.isElementInLane(checkStock, prepStationLane)) {
+        errors.push("'Check Stock' must be in the 'Prep Station'.");
+    }
+    if (splitGateway && prepStationLane && !p.isElementInLane(splitGateway, prepStationLane)) {
+        errors.push("'Stock OK?' gateway must be in the 'Prep Station'.");
+    }
+    if (placeOrder && orderDeskLane && !p.isElementInLane(placeOrder, orderDeskLane)) {
+        errors.push("'Place Ingredient Order' must be in the 'Order Desk'.");
+    }
+    if (receiveMsgEvent && orderDeskLane && !p.isElementInLane(receiveMsgEvent, orderDeskLane)) {
+        errors.push("'Receive Ingredients' must be in the 'Order Desk'.");
+    }
+    if (receiveMsgEvent && !p.getEventDefinition(receiveMsgEvent, 'messageEventDefinition')) {
+        errors.push("'Receive Ingredients' must be a Message Event.");
+    }
+    if (restock && prepStationLane && !p.isElementInLane(restock, prepStationLane)) {
+        errors.push("'Restock Ingredients' must be in the 'Prep Station'.");
+    }
+    if (attachedEvent && restock && p.getAttachedToRef(attachedEvent) !== restock.getAttribute('id')) {
+        errors.push("'Shipment Delayed...' must be attached directly to the 'Restock Ingredients' task.");
+    }
+    if (attachedEvent && !p.getEventDefinition(attachedEvent, 'conditionalEventDefinition')) {
+        errors.push("'Shipment Delayed...' must be a Conditional Boundary Event.");
+    }
+    if (informCustomer && orderDeskLane && !p.isElementInLane(informCustomer, orderDeskLane)) {
+        errors.push("'Inform Customer about Delay' must be in the 'Order Desk'.");
+    }
+    if (delayEndEvent && p.getOutgoingFlows(delayEndEvent).length !== 0) {
+        errors.push("'Delay Handled' (End Event) cannot have an outgoing flow.");
+    }
 
-    const splitTargets = p.getOutgoingFlows(splitGateway).map(p.getTargetOfFlow);
-    if (!splitTargets.includes(placeOrder)) return { success: false, message: "One path from 'Stock OK?' must connect to 'Place Ingredient Order'."};
-    if (!p.isElementInLane(placeOrder, p.getLaneNodeIds("Order Desk"))) return { success: false, message: "'Place Ingredient Order' must be in the 'Order Desk'."};
-    if (p.getOutgoingFlows(placeOrder).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(placeOrder)[0]) !== receiveMsgEvent) return { success: false, message: "'Place Ingredient Order' must connect to 'Receive Ingredients'."};
-    if (p.getOutgoingFlows(receiveMsgEvent).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(receiveMsgEvent)[0]) !== restock) return { success: false, message: "'Receive Ingredients' must connect to 'Restock Ingredients'."};
 
-    // --- CRITICAL: Validate the Merge Gateway ---
-    const stockOkFlow = p.getOutgoingFlows(splitGateway).find(flow => p.getTargetOfFlow(flow) !== placeOrder);
-    if (!stockOkFlow) return { success: false, message: "Could not identify the 'Stock is OK' path from the gateway." };
-    const mergeGateway = p.getTargetOfFlow(stockOkFlow);
-    if (!mergeGateway || !mergeGateway.tagName.includes('exclusiveGateway')) return { success: false, message: "The 'Stock is OK' path must lead to a new Exclusive Gateway to merge the paths."};
+    // Phase 4: Check Sequencing
+    if (takePayment) {
+        if (p.getOutgoingFlows(takePayment).length !== 1) errors.push("'Take Payment' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(takePayment)[0]) !== checkStock) errors.push("The flow from 'Take Payment' must now connect directly to 'Check Stock'.");
+    }
+    if (checkStock) {
+        if (p.getIncomingFlows(checkStock).length !== 1) errors.push("'Check Stock' must have one incoming flow.");
+        if (p.getOutgoingFlows(checkStock).length !== 1) errors.push("'Check Stock' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(checkStock)[0]) !== splitGateway) errors.push("'Check Stock' must connect directly to the 'Stock OK?' gateway.");
+    }
+    if (splitGateway) {
+        if (p.getIncomingFlows(splitGateway).length !== 1) errors.push("'Stock OK?' gateway must have one incoming flow.");
+        if (p.getOutgoingFlows(splitGateway).length !== 2) errors.push("'Stock OK?' gateway must have exactly two outgoing paths.");
+    }
+    
+    // Find the two paths from the split
+    const splitFlows = splitGateway ? p.getOutgoingFlows(splitGateway) : [];
+    const pathA_target = splitFlows.length > 0 ? p.getTargetOfFlow(splitFlows[0]) : null;
+    const pathB_target = splitFlows.length > 1 ? p.getTargetOfFlow(splitFlows[1]) : null;
 
-    const restockOutFlows = p.getOutgoingFlows(restock);
-    if (restockOutFlows.length !== 1 || p.getTargetOfFlow(restockOutFlows[0]) !== mergeGateway) return { success: false, message: "'Restock Ingredients' must also connect to the *same* merging gateway." };
-    if (p.getIncomingFlows(mergeGateway).length !== 2) return { success: false, message: "The merging gateway must have exactly two incoming flows (from 'Stock OK?' and 'Restock')." };
+    const badPathTarget = (pathA_target === placeOrder) ? pathA_target : pathB_target;
+    const goodPathTarget = (badPathTarget === pathA_target) ? pathB_target : pathA_target;
 
-    // --- Validate the Final Connection ---
-    if (p.getOutgoingFlows(mergeGateway).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(mergeGateway)[0]) !== preparePizza) return { success: false, message: "The merging gateway must have one single connection going to 'Prepare Pizza'."};
+    if (badPathTarget !== placeOrder) {
+        errors.push("One path from 'Stock OK?' must connect to 'Place Ingredient Order'.");
+    }
+    
+    // --- Bad Path ---
+    if (placeOrder) {
+        if (p.getIncomingFlows(placeOrder).length !== 1) errors.push("'Place Ingredient Order' must have one incoming flow.");
+        if (p.getOutgoingFlows(placeOrder).length !== 1) errors.push("'Place Ingredient Order' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(placeOrder)[0]) !== receiveMsgEvent) errors.push("'Place Ingredient Order' must connect to 'Receive Ingredients'.");
+    }
+    if (receiveMsgEvent) {
+        if (p.getIncomingFlows(receiveMsgEvent).length !== 1) errors.push("'Receive Ingredients' must have one incoming flow.");
+        if (p.getOutgoingFlows(receiveMsgEvent).length !== 1) errors.push("'Receive Ingredients' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(receiveMsgEvent)[0]) !== restock) errors.push("'Receive Ingredients' must connect to 'Restock Ingredients'.");
+    }
+    
+    // --- Merge Logic ---
+    let mergeGateway = null;
+    if (goodPathTarget && goodPathTarget.tagName && goodPathTarget.tagName.includes('exclusiveGateway')) {
+        mergeGateway = goodPathTarget;
+    } else {
+        errors.push("The 'Stock is OK' path must lead to a new Exclusive Gateway to merge the paths.");
+    }
 
-    // --- Validate the Exception Path AND ITS TERMINATION ---
-    const attachedEvent = p.findElementByName("bpmn:boundaryEvent", "Shipment Delayed 15 Min");
-    if (!attachedEvent) return { success: false, message: "The Boundary Event 'Shipment Delayed 15 Min' is missing."};
-    if (p.getAttachedToRef(attachedEvent) !== restock.getAttribute('id')) return { success: false, message: "'Shipment Delayed...' must be attached to 'Restock Ingredients'."};
+    if (restock) {
+        if (p.getIncomingFlows(restock).length !== 1) errors.push("'Restock Ingredients' must have one incoming flow.");
+        if (p.getOutgoingFlows(restock).length !== 1) errors.push("'Restock Ingredients' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(restock)[0]) !== mergeGateway) errors.push("'Restock Ingredients' must also connect to the *same* merging gateway.");
+    }
 
-    const informCustomer = p.findElementByName("bpmn:task", "Inform Customer about Delay");
-    if (!informCustomer) return { success: false, message: "The Task 'Inform Customer about Delay' is missing."};
-    if (p.getOutgoingFlows(attachedEvent).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(attachedEvent)[0]) !== informCustomer) return { success: false, message: "The delay event must connect to 'Inform Customer'."};
-    if (!p.findMessageFlow(informCustomer, p.findElementByName("bpmn:participant", "Customer"))) return { success: false, message: "A message must be sent from 'Inform Customer' to the 'Customer' pool."};
+    if (mergeGateway) {
+        if (p.getIncomingFlows(mergeGateway).length !== 2) errors.push("The merging gateway must have exactly two incoming flows (one from 'Stock OK?' and one from 'Restock').");
+        if (p.getOutgoingFlows(mergeGateway).length !== 1) errors.push("The merging gateway must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(mergeGateway)[0]) !== preparePizza) errors.push("The merging gateway must have one single connection going to 'Prepare Pizza'.");
+    }
+    
+    // --- Exception Path Termination ---
+    if (attachedEvent) {
+        if (p.getOutgoingFlows(attachedEvent).length !== 1) errors.push("'Shipment Delayed...' event must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(attachedEvent)[0]) !== informCustomer) errors.push("The 'Shipment Delayed...' event must connect to 'Inform Customer'.");
+    }
+    if (informCustomer) {
+        if (!p.findMessageFlow(informCustomer, customerPool)) {
+            errors.push("A message must be sent from 'Inform Customer' to the 'Customer' pool.");
+        }
+        if (p.getIncomingFlows(informCustomer).length !== 1) errors.push("'Inform Customer' must have one incoming flow.");
+        if (p.getOutgoingFlows(informCustomer).length !== 1) errors.push("'Inform Customer' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(informCustomer)[0]) !== delayEndEvent) errors.push("'Inform Customer about Delay' must connect directly to the 'Delay Handled' End Event.");
+    }
+    if (delayEndEvent && p.getIncomingFlows(delayEndEvent).length !== 1) {
+        errors.push("'Delay Handled' End Event must have one incoming flow.");
+    }
 
-    const delayEndEvent = p.findElementByName("bpmn:endEvent", "Delay Handled");
-    if (!delayEndEvent) return { success: false, message: "The exception path is a dead end! Add an End Event named 'Delay Handled' after 'Inform Customer'."};
-    if (p.getOutgoingFlows(informCustomer).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(informCustomer)[0]) !== delayEndEvent) {
-        return { success: false, message: "'Inform Customer about Delay' must have a single sequence flow connecting directly to the 'Delay Handled' End Event."};
+
+    // Final check
+    if (errors.length > 0) {
+        const errorList = "<ul><li>" + errors.join("</li><li>") + "</li></ul>";
+        return { success: false, message: `Your diagram has ${errors.length} error(s):<br>${errorList}` };
     }
 
     return { success: true, message: "Perfect! You've correctly modeled the branching, merging, and exception termination for the supply chain." };
 }
+
 function validateLevel4(xml) {
     const p = parseXML(xml);
-    const packageGateway = p.findElementByName("bpmn:parallelGateway", "Package");
-    if (!packageGateway) return { success: false, message: "The 'Package' gateway from Level 2 is missing."};
-    if (p.getLaneNodeIds("Delivery") === null) return { success: false, message: "A 'Delivery' lane is required." };
-    const decisionGateway = p.findElementByName("bpmn:exclusiveGateway", "For Delivery?");
-    if (!decisionGateway) return { success: false, message: "An Exclusive Gateway named 'For Delivery?' is missing." };
-    const deliverPizza = p.findElementByName("bpmn:task", "Deliver Pizza");
-    const handToCustomer = p.findElementByName("bpmn:task", "Hand to Customer");
-    const endComplete = p.findElementByName("bpmn:endEvent", "Order Complete");
-    const endDelivered = p.findElementByName("bpmn:endEvent", "Order Delivered");
-    if (!deliverPizza || !handToCustomer || !endComplete || !endDelivered) return { success: false, message: "One or more elements for the delivery process is missing." };
-    if (!p.isElementInLane(deliverPizza, p.getLaneNodeIds("Delivery"))) return { success: false, message: "'Deliver Pizza' must be in the 'Delivery' lane." };
-    if (!p.isElementInLane(handToCustomer, p.getLaneNodeIds("Order Desk"))) return { success: false, message: "'Hand to Customer' must be in the 'Order Desk' lane." };
-    if (p.getOutgoingFlows(packageGateway).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(packageGateway)[0]) !== decisionGateway) return { success: false, message: "The 'Package' gateway must connect directly to 'For Delivery?'." };
-    const decisionTargets = p.getOutgoingFlows(decisionGateway).map(p.getTargetOfFlow);
-    if (decisionTargets.length !== 2 || !decisionTargets.includes(deliverPizza) || !decisionTargets.includes(handToCustomer)) return { success: false, message: "'For Delivery?' must have two paths: one to 'Deliver Pizza' and one to 'Hand to Customer'." };
-    if (p.getOutgoingFlows(deliverPizza).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(deliverPizza)[0]) !== endDelivered) return { success: false, message: "'Deliver Pizza' must end at 'Order Delivered'." };
-    if (p.getOutgoingFlows(handToCustomer).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(handToCustomer)[0]) !== endComplete) return { success: false, message: "'Hand to Customer' must end at 'Order Complete'." };
+    const errors = [];
+    const get = (type, name) => p.findElementByName(type, name) || null;
+
+    // Phase 1: Find elements
+    const packageGateway = get("bpmn:parallelGateway", "Package");
+    const deliveryLane = p.getLaneNodeIds("Delivery");
+    const decisionGateway = get("bpmn:exclusiveGateway", "For Delivery?");
+    const deliverPizza = get("bpmn:task", "Deliver Pizza");
+    const handToCustomer = get("bpmn:task", "Hand to Customer");
+    const endComplete = get("bpmn:endEvent", "Order Complete");
+    const endDelivered = get("bpmn:endEvent", "Order Delivered");
+    const orderDeskLane = p.getLaneNodeIds("Order Desk");
+
+    // Phase 2: Check existence
+    if (!packageGateway) errors.push("The 'Package' parallel gateway from Level 2 is missing.");
+    if (deliveryLane === null) errors.push("A 'Delivery' lane is required.");
+    if (!decisionGateway) errors.push("An Exclusive Gateway named 'For Delivery?' is missing.");
+    if (!deliverPizza) errors.push("The task 'Deliver Pizza' is missing.");
+    if (!handToCustomer) errors.push("The task 'Hand to Customer' is missing.");
+    if (!endComplete) errors.push("The End Event 'Order Complete' is missing.");
+    if (!endDelivered) errors.push("The End Event 'Order Delivered' is missing.");
+
+    // Phase 3: Check placement
+    if (deliverPizza && deliveryLane && !p.isElementInLane(deliverPizza, deliveryLane)) {
+        errors.push("'Deliver Pizza' must be in the 'Delivery' lane.");
+    }
+    if (handToCustomer && orderDeskLane && !p.isElementInLane(handToCustomer, orderDeskLane)) {
+        errors.push("'Hand to Customer' must be in the 'Order Desk' lane.");
+    }
+    if (decisionGateway && orderDeskLane && !p.isElementInLane(decisionGateway, orderDeskLane)) {
+        errors.push("'For Delivery?' gateway must be in the 'Order Desk' lane.");
+    }
+
+    // Phase 4: Check sequencing
+    if (packageGateway) {
+        if (p.getIncomingFlows(packageGateway).length !== 2) errors.push("'Package' gateway should be merging two flows (from Level 2).");
+        if (p.getOutgoingFlows(packageGateway).length !== 1) errors.push("'Package' gateway must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(packageGateway)[0]) !== decisionGateway) errors.push("The 'Package' gateway must connect directly to 'For Delivery?'.");
+    }
+    if (decisionGateway) {
+        if (p.getIncomingFlows(decisionGateway).length !== 1) errors.push("'For Delivery?' gateway must have one incoming flow.");
+        const decisionTargets = p.getOutgoingFlows(decisionGateway).map(p.getTargetOfFlow);
+        if (decisionTargets.length !== 2 || !decisionTargets.includes(deliverPizza) || !decisionTargets.includes(handToCustomer)) {
+            errors.push("'For Delivery?' must have two paths: one to 'Deliver Pizza' and one to 'Hand to Customer'.");
+        }
+    }
+    if (deliverPizza) {
+        if (p.getIncomingFlows(deliverPizza).length !== 1) errors.push("'Deliver Pizza' must have one incoming flow.");
+        if (p.getOutgoingFlows(deliverPizza).length !== 1) errors.push("'Deliver Pizza' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(deliverPizza)[0]) !== endDelivered) errors.push("'Deliver Pizza' must end at 'Order Delivered'.");
+    }
+    if (handToCustomer) {
+        if (p.getIncomingFlows(handToCustomer).length !== 1) errors.push("'Hand to Customer' must have one incoming flow.");
+        if (p.getOutgoingFlows(handToCustomer).length !== 1) errors.push("'Hand to Customer' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(handToCustomer)[0]) !== endComplete) errors.push("'Hand to Customer' must end at 'Order Complete'.");
+    }
+    if (endComplete) {
+        if (p.getIncomingFlows(endComplete).length !== 1) errors.push("'Order Complete' must have one incoming flow.");
+        if (p.getOutgoingFlows(endComplete).length !== 0) errors.push("'Order Complete' (End Event) cannot have outgoing flows.");
+    }
+    if (endDelivered) {
+        if (p.getIncomingFlows(endDelivered).length !== 1) errors.push("'Order Delivered' must have one incoming flow.");
+        if (p.getOutgoingFlows(endDelivered).length !== 0) errors.push("'Order Delivered' (End Event) cannot have outgoing flows.");
+    }
+
+    // Final check
+    if (errors.length > 0) {
+        const errorList = "<ul><li>" + errors.join("</li><li>") + "</li></ul>";
+        return { success: false, message: `Your diagram has ${errors.length} error(s):<br>${errorList}` };
+    }
+    
     return { success: true, message: "Excellent! The delivery process is clearly defined." };
 }
+
 function validateLevel5(xml) {
     const p = parseXML(xml);
-    const deliverPizza = p.findElementByName("bpmn:task", "Deliver Pizza");
-    if(!deliverPizza) return { success: false, message: "The 'Deliver Pizza' task is missing."};
-    const customerPool = p.findElementByName("bpmn:participant", "Customer");
-    if(!customerPool) return { success: false, message: "The 'Customer' pool is required."};
-    const eventGateway = p.findElementByName("bpmn:eventBasedGateway", "Confirm or Complaint?");
-    if (!eventGateway) return { success: false, message: "An Event-Based Gateway 'Confirm or Complaint?' is missing." };
-    const timerEvent = p.findElementByName("bpmn:intermediateCatchEvent", "30 Mins Pass");
-    const messageEvent = p.findElementByName("bpmn:intermediateCatchEvent", "Complaint Received");
-    if (!timerEvent || !messageEvent) return { success: false, message: "Both the Timer ('30 Mins Pass') and Message ('Complaint Received') events are required." };
-    const handleComplaint = p.findElementByName("bpmn:task", "Handle Complaint");
-    const escalationEvent = p.findElementByName("bpmn:boundaryEvent", "Escalate to Manager");
-    const managerReview = p.findElementByName("bpmn:task", "Manager Review");
-    const endResolved = p.findElementByName("bpmn:endEvent", "Complaint Resolved");
-    const endDelivered = p.findElementByName("bpmn:endEvent", "Order Delivered");
-    if (!handleComplaint || !escalationEvent || !managerReview || !endResolved || !endDelivered) return { success: false, message: "One or more elements for the complaint/escalation path is missing."};
-    if (!p.findMessageFlow(customerPool, messageEvent)) return { success: false, message: "A message flow from 'Customer' to 'Complaint Received' is required."};
-    if (p.getOutgoingFlows(deliverPizza).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(deliverPizza)[0]) !== eventGateway) return { success: false, message: "'Deliver Pizza' must connect directly to the 'Confirm or Complaint?' gateway."};
-    const gatewayTargets = p.getOutgoingFlows(eventGateway).map(p.getTargetOfFlow);
-    if (gatewayTargets.length !== 2 || !gatewayTargets.includes(timerEvent) || !gatewayTargets.includes(messageEvent)) return { success: false, message: "The event gateway must connect to both the timer and the message event."};
-    if (p.getOutgoingFlows(timerEvent).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(timerEvent)[0]) !== endDelivered) return { success: false, message: "'30 Mins Pass' must connect to 'Order Delivered'."};
-    if (p.getOutgoingFlows(messageEvent).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(messageEvent)[0]) !== handleComplaint) return { success: false, message: "The complaint message must trigger the 'Handle Complaint' task."};
-    if (p.getAttachedToRef(escalationEvent) !== handleComplaint.getAttribute('id')) return { success: false, message: "'Escalate to Manager' must be attached to 'Handle Complaint'."};
-    if (p.getOutgoingFlows(escalationEvent).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(escalationEvent)[0]) !== managerReview) return { success: false, message: "The escalation event must connect to 'Manager Review'."};
-    if (p.getOutgoingFlows(managerReview).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(managerReview)[0]) !== endResolved) return { success: false, message: "'Manager Review' must connect to 'Complaint Resolved'."};
-    if (p.getOutgoingFlows(handleComplaint).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(handleComplaint)[0]) !== endResolved) return { success: false, message: "'Handle Complaint' must also have a path to 'Complaint Resolved' for non-escalated cases."};
+    const errors = [];
+    const get = (type, name) => p.findElementByName(type, name) || null;
+
+    // Phase 1: Find elements
+    const deliverPizza = get("bpmn:task", "Deliver Pizza");
+    const customerPool = get("bpmn:participant", "Customer");
+    const eventGateway = get("bpmn:eventBasedGateway", "Confirm or Complaint?");
+    const timerEvent = get("bpmn:intermediateCatchEvent", "30 Mins Pass");
+    const messageEvent = get("bpmn:intermediateCatchEvent", "Complaint Received");
+    const handleComplaint = get("bpmn:task", "Handle Complaint");
+    const escalationEvent = get("bpmn:boundaryEvent", "Escalate to Manager");
+    const managerReview = get("bpmn:task", "Manager Review");
+    const endResolved = get("bpmn:endEvent", "Complaint Resolved");
+    const endDelivered = get("bpmn:endEvent", "Order Delivered");
+    const orderDeskLane = p.getLaneNodeIds("Order Desk");
+
+    // Phase 2: Check existence
+    if (!deliverPizza) errors.push("The 'Deliver Pizza' task is missing.");
+    if (!customerPool) errors.push("The 'Customer' pool is required.");
+    if (!eventGateway) errors.push("An Event-Based Gateway 'Confirm or Complaint?' is missing.");
+    if (!timerEvent) errors.push("The Timer Event '30 Mins Pass' is missing.");
+    if (!messageEvent) errors.push("The Message Event 'Complaint Received' is missing.");
+    if (!handleComplaint) errors.push("The task 'Handle Complaint' is missing.");
+    if (!escalationEvent) errors.push("The Escalation Boundary Event 'Escalate to Manager' is missing.");
+    if (!managerReview) errors.push("The task 'Manager Review' is missing.");
+    if (!endResolved) errors.push("The End Event 'Complaint Resolved' is missing.");
+    if (!endDelivered) errors.push("The End Event 'Order Delivered' (from Level 4) is missing.");
+
+    // Phase 3: Check types and placements
+    if (customerPool && p.isParticipantCollapsed(customerPool.getAttribute('name'))) {
+        errors.push("The 'Customer' pool should be expanded (not collapsed) to send messages from.");
+    }
+    if (messageEvent && !p.findMessageFlow(customerPool, messageEvent)) {
+        errors.push("A message flow from the 'Customer' pool to the 'Complaint Received' event is required.");
+    }
+    if (timerEvent && !p.getEventDefinition(timerEvent, 'timerEventDefinition')) {
+        errors.push("'30 Mins Pass' must be a Timer Event.");
+    }
+    if (messageEvent && !p.getEventDefinition(messageEvent, 'messageEventDefinition')) {
+        errors.push("'Complaint Received' must be a Message Event.");
+    }
+    if (escalationEvent && !p.getEventDefinition(escalationEvent, 'escalationEventDefinition')) {
+        errors.push("'Escalate to Manager' must be an Escalation Boundary Event.");
+    }
+    if (escalationEvent && handleComplaint && p.getAttachedToRef(escalationEvent) !== handleComplaint.getAttribute('id')) {
+        errors.push("'Escalate to Manager' must be attached to 'Handle Complaint'.");
+    }
+    if (handleComplaint && orderDeskLane && !p.isElementInLane(handleComplaint, orderDeskLane)) {
+         errors.push("'Handle Complaint' must be in the 'Order Desk' lane.");
+    }
+    if (managerReview && orderDeskLane && !p.isElementInLane(managerReview, orderDeskLane)) {
+         errors.push("'Manager Review' must be in the 'Order Desk' lane.");
+    }
+    
+    // Phase 4: Check sequencing
+    if (deliverPizza) {
+        if (p.getIncomingFlows(deliverPizza).length !== 1) errors.push("'Deliver Pizza' must have one incoming flow.");
+        if (p.getOutgoingFlows(deliverPizza).length !== 1) errors.push("'Deliver Pizza' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(deliverPizza)[0]) !== eventGateway) errors.push("'Deliver Pizza' must connect directly to the 'Confirm or Complaint?' gateway.");
+    }
+    if (eventGateway) {
+        if (p.getIncomingFlows(eventGateway).length !== 1) errors.push("'Confirm or Complaint?' gateway must have one incoming flow.");
+        const gatewayTargets = p.getOutgoingFlows(eventGateway).map(p.getTargetOfFlow);
+        if (gatewayTargets.length !== 2 || !gatewayTargets.includes(timerEvent) || !gatewayTargets.includes(messageEvent)) {
+            errors.push("The event gateway must connect to *both* the timer event and the message event.");
+        }
+    }
+    if (timerEvent) {
+        if (p.getIncomingFlows(timerEvent).length !== 1) errors.push("'30 Mins Pass' must have one incoming flow.");
+        if (p.getOutgoingFlows(timerEvent).length !== 1) errors.push("'30 Mins Pass' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(timerEvent)[0]) !== endDelivered) errors.push("'30 Mins Pass' must connect to 'Order Delivered'.");
+    }
+    if (messageEvent) {
+        if (p.getIncomingFlows(messageEvent).length !== 1) errors.push("'Complaint Received' must have one incoming flow.");
+        if (p.getOutgoingFlows(messageEvent).length !== 1) errors.push("'Complaint Received' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(messageEvent)[0]) !== handleComplaint) errors.push("The 'Complaint Received' message must trigger the 'Handle Complaint' task.");
+    }
+    if (escalationEvent) {
+        if (p.getOutgoingFlows(escalationEvent).length !== 1) errors.push("The escalation event must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(escalationEvent)[0]) !== managerReview) errors.push("The escalation event must connect to 'Manager Review'.");
+    }
+    
+    // Check both termination paths for the complaint
+    if (managerReview) {
+        if (p.getIncomingFlows(managerReview).length !== 1) errors.push("'Manager Review' must have one incoming flow.");
+        if (p.getOutgoingFlows(managerReview).length !== 1) errors.push("'Manager Review' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(managerReview)[0]) !== endResolved) errors.push("'Manager Review' must connect to 'Complaint Resolved'.");
+    }
+    if (handleComplaint) {
+        if (p.getIncomingFlows(handleComplaint).length !== 1) errors.push("'Handle Complaint' must have one incoming flow.");
+        if (p.getOutgoingFlows(handleComplaint).length !== 1) errors.push("'Handle Complaint' must have one outgoing flow.");
+        else if (p.getTargetOfFlow(p.getOutgoingFlows(handleComplaint)[0]) !== endResolved) errors.push("'Handle Complaint' must *also* have a path to 'Complaint Resolved' for non-escalated cases.");
+    }
+    if (endResolved) {
+        if (p.getIncomingFlows(endResolved).length !== 2) errors.push("'Complaint Resolved' must merge the two paths (from 'Handle Complaint' and 'Manager Review'). A gateway is not needed, but both flows must target the end event.");
+        if (p.getOutgoingFlows(endResolved).length !== 0) errors.push("'Complaint Resolved' (End Event) cannot have outgoing flows.");
+    }
+
+    // Final check
+    if (errors.length > 0) {
+        const errorList = "<ul><li>" + errors.join("</li><li>") + "</li></ul>";
+        return { success: false, message: `Your diagram has ${errors.length} error(s):<br>${errorList}` };
+    }
+    
     return { success: true, message: "Congratulations! You've completed the Pizza Adventure!" };
 }
 
