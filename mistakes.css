@@ -1,0 +1,131 @@
+:root {
+	--mistake-red: #dc2626;
+	--mistake-red-bg: rgba(220, 38, 38, 0.05);
+	--mistake-green: #16a34a;
+	--mistake-green-bg: rgba(22, 163, 74, 0.05);
+}
+
+/* Container for the whole "mistakes" block */
+.mistakes-container {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	width: 100%;
+}
+
+/* Horizontal tab navigation for the mistakes */
+.mistake-nav {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	border-bottom: 1px solid rgba(7, 18, 40, 0.06);
+	padding-bottom: 12px;
+}
+
+.mistake-tab-btn {
+	padding: 8px 12px;
+	border-radius: 10px;
+	border: 1px solid rgba(7, 18, 40, 0.08);
+	background: transparent;
+	cursor: pointer;
+	font-weight: 700;
+	color: var(--muted-2);
+	font-size: 13px;
+	transition: all 0.2s ease;
+}
+
+.mistake-tab-btn:hover {
+	background: rgba(2, 6, 23, 0.03);
+}
+
+.mistake-tab-btn.active {
+	background: var(--mistake-red-bg);
+	color: var(--mistake-red);
+	border-color: rgba(220, 38, 38, 0.1);
+	box-shadow: inset 0 0 0 1px rgba(220, 38, 38, 0.04);
+}
+
+/* The main content panel for a single mistake */
+.mistake-panel {
+	display: none; /* Hidden by default */
+	flex-direction: column;
+	gap: 16px;
+	width: 100%;
+}
+
+.mistake-panel.active {
+	display: flex; /* Shown by JS */
+}
+
+.mistake-title {
+	font-size: 20px;
+	font-weight: 800;
+	color: var(--mistake-red);
+	margin: 0;
+}
+
+.mistake-description {
+	font-size: 15px;
+	color: var(--muted);
+	line-height: 1.5;
+	margin: 0;
+}
+
+/* "Bad vs Good" example images */
+.mistake-example-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+}
+
+.mistake-example {
+	border-radius: 8px;
+	padding: 16px;
+	background: #fff;
+	border: 1px solid rgba(7, 18, 40, 0.04);
+}
+
+.mistake-example.bad {
+	background: var(--mistake-red-bg);
+	border-color: rgba(220, 38, 38, 0.1);
+}
+
+.mistake-example.good {
+	background: var(--mistake-green-bg);
+	border-color: rgba(22, 163, 74, 0.1);
+}
+
+.mistake-example h4 {
+	margin: 0 0 12px 0;
+	font-size: 16px;
+}
+
+.mistake-example.bad h4 {
+	color: var(--mistake-red);
+}
+
+.mistake-example.good h4 {
+	color: var(--mistake-green);
+}
+
+.mistake-example img {
+	width: 100%;
+	height: auto;
+	border-radius: 6px;
+	border: 1px solid rgba(7, 18, 40, 0.1);
+	background: #fff; /* Add white background for transparent PNGs */
+}
+
+.mistake-example p {
+	font-size: 13px;
+	color: var(--muted);
+	line-height: 1.4;
+	margin: 8px 0 0 0;
+}
+
+/* Responsive for grid */
+@media (max-width: 768px) {
+	.mistake-example-grid {
+		grid-template-columns: 1fr;
+	}
+}

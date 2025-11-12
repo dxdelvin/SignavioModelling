@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>         
   <title>Events (Concept & Types)</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="mistakes.css">
   <link rel="icon" type="image/svg" href="img/icon.svg"/>
 </head>
 <body>
@@ -25,8 +26,8 @@
         <button id="menu-usage" aria-pressed="false">Usage</button>
         <!-- New Challenge Button -->
         <button id="menu-challenge" aria-pressed="false">Learn It <span class="new-badge">NEW</span></button>
-        <button id="menu-mistakes" disabled aria-pressed="false" aria-disabled="true" tabindex="-1">Common Mistakes  <span class="badge">Inprogress</span></button>
-      </nav>
+        <button id="menu-mistakes" aria-pressed="false">Common Mistakes<span class="new-badge">New</span></button>     
+ </nav>
     </aside>
 
     <!-- MAIN Content Section -->
@@ -197,15 +198,186 @@
       </div>
 
       <!-- 5. COMMON MISTAKES Block -->
-      <div class="content" id="mistakesBlock" style="display:none;">
-        <div style="flex:1">
-          <div style="font-weight:800;margin-bottom:8px">Common Mistakes — Things to Avoid</div>
-          <!-- (Your existing mistakes content would go here) -->
-          <div class="mistakes-list" aria-label="Common mistakes list">
-            <p>...(Content In Progress)...</p>
+<div class="content" id="mistakesBlock" style="display:none; flex-direction:column;">
+  <div class="mistakes-container">
+    
+    <div class="mistake-nav" id="mistakeNav">
+      <button class="mistake-tab-btn active" data-mistake="mistake-1">1. Naming</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-2">2. Wrong Trigger</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-3">3. Timer Logic</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-4">4. Message Flow</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-5">5. Dead Ends</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-6">6. Multi-Process</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-7">7. Clutter</button>
+    </div>
+
+    <div class="mistake-panel active" id="mistake-1" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 1: Wrong Naming (Active vs. Passive)</h3>
+      <p class="mistake-description">Events are triggers or results, so they must have <strong>passive names</strong> (e.g., "Order Received"). Tasks are actions, so they get <strong>active names</strong> (e.g., "Receive Order"). This is the most common mistake.</p>
+      
+      <div class="mistake-example-grid">
+        <div class="mistake-example bad">
+          <h4>🔴 BAD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/badevent1.png')">🔍 Zoom</button>
+            <img src="img/mistakes/badevent1.png" alt="Bad Naming Example">
           </div>
+          <p>Using "Process the order" (an action) for a Start Event is incorrect.</p>
+        </div>
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/goodevent1.png')">🔍 Zoom</button>
+            <img src="img/mistakes/goodevent1.png" alt="Good Naming Example">
+          </div>
+          <p>"Supplier Confirmation Received" is a perfect passive name for a Start Event for The *task* is "Validate Supplier Confirmation".</p>
         </div>
       </div>
+    </div>
+
+    <div class="mistake-panel" id="mistake-2" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 2: Wrong Trigger Type</h3>
+      <p class="mistake-description">Don't use a Timer event if the process is *reacting* to an external action. A <strong>Timer</strong> (clock icon) *forces* the process to start at a set time. A <strong>Message</strong> (envelope icon) *waits* for an external trigger to arrive.</p>
+      
+      <div class="mistake-example-grid">
+        <div class="mistake-example bad">
+          <h4>🔴 BAD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/start_timer.png')">🔍 Zoom</button>
+            <img src="img/start_timer.png" alt="Bad: Using Timer for a reactive process">
+          </div>
+          <p>This is wrong if you are *waiting* for a confirmation. This model will *force* a sync at 2:00 AM, even if no confirmation was sent.</p>
+        </div>
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/start_message.png')">🔍 Zoom</button>
+            <img src="img/start_message.png" alt="Good: Using Message for a reactive process">
+          </div>
+          <p>This is correct. The process will only start *when* the "Supplier Confirmation" actually arrives, whether it's at 2:00 AM or 3:15 PM.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mistake-panel" id="mistake-3" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 3: Confusing Timer Logic (Start vs. Delay vs. Deadline)</h3>
+      <p class="mistake-description">All timers are not the same. Using the wrong one breaks the logic.</p>
+      <ul>
+        <li><strong>Start Timer (single border):</strong> Only goes at the *beginning*. Triggers the process *at* a specific time (e.g., "Every Monday 9 AM").</li>
+        <li><strong>Intermediate Timer (double border):</strong> Goes *during* the process. Creates a *delay* (e.g., "Wait for 24 Hours").</li>
+        <li><strong>Attached Timer (on task boundary):</strong> A "deadline" that triggers an escape path if the task isn't done in time.</li>
+      </ul>
+      <div class="mistake-example-grid">
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/intermediate_timer.png')">🔍 Zoom</button>
+            <img src="img/intermediate_timer.png" alt="Bad: Using an Intermediate Timer as a start">
+          </div>
+          <p>You use an Intermediate Timer (double border) to delay a process. It has 1 incoming flow and 1 outgoing flow, so the process waits for it.</p>
+        </div>
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/goodevent3.png')">🔍 Zoom</button>
+            <img src="img/mistakes/goodevent3.png" alt="Good: Correct Timer usage">
+          </div>
+          <p>This model correctly uses a <strong>Start Timer</strong> ("Every Monday at 02:00") and an <strong>Attached Timer</strong> ("Wait 24 Hours") as a deadline on the task.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mistake-panel" id="mistake-4" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 4: Using Sequence Flow Between Pools</h3>
+      <p class="mistake-description">You <strong>cannot</strong> use a solid-line <strong>Sequence Flow</strong> to connect two different Pools (e.g., "Customer" and "Supplier"). Sequence Flows only work *inside* a single Pool. To communicate between pools, you <strong>must</strong> use a dashed-line <strong>Message Flow</strong>.</p>
+      
+      <div class="mistake-example-grid">
+      
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/end_message.png')">🔍 Zoom</button>
+            <img src="img/end_message.png" alt="Good: Message flow between events">
+          </div>
+          <p>This is correct. A dashed Message Flow connects a *Throwing* event (dark icon) in one pool to a *Catching* event (light icon) in the other.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mistake-panel" id="mistake-5" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 5: Process "Dead Ends"</h3>
+      <p class="mistake-description">Every single path in your process must finish at an <strong>End Event</strong> (thick single border). A common mistake is leaving a gateway path (like a "No" branch) hanging. This creates a "dead end," and the process will get stuck.</p>
+      
+       <div class="mistake-example-grid">
+        <div class="mistake-example bad">
+          <h4>🔴 BAD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/badevent5.png')">🔍 Zoom</button>
+            <img src="img/mistakes/badevent5.png" alt="Bad: If a path was missing an end">
+          </div>
+          <p>Every Branch here doesnt have a End Event and so the Process is Incompleted</p>
+        </div>
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/goodevent5.png')">🔍 Zoom</button>
+            <img src="img/mistakes/goodevent5.png" alt="Good: All paths merge or end">
+          </div>
+          <p>This is correct. And it make sures the process is finished.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mistake-panel" id="mistake-6" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 6: Multiple Unrelated Processes in One Diagram</h3>
+      <p class="mistake-description">A single BPMN diagram should represent *one* end-to-end process. It should have a clear beginning and end. Modeling two completely separate processes (e.g., "Hiring" and "Invoicing") in the same file just because they are in the same department is a critical error. This makes the diagram unreadable and un-executable.</p>
+      
+       <div class="mistake-example-grid">
+        <div class="mistake-example bad">
+          <h4>🔴 BAD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/badevent6.png')">🔍 Zoom</button>
+            <img src="img/mistakes/badevent6.png" alt="Bad: Two separate processes">
+          </div>
+          <p>In This diagram, 3 Process are mentioned and creates confuses what is this BPMN about?</p>
+        </div>
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/goodevent6.gif')">🔍 Zoom</button>
+            <img src="img/mistakes/goodevent6.gif" alt="Good: One clear, linear process">
+          </div>
+          <p>This is a perfect, simple process. It makes sures one process is properly defined</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mistake-panel" id="mistake-7" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 7: Clutter & Overusing Intermediate Events</h3>
+      <p class="mistake-description">Events should mark *significant* milestones, delays, or triggers. A common mistake is to add a plain Intermediate Event (double circle) after *every single task* to say "Task Done". This adds zero value and creates massive visual clutter. Let the Sequence Flow arrow show that the task is done.</p>
+      
+       <div class="mistake-example-grid">
+        <div class="mistake-example bad">
+          <h4>🔴 BAD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/badevent7.png')">🔍 Zoom</button>
+            <img src="img/mistakes/badevent7.png" alt="Bad: Unnecessary 'milestone' event">
+          </div>
+          <p>Sequence Flow already means Task is Completed so its not neccessary to show it as intermediate event.</p>
+        </div>
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/goodevent7.png')">🔍 Zoom</button>
+            <img src="img/mistakes/goodevent7.png" alt="Good: Clean flow, no clutter">
+          </div>
+          <p>This flow is clean. There is no "Draft Done" event or "Review Done" event. The arrow itself implies the process moves to the next step.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 
     </section>
   </div>
@@ -512,6 +684,47 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') closeZoom(); 
 showMenu('concept');
 selectEvent('start');
 selectType('Plain');
+
+
+
+const mistakeNav = document.getElementById('mistakeNav');
+  const mistakePanels = document.querySelectorAll('[data-mistake-panel]');
+
+  mistakeNav.addEventListener('click', (e) => {
+    // Check if a tab button was clicked
+    if (!e.target.classList.contains('mistake-tab-btn')) return;
+
+    const targetMistake = e.target.dataset.mistake;
+
+    // 1. Update Tab Buttons
+    mistakeNav.querySelectorAll('.mistake-tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.mistake === targetMistake);
+    });
+
+    // 2. Show/Hide Content Panels
+    mistakePanels.forEach(panel => {
+      panel.classList.toggle('active', panel.id === targetMistake);
+    });
+  });
+
+  // (Optional but recommended) Add logic for the "Fix It" buttons
+  // This is a simple version. You can expand this.
+  document.querySelectorAll('.mistake-fix-box .btn').forEach(btn => {
+    if (btn.innerText.toLowerCase().includes('fix it')) {
+      btn.addEventListener('click', (e) => {
+        const fixBox = e.target.closest('.mistake-fix-box');
+        const modeler = fixBox.querySelector('.mistake-modeler-container');
+        if (modeler) {
+          modeler.classList.toggle('active');
+          if (modeler.classList.contains('active')) {
+            e.target.innerText = "Hide Modeler";
+          } else {
+            e.target.innerText = "Fix It!";
+          }
+        }
+      });
+    }
+  });
 
 </script>
 </body>

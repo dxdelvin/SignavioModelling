@@ -6,6 +6,7 @@
   <title>Gateways (XOR • AND • OR)</title>
   <link rel="icon" type="image/svg" href="img/icon.svg"/>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="mistakes.css">
  
 </head>
 <body>
@@ -25,8 +26,7 @@
         <button id="menu-usage" aria-pressed="false">Usage</button>
         <!-- New Buttons -->
         <button id="menu-challenge" aria-pressed="false"> Learn It<span class="new-badge">NEW</span></button>
-        <button id="menu-mistakes" disabled aria-pressed="false" aria-disabled="true" tabindex="-1">Common Mistakes  <span class="badge">Inprogress</span></button>
-      </nav>
+        <button id="menu-mistakes" aria-pressed="false">Common Mistakes <span class="new-badge">NEW</span></button>      </nav>
     </aside>
 
     <!-- MAIN -->
@@ -184,15 +184,133 @@
         </div>
       </div>
 
-      <!-- 3. NEW COMMON MISTAKES BLOCK (Locked) -->
-      <div class="content" id="mistakesBlock" style="display:none;">
-        <h2>Common Mistakes</h2>
-        <div class="task-box">
-          <div class="definition">
-            <p>This section is currently in progress. Check back later for updates!</p>
+      <!-- 3. COMMON MISTAKES BLOCK -->
+      <div class="content" id="mistakesBlock" style=" flex-direction:column;">
+  <div class="mistakes-container">
+    
+    <div class="mistake-nav" id="mistakeNav">
+      <button class="mistake-tab-btn active" data-mistake="mistake-1">1. Missing Labels</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-2">2. Wrong Gateway</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-3">3. Unbalanced</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-4">4. OR vs. XOR</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-5">5. Merge to Task</button>
+    </div>
+
+    <div class="mistake-panel active" id="mistake-1" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 1: Missing Gateway Labels</h3>
+      <p class="mistake-description">This is the most critical error. An Exclusive (XOR) or Inclusive (OR) gateway is a *question*. The outgoing paths are the *answers*. If you don't add a question to the gateway (e.g., "Supplier Confirmed?") and labels to the paths (e.g., "yes" / "no"), the diagram is broken and unreadable.</p>
+      
+      <div class="mistake-example-grid">
+        <div class="mistake-example bad">
+          <h4>🔴 BAD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/badgate1.png')">🔍 Zoom</button>
+            <img src="img/mistakes/badgate1.png" alt="XOR Gateway">
           </div>
+          <p>Imagine this diagram *without* the "Data Available?", "yes", and "no" labels. It would be impossible to understand the logic.</p>
+        </div>
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/goodgate1.png')">🔍 Zoom</button>
+            <img src="img/mistakes/goodgate1.png" alt="XOR Gateway with labels">
+          </div>
+          <p>This is perfect. The gateway asks a clear question, and the paths provide clear "yes" / "no" answers.</p>
         </div>
       </div>
+    </div>
+
+    <div class="mistake-panel" id="mistake-2" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 2: Using the Wrong Gateway (AND vs. XOR)</h3>
+      <p class="mistake-description">Using the wrong gateway type breaks the process logic. Don't use a Parallel (AND `+`) gateway if you mean to make an exclusive choice. Don't use an Exclusive (XOR `X`) gateway if you want tasks to run in parallel.</p>
+      
+      <div class="mistake-example-grid">
+        
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/gateways_and.png')">🔍 Zoom</button>
+            <img src="img/gateways_and.png" alt="AND Gateway">
+          </div>
+          <p>This is correct for parallel work. The AND `+` gateway *splits* the flow, forcing "Perform Quality Inspection" AND "Packaging & Labeling" to *both* run.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mistake-panel" id="mistake-3" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 3: Unbalanced Gateways</h3>
+      <p class="mistake-description">A critical rule: **You must merge paths with the same gateway type you used to split them.** If you split with an AND `+` gateway, you MUST merge with an AND `+` gateway. If you split with XOR `X`, you merge with XOR `X`. Mixing them (e.g., splitting with AND, merging with XOR) can cause deadlocks or unwanted duplicate process flows.</p>
+      
+      <div class="mistake-example-grid">
+        <div class="mistake-example bad">
+          <h4>🔴 BAD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/badgate2.png')">🔍 Zoom</button>
+            <img src="img/mistakes/badgate2.png" alt="AND Gateway Split">
+          </div>
+          <p>It is a *major error* if the second `X` gateway (the merge) was an `+` gateway instead. The process would stop there and wont move ahead.</p>
+        </div>
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/GatewaySolution1.png')">🔍 Zoom</button>
+            <img src="img/GatewaySolution1.png" alt="Balanced XOR Gateway">
+          </div>
+          <p>This is a perfectly balanced process. The flow splits with an XOR `X` gateway and merges with another XOR `X` gateway.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mistake-panel" id="mistake-4" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 4: Confusing Inclusive (OR) and Exclusive (XOR)</h3>
+      <p class="mistake-description">`XOR (X)` means: **One, and only one, path is possible.** (e.g., "yes" or "no"). `OR (O)` means: **One *or more* paths are possible.** (e.g., "Notify Transport" and/or "Notify Warehouse"). Using XOR when multiple paths might be valid is a logic error.</p>
+      
+      <div class="mistake-example-grid">
+        <div class="mistake-example bad">
+          <h4>🔴 BAD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/badgate4.png')">🔍 Zoom</button>
+            <img src="img/mistakes/badgate4.png" alt="OR Gateway">
+          </div>
+          <p>It would be wrong to use an XOR `X` gateway here. That would mean if an order was *both* "Urgent" and "Large Volume," the process could only pick *one* path, which is bad.</p>
+        </div>
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/gateways_or.png')">🔍 Zoom</button>
+            <img src="img/gateways_or.png" alt="OR Gateway">
+          </div>
+          <p>This is correct. The OR `O` gateway allows the process to send *just one* notification, or *both*, depending on the conditions. This is flexible.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mistake-panel" id="mistake-5" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 5: Merging Paths Directly Into a Task</h3>
+      <p class="mistake-description">A Task is not a Gateway! You cannot have two (or more) sequence flows going *into* a single task. This is a modeling error. You *must* use a gateway to merge the paths *before* the flow continues to the next task.</p>
+      
+      <div class="mistake-example-grid">
+        <div class="mistake-example bad">
+          <h4>🔴 BAD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/badgate3.png')">🔍 Zoom</button>
+            <img src="img/mistakes/badgate3.png" alt="Good Gateway Merge">
+          </div>
+          <p>Both Tasks Should Not Join Directly to a Task, A logic Should be Implemented with gateways</p>
+        </div>
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/goodgate3.png')">🔍 Zoom</button>
+            <img src="img/mistakes/goodgate3.png" alt="Good Gateway Merge">
+          </div>
+          <p>This is correct. The Two Tasks Uses Here XOR gateway which means it waits for any one branch to be finished and move forward.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 
       <!-- zoom overlay -->
       <div class="zoom-overlay" id="zoomOverlay" role="dialog" aria-modal="true" aria-hidden="true">
@@ -607,6 +725,33 @@ updateExplanation();
 document.addEventListener('DOMContentLoaded', function() {
     if(usageImg) usageImg.src = 'img/gateways_xor.png';
 });
+
+
+
+
+    menuMistakes.addEventListener('click', ()=> setActiveMenu(menuMistakes));
+
+    const mistakeNav = document.getElementById('mistakeNav');
+    const mistakePanels = document.querySelectorAll('[data-mistake-panel]');
+
+    if (mistakeNav) {
+      mistakeNav.addEventListener('click', (e) => {
+        // Check if a tab button was clicked
+        if (!e.target.classList.contains('mistake-tab-btn')) return;
+
+        const targetMistake = e.target.dataset.mistake;
+
+        // 1. Update Tab Buttons
+        mistakeNav.querySelectorAll('.mistake-tab-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.mistake === targetMistake);
+        });
+
+        // 2. Show/Hide Content Panels
+        mistakePanels.forEach(panel => {
+          panel.classList.toggle('active', panel.id === targetMistake);
+        });
+      });
+    }
 </script>
 </body>
 </html>

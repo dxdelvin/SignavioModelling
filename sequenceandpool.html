@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Pools & Sequence Flows</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="mistakes.css">
   <link rel="icon" type="image/svg" href="img/icon.svg"/>
 </head>
 <body>
@@ -24,8 +25,7 @@
         <button id="menu-naming" aria-pressed="false">Naming Conventions</button>
         <button id="menu-flows" aria-pressed="false">Sequence Flows</button>
         <button id="menu-challenge" aria-pressed="false">Learn It <span class="new-badge">NEW</span></button>
-        <button id="menu-mistakes" disabled aria-pressed="false" aria-disabled="true" tabindex="-1">Common Mistakes <span class="badge">Inprogress</span></button>
-      </nav>
+        <button id="menu-mistakes" aria-pressed="false">Common Mistakes <span class="new-badge">NEW</span></button>      </nav>
     </aside>
 
     <!-- MAIN -->
@@ -182,16 +182,87 @@
             </div>
           </div>
         </div>
+
         
-        <!-- Common Mistakes Section (Locked) -->
-        <div id="mistakesSection" class="hidden">
-          <h2>Common Mistakes</h2>
-          <div class="task-box">
-            <div class="definition">
-              <p>This section is currently in progress. Check back later for updates!</p>
-            </div>
+        <!-- Common Mistakes Section -->
+        <div class="content" id="mistakesSection" style="flex-direction:column;">
+  <div class="mistakes-container">
+    
+    <div class="mistake-nav" id="mistakeNav">
+      <button class="mistake-tab-btn active" data-mistake="mistake-1">1. External vs. Internal</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-2">2. Departments as Pools</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-3">3. No Lanes</button>
+    </div>
+
+
+
+    <div class="mistake-panel active" id="mistake-1" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 1: External Participant as a Lane</h3>
+      <p class="mistake-description">A **Lane** is for internal roles/departments inside your organization's **Pool**. An external participant (like "Customer" or "Supplier") is *not* part of your internal process. They must be modeled as a separate, external **Pool**.</p>
+      
+      <div class="mistake-example-grid">
+        <div class="mistake-example bad">
+          <h4>🔴 BAD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/badflow1.png')">🔍 Zoom</button>
+            <img src="img/mistakes/badflow1.png" alt="Bad: Customer as a Lane">
           </div>
+          <p>This would be wrong if "Customer" was a second *Lane* inside the Pool. A customer is not an Part of Organisation.</p>
         </div>
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/goodflow1.png')">🔍 Zoom</button>
+            <img src="img/mistakes/goodflow1.png" alt="Good: Customer as a Pool">
+          </div>
+          <p>This is correct. (the organization) and "Customer" is a separate, external Pool. They communicate with a dashed Message Flow.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mistake-panel" id="mistake-2" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 2: Departments Modeled as Separate Pools</h3>
+      <p class="mistake-description">A common error is to create a Pool for "Sales," a Pool for "Finance," and a Pool for "Logistics" when they are all part of *one* company's process. The entire company should be **One Pool**, and "Sales," "Finance," and "Logistics" should be **Lanes** within it.</p>
+      
+      <div class="mistake-example-grid">
+        <div class="mistake-example bad">
+          <h4>🔴 BAD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/badflow2.png')">🔍 Zoom</button>
+            <img src="img/mistakes/badflow2.png" alt="Bad: Multiple pools for one company">
+          </div>
+          <p>Imagine if "ACMEGA" was one pool and "Sales" and "Finance" were *also* separate pools. This is wrong. They are all part of ACMEGA.</p>
+        </div>
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/poolandlane.png')">🔍 Zoom</button>
+            <img src="img/poolandlane.png" alt="Good: One pool, multiple lanes">
+          </div>
+          <p>This is correct. "ACMEGA" is the Pool (the participant), and "Sales" and "Finance" are Lanes (the roles/departments *within* the participant).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mistake-panel" id="mistake-3" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 3: No Lanes in a Multi-Role Process</h3>
+      <p class="mistake-description">If your process involves hand-offs between different departments (e.g., Sales -> Finance -> Warehouse), modeling it in one giant Pool with no Lanes is very confusing. You lose all information about *who* does *what*. Lanes are essential for showing responsibility.</p>
+      
+      <div class="mistake-example-grid">
+       
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/PoolSolution2.png')">🔍 Zoom</button>
+            <img src="img/PoolSolution2.png" alt="Good: Clear lanes">
+          </div>
+          <p>This is excellent. You can clearly see which tasks are done by "Operations," "ERP," and "WMS" because they are in separate, clearly labeled Lanes.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
       </div>
     </section>
   </div>
@@ -399,6 +470,30 @@ const challengeData = {
     challengeBlock.classList.add('hidden');
     mistakesSection.classList.add('hidden');
     setActiveMenu(menuPools);
+
+    menuMistakes.addEventListener('click', () => setActiveMenu(menuMistakes));
+
+    const mistakeNav = document.getElementById('mistakeNav');
+    const mistakePanels = document.querySelectorAll('[data-mistake-panel]');
+
+    if (mistakeNav) {
+      mistakeNav.addEventListener('click', (e) => {
+        // Check if a tab button was clicked
+        if (!e.target.classList.contains('mistake-tab-btn')) return;
+
+        const targetMistake = e.target.dataset.mistake;
+
+        // 1. Update Tab Buttons
+        mistakeNav.querySelectorAll('.mistake-tab-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.mistake === targetMistake);
+        });
+
+        // 2. Show/Hide Content Panels
+        mistakePanels.forEach(panel => {
+          panel.classList.toggle('active', panel.id === targetMistake);
+        });
+      });
+    }
   </script>
 </body>
 </html>

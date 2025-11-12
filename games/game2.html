@@ -3,395 +3,472 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Game 2: The Process Adventure</title>
-  
-  <link rel="stylesheet" href="../styles.css">
-    <link rel="icon" type="image/svg" href="../img/icon.svg"/>
+  <title>The Process Adventure - Advanced</title>
+  <link rel="icon" type="image/svg" href="https://cd-public.s3.eu.central-1.amazonaws.com/img/icon.svg"/>
 
   <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.0.0/dist/assets/diagram-js.css">
   <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.0.0/dist/assets/bpmn-js.css">
   <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.0.0/dist/assets/bpmn-font/css/bpmn.css">
   <script src="https://unpkg.com/bpmn-js@17.0.0/dist/bpmn-modeler.development.js"></script>
+  <link rel="stylesheet" href="../games.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-  <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
-  
-  <style>
-    /* Basic styling for the modeler */
-    #canvas {
-      height: 600px;
-      width: 100%;
-      position: relative;
-      background: white;
-    }
 
-    body {
-      padding: 20px;
-      background: var(--bg);
-    }
-    .game-container {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .adventure-box {
-      background: var(--card);
-      border-radius: var(--round);
-      padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: var(--shadow-1);
-      border-left: 4px solid var(--bsh-accent);
-    }
-    .adventure-box h3 {
-      margin-top: 0;
-      color: var(--bsh-accent);
-    }
-    .adventure-box p {
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.5;
-    }
-    #canvas {
-      width: 100%;
-      height: 600px;
-      border-radius: var(--round);
-      border: 1px solid rgba(7,18,40,0.06);
-      background: #fff;
-    }
-    #check-work-btn {
-      width: 100%;
-      padding: 16px;
-      font-size: 16px;
-      margin-top: 16px;
-    }
-    
-    /* Styles for the feedback modal */
-    #feedback-modal {
-      /* Uses zoom-overlay class from styles.css */
-      display: none; /* Hidden by default */
-      align-items: center;
-      justify-content: center;
-    }
-    #feedback-modal.active {
-      display: flex; /* Shown by JS */
-    }
-    .feedback-card {
-      /* Re-using updates-modal style from styles.css */
-      background: var(--card);
-      border-radius: var(--round);
-      padding: 24px 28px;
-      box-shadow: var(--shadow-1);
-      width: 90%;
-      max-width: 500px;
-      text-align: center;
-    }
-    #modal-title {
-      margin-top: 0;
-    }
-  </style>
 </head>
 <body>
 
-  <div class="game-container">
-    
-    <a href="game-start-page.html" title="Back to Games Hub" style="text-decoration:none; display:inline-block; margin-bottom: 20px;">
-        <div class="logo" style="width:44px;height:44px;border-radius:8px;font-size:16px">←</div>
-    </a>
-  
-    <div class="adventure-box">
-      <h3>Level <span id="level-num">1</span>: <span id="level-title">The Grand Opening!</span></h3>
-      <p id="story-text">
-        Welcome, boss! You've opened 'BSH Pizza'. Before we hire anyone, let's set up the main departments. We'll need a 'Front Counter' for taking orders and a 'Kitchen' for making them.
-        <br><strong>Goal:</strong> Create one Pool named "BSH Pizza" and add two Lanes named "Front Counter" and "Kitchen".
-      </p>
+  <div class="container app-shell">
+    <header class="app-header" role="banner">
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div class="logo" aria-hidden>           <a href="../game-start-page.html" title="Back to Home" style="text-decoration:none">
+          <div class="logo" style="width:44px;height:44px;border-radius:8px;font-size:16px">←</div>
+        </a>
+ </div>
+        <div class="title-wrap">
+          <h1 class="app-title">Level <span id="level-num">1</span> — <span id="level-title">The Foundation!</span></h1>
+          <div class="app-sub" id="level-badge">Beginner Difficulty</div>
+        </div>
+      </div>
+      <div class="header-actions" role="toolbar" aria-label="Page Controls">
+        <button id="story-toggle" class="btn ghost" title="Toggle instructions panel" aria-pressed="false">Collapse</button>
+        <button id="check-work-btn" class="btn" title="Validate current level">Check My Work</button>
+      </div>
+    </header>
+
+    <main class="main-split" id="main-split" role="main">
+      <aside class="panel story-panel" id="storyPanel" aria-labelledby="storyHeading">
+        <div class="story-header">
+          <h3 id="storyHeading" style="margin:0; font-size:16px;">Story & Instructions</h3>
+        </div>
+        <div id="story-text" class="story-content" tabindex="0" aria-live="polite"></div>
+        <div class="panel-footer">
+          <div class="accent-pill" id="progress-pill">Level 1 / 5</div>
+        </div>
+      </aside>
+
+      <section class="panel canvas-panel" aria-label="Design canvas region">
+        <div id="canvas" role="region"></div>
+        <div class="canvas-footer">
+            <p class="muted" style="margin:0;">Tip: Use the palette on the left to build the diagram.</p>
+            <div class="header-actions">
+                <button id="reset-btn" class="btn ghost">Reset</button>
+                <button id="zoom-fit-btn" class="btn ghost">Fit</button>
+                <input type="file" id="import-input" accept=".bpmn, .xml" style="display: none;">
+                <button id="import-btn" class="btn ghost">Import</button>
+                <button id="export-btn" class="btn ghost">Export</button>
+            </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="feedback-modal" class="overlay" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="feedback-card" role="document">
+        <h2 id="modal-title">Success!</h2>
+        <p id="modal-message">Great job!</p>
+        <div class="feedback-actions">
+          <button id="modal-action-btn" class="btn">Continue</button>
+        </div>
+      </div>
     </div>
-
-    <div id="canvas"></div>
-
-    <button id="check-work-btn" class="btn">Check My Work</button>
-
   </div>
 
-  <div id="feedback-modal" class="zoom-overlay">
-     <div class="feedback-card">
-       <h2 id="modal-title">Success!</h2>
-       <p id="modal-message">Great job!</p>
-       <button id="close-modal-btn" class="btn">Continue</button>
-     </div>
-  </div>
+<script>
+let modeler;
+let currentLevel = 1;
+const totalLevels = 5;
 
-
-  <script>
-    // --- Global variable for the modeler ---
-    let modeler;
-
-    // Default empty BPMN diagram (for the very start)
-    const emptyBpmn = `<?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
-  <bpmn:process id="Process_1" isExecutable="false">
-  </bpmn:process>
-  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">
-    </bpmndi:BPMNPlane>
-  </bpmndi:BPMNDiagram>
+const emptyBpmn = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_1"><bpmn:participant id="Participant_1" name="" processRef="Process_1" /></bpmn:collaboration>
+  <bpmn:process id="Process_1" isExecutable="false" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1"><bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1" /></bpmndi:BPMNDiagram>
 </bpmn:definitions>`;
 
-    // --- Game State & Level Data ---
-    let currentLevel = 1;
+(function injectRuntimeCss() {
+  const css = `
+    .djs-palette { z-index: 60 !important; }
+    .bjs-container, .djs-container { overflow: visible !important; }
+  `;
+  const style = document.createElement('style');
+  style.appendChild(document.createTextNode(css));
+  document.head.appendChild(style);
+})();
 
-    // --- Helper function to parse XML and get elements ---
-    function parseXML(xmlString) {
+function parseXML(xmlString) {
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(xmlString, "text/xml");
-      
-      // Helper to find an element by tag and name attribute
-      const findElementByName = (tagName, name) => {
-        const elements = xmlDoc.getElementsByTagName(tagName);
-        return Array.from(elements).find(el => el.getAttribute('name') === name);
-      };
-      
-      // Helper to get all node IDs within a specific lane
+      const allFlows = Array.from(xmlDoc.getElementsByTagName("bpmn:sequenceFlow"));
+      const findElementByName = (tagName, name) => Array.from(xmlDoc.getElementsByTagName(tagName)).find(el => el.getAttribute('name') === name);
+      const findElementById = (id) => xmlDoc.querySelector(`[id="${id}"]`);
+      const getLaneByName = (laneName) => Array.from(xmlDoc.getElementsByTagName('bpmn:lane')).find(el => el.getAttribute('name') === laneName);
+      const getIncomingFlows = (element) => element ? allFlows.filter(flow => flow.getAttribute("targetRef") === element.getAttribute("id")) : [];
+      const getOutgoingFlows = (element) => element ? allFlows.filter(flow => flow.getAttribute("sourceRef") === element.getAttribute("id")) : [];
+      const getTargetOfFlow = (flow) => flow ? findElementById(flow.getAttribute('targetRef')) : null;
+      const getSourceOfFlow = (flow) => flow ? findElementById(flow.getAttribute('sourceRef')) : null;
       const getLaneNodeIds = (laneName) => {
-        const lane = findElementByName('bpmn:lane', laneName);
-        if (!lane) return [];
-        const flowNodes = lane.getElementsByTagName('bpmn:flowNodeRef');
-        return Array.from(flowNodes).map(node => node.textContent);
+          const lane = getLaneByName(laneName);
+          return lane ? Array.from(lane.querySelectorAll('bpmn\\:flowNodeRef, flowNodeRef')).map(node => node.textContent) : null;
       };
-      
-      // Helper to check if a specific element (by ID) is in a list of IDs
-      const isElementInLane = (element, laneNodeIds) => {
-          return element && laneNodeIds.includes(element.getAttribute('id'));
+      const getSubLaneNodeIds = (parentLaneName, subLaneName) => {
+          const parentLane = getLaneByName(parentLaneName);
+          if (!parentLane) return null;
+          const childLaneSet = parentLane.querySelector('bpmn\\:childLaneSet, childLaneSet');
+          if (!childLaneSet) return null;
+          const subLane = Array.from(childLaneSet.querySelectorAll('bpmn\\:lane, lane')).find(l => l.getAttribute('name') === subLaneName);
+          return subLane ? Array.from(subLane.querySelectorAll('bpmn\\:flowNodeRef, flowNodeRef')).map(node => node.textContent) : null;
       };
+      const isElementInLane = (element, laneNodeIds) => element && laneNodeIds && laneNodeIds.includes(element.getAttribute('id'));
+      const getEventDefinition = (element, defType) => element ? element.querySelector(`bpmn\\:${defType}, ${defType}`) : null;
+      const getAttachedToRef = (element) => element ? element.getAttribute('attachedToRef') : null;
+      const findMessageFlow = (source, target) => {
+          if (!source || !target) return false;
+          return Array.from(xmlDoc.getElementsByTagName("bpmn:messageFlow")).some(flow =>
+              flow.getAttribute("sourceRef") === source.getAttribute("id") && flow.getAttribute("targetRef") === target.getAttribute("id"));
+      };
+      const isParticipantCollapsed = (participantName) => {
+          const participant = findElementByName('bpmn:participant', participantName);
+          if (!participant) {
+              return null;
+          }
+          return !participant.hasAttribute('processRef');
+      };
+      return { findElementByName, getLaneByName, getSubLaneNodeIds, getLaneNodeIds, isElementInLane, getIncomingFlows, getOutgoingFlows, getTargetOfFlow, getSourceOfFlow, getEventDefinition, getAttachedToRef, findMessageFlow, isParticipantCollapsed };
+}
 
-      return { xmlDoc, findElementByName, getLaneNodeIds, isElementInLane };
+// --- Validation Functions (Improved Logic) ---
+function validateLevel1(xml) {
+    const p = parseXML(xml);
+    if (!p.findElementByName("bpmn:participant", "BSH Pizzeria")) return { success: false, message: "The main Pool must be named 'BSH Pizzeria'." };
+    if (p.getLaneNodeIds("Order Desk") === null) return { success: false, message: "The 'Order Desk' lane is missing." };
+    if (!p.getLaneByName("Kitchen")) return { success: false, message: "The 'Kitchen' lane is missing." };
+    if (p.getSubLaneNodeIds("Kitchen", "Prep Station") === null) return { success: false, message: "The 'Prep Station' sub-lane is missing. Make sure it is inside the 'Kitchen' lane." };
+    if (p.getSubLaneNodeIds("Kitchen", "Oven Station") === null) return { success: false, message: "The 'Oven Station' sub-lane is missing. Make sure it is inside the 'Kitchen' lane." };
+    const start = p.findElementByName("bpmn:startEvent", "Order Received");
+    if (!start) return { success: false, message: "The Start Event named 'Order Received' is missing."};
+    const task1 = p.findElementByName("bpmn:task", "Take Payment");
+    if (!task1) return { success: false, message: "The Task named 'Take Payment' is missing."};
+    const task2 = p.findElementByName("bpmn:task", "Prepare Pizza");
+    if (!task2) return { success: false, message: "The Task named 'Prepare Pizza' is missing."};
+    const condEvent = p.findElementByName("bpmn:intermediateCatchEvent", "Quality Check Passed");
+    if (!condEvent) return { success: false, message: "The Intermediate Event named 'Quality Check Passed' is missing."};
+    const task3 = p.findElementByName("bpmn:task", "Bake Pizza");
+    if (!task3) return { success: false, message: "The Task named 'Bake Pizza' is missing."};
+    const end = p.findElementByName("bpmn:endEvent", "Pizza Ready");
+    if (!end) return { success: false, message: "The End Event named 'Pizza Ready' is missing."};
+    if (!p.getEventDefinition(condEvent, 'conditionalEventDefinition')) return { success: false, message: "'Quality Check Passed' must be a Conditional Event type." };
+    if(!p.isElementInLane(start, p.getLaneNodeIds("Order Desk"))) return { success: false, message: "'Order Received' must be in 'Order Desk'."};
+    if(!p.isElementInLane(task1, p.getLaneNodeIds("Order Desk"))) return { success: false, message: "'Take Payment' must be in 'Order Desk'."};
+    if(!p.isElementInLane(task2, p.getSubLaneNodeIds("Kitchen", "Prep Station"))) return { success: false, message: "'Prepare Pizza' must be in 'Prep Station'."};
+    if(!p.isElementInLane(condEvent, p.getSubLaneNodeIds("Kitchen", "Prep Station"))) return { success: false, message: "'Quality Check Passed' must be in 'Prep Station'."};
+    if(!p.isElementInLane(task3, p.getSubLaneNodeIds("Kitchen", "Oven Station"))) return { success: false, message: "'Bake Pizza' must be in 'Oven Station'."};
+    if(!p.isElementInLane(end, p.getSubLaneNodeIds("Kitchen", "Oven Station"))) return { success: false, message: "'Pizza Ready' must be in 'Oven Station'."};
+    if (p.getOutgoingFlows(start).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(start)[0]) !== task1) return { success: false, message: "'Order Received' must connect directly to 'Take Payment'." };
+    if (p.getOutgoingFlows(task1).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(task1)[0]) !== task2) return { success: false, message: "'Take Payment' must connect directly to 'Prepare Pizza'." };
+    if (p.getOutgoingFlows(task2).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(task2)[0]) !== condEvent) return { success: false, message: "'Prepare Pizza' must connect directly to 'Quality Check Passed'." };
+    if (p.getOutgoingFlows(condEvent).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(condEvent)[0]) !== task3) return { success: false, message: "'Quality Check Passed' must connect directly to 'Bake Pizza'." };
+    if (p.getOutgoingFlows(task3).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(task3)[0]) !== end) return { success: false, message: "'Bake Pizza' must connect directly to 'Pizza Ready'." };
+    return { success: true, message: "Excellent! The foundational process is perfectly mapped." };
+}
+function validateLevel2(xml) {
+    const p = parseXML(xml);
+    if (!p.findElementByName("bpmn:participant", "BSH Pizzeria")) return { success: false, message: "The 'BSH Pizzeria' Pool is missing." };
+    const bakePizza = p.findElementByName("bpmn:task", "Bake Pizza");
+    if (!bakePizza) return { success: false, message: "The 'Bake Pizza' task from Level 1 is missing." };
+    const parallelSplit = p.findElementByName("bpmn:parallelGateway", "Prep");
+    if (!parallelSplit) return { success: false, message: "The Parallel Gateway named 'Prep' is missing." };
+    const timerEvent = p.findElementByName("bpmn:intermediateCatchEvent", "Allow Cooling (30s)");
+    if (!timerEvent) return { success: false, message: "The Timer Event named 'Allow Cooling (30s)' is missing." };
+    const boxPizza = p.findElementByName("bpmn:task", "Box Pizza");
+    if (!boxPizza) return { success: false, message: "The Task named 'Box Pizza' is missing." };
+    const getDrinks = p.findElementByName("bpmn:task", "Get Drinks");
+    if (!getDrinks) return { success: false, message: "The Task named 'Get Drinks' is missing." };
+    const parallelJoin = p.findElementByName("bpmn:parallelGateway", "Package");
+    if (!parallelJoin) return { success: false, message: "The merging Parallel Gateway named 'Package' is missing." };
+    const endEvent = p.findElementByName("bpmn:endEvent", "Pizza Ready");
+    if (!endEvent) return { success: false, message: "The 'Pizza Ready' End Event is missing."};
+    if (!p.getEventDefinition(timerEvent, 'timerEventDefinition')) return { success: false, message: "'Allow Cooling (30s)' must be a Timer Event." };
+    if (!p.isElementInLane(boxPizza, p.getSubLaneNodeIds("Kitchen", "Oven Station"))) return { success: false, message: "'Box Pizza' must be in the 'Oven Station'." };
+    if (!p.isElementInLane(getDrinks, p.getLaneNodeIds("Order Desk"))) return { success: false, message: "'Get Drinks' must be in the 'Order Desk'." };
+    if (p.getOutgoingFlows(bakePizza).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(bakePizza)[0]) !== parallelSplit) return { success: false, message: "'Bake Pizza' must connect directly to the 'Prep' gateway." };
+    const splitOutTargets = p.getOutgoingFlows(parallelSplit).map(p.getTargetOfFlow);
+    if (splitOutTargets.length !== 2 || !splitOutTargets.includes(timerEvent) || !splitOutTargets.includes(getDrinks)) return { success: false, message: "The 'Prep' gateway must split into two paths: one to the timer, one to 'Get Drinks'." };
+    if (p.getOutgoingFlows(timerEvent).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(timerEvent)[0]) !== boxPizza) return { success: false, message: "The timer must connect directly to 'Box Pizza'." };
+    if (p.getOutgoingFlows(boxPizza).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(boxPizza)[0]) !== parallelJoin) return { success: false, message: "'Box Pizza' must connect directly to the 'Package' gateway." };
+    if (p.getOutgoingFlows(getDrinks).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(getDrinks)[0]) !== parallelJoin) return { success: false, message: "'Get Drinks' must connect directly to the 'Package' gateway." };
+    if (p.getOutgoingFlows(parallelJoin).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(parallelJoin)[0]) !== endEvent) return { success: false, message: "The 'Package' gateway must connect directly to the 'Pizza Ready' End Event." };
+    return { success: true, message: "Fantastic! You've flawlessly modeled parallel processing." };
+}
+function validateLevel3(xml) {
+    const p = parseXML(xml);
+
+    // --- Prerequisite Elements ---
+    if (p.isParticipantCollapsed("BSH Supplier") !== true) return { success: false, message: "A collapsed 'BSH Supplier' Pool is required. Use the wrench icon to toggle its state." };
+    if (!p.findElementByName("bpmn:participant", "Customer")) return { success: false, message: "The 'Customer' Pool is missing." };
+    const takePayment = p.findElementByName("bpmn:task", "Take Payment");
+    const preparePizza = p.findElementByName("bpmn:task", "Prepare Pizza");
+    if (!takePayment || !preparePizza) return { success: false, message: "Core tasks from previous levels are missing." };
+
+    // --- Validate Rerouting and Splitting ---
+    const checkStock = p.findElementByName("bpmn:task", "Check Stock");
+    if (!checkStock) return { success: false, message: "The Task 'Check Stock' is missing." };
+    if (!p.isElementInLane(checkStock, p.getSubLaneNodeIds("Kitchen", "Prep Station"))) return { success: false, message: "'Check Stock' must be in the 'Prep Station'." };
+    if (p.getOutgoingFlows(takePayment).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(takePayment)[0]) !== checkStock) return { success: false, message: "The flow from 'Take Payment' must now connect directly to 'Check Stock'." };
+
+    const splitGateway = p.findElementByName("bpmn:exclusiveGateway", "Stock OK?");
+    if (!splitGateway) return { success: false, message: "The splitting Exclusive Gateway 'Stock OK?' is missing." };
+    if (p.getOutgoingFlows(checkStock).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(checkStock)[0]) !== splitGateway) return { success: false, message: "'Check Stock' must connect directly to the 'Stock OK?' gateway." };
+    if (p.getOutgoingFlows(splitGateway).length !== 2) return { success: false, message: "'Stock OK?' gateway must have exactly two outgoing paths." };
+
+    // --- Validate the Full "Out of Stock" Path ---
+    const placeOrder = p.findElementByName("bpmn:task", "Place Ingredient Order");
+    if (!placeOrder) return { success: false, message: "The Task 'Place Ingredient Order' is missing." };
+    const receiveMsgEvent = p.findElementByName("bpmn:intermediateCatchEvent", "Receive Ingredients");
+    if (!receiveMsgEvent) return { success: false, message: "The Message Event 'Receive Ingredients' is missing." };
+    const restock = p.findElementByName("bpmn:task", "Restock Ingredients");
+    if (!restock) return { success: false, message: "The Task 'Restock Ingredients' is missing." };
+
+    const splitTargets = p.getOutgoingFlows(splitGateway).map(p.getTargetOfFlow);
+    if (!splitTargets.includes(placeOrder)) return { success: false, message: "One path from 'Stock OK?' must connect to 'Place Ingredient Order'."};
+    if (!p.isElementInLane(placeOrder, p.getLaneNodeIds("Order Desk"))) return { success: false, message: "'Place Ingredient Order' must be in the 'Order Desk'."};
+    if (p.getOutgoingFlows(placeOrder).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(placeOrder)[0]) !== receiveMsgEvent) return { success: false, message: "'Place Ingredient Order' must connect to 'Receive Ingredients'."};
+    if (p.getOutgoingFlows(receiveMsgEvent).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(receiveMsgEvent)[0]) !== restock) return { success: false, message: "'Receive Ingredients' must connect to 'Restock Ingredients'."};
+
+    // --- CRITICAL: Validate the Merge Gateway ---
+    const stockOkFlow = p.getOutgoingFlows(splitGateway).find(flow => p.getTargetOfFlow(flow) !== placeOrder);
+    if (!stockOkFlow) return { success: false, message: "Could not identify the 'Stock is OK' path from the gateway." };
+    const mergeGateway = p.getTargetOfFlow(stockOkFlow);
+    if (!mergeGateway || !mergeGateway.tagName.includes('exclusiveGateway')) return { success: false, message: "The 'Stock is OK' path must lead to a new Exclusive Gateway to merge the paths."};
+
+    const restockOutFlows = p.getOutgoingFlows(restock);
+    if (restockOutFlows.length !== 1 || p.getTargetOfFlow(restockOutFlows[0]) !== mergeGateway) return { success: false, message: "'Restock Ingredients' must also connect to the *same* merging gateway." };
+    if (p.getIncomingFlows(mergeGateway).length !== 2) return { success: false, message: "The merging gateway must have exactly two incoming flows (from 'Stock OK?' and 'Restock')." };
+
+    // --- Validate the Final Connection ---
+    if (p.getOutgoingFlows(mergeGateway).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(mergeGateway)[0]) !== preparePizza) return { success: false, message: "The merging gateway must have one single connection going to 'Prepare Pizza'."};
+
+    // --- Validate the Exception Path AND ITS TERMINATION ---
+    const attachedEvent = p.findElementByName("bpmn:boundaryEvent", "Shipment Delayed 15 Min");
+    if (!attachedEvent) return { success: false, message: "The Boundary Event 'Shipment Delayed 15 Min' is missing."};
+    if (p.getAttachedToRef(attachedEvent) !== restock.getAttribute('id')) return { success: false, message: "'Shipment Delayed...' must be attached to 'Restock Ingredients'."};
+
+    const informCustomer = p.findElementByName("bpmn:task", "Inform Customer about Delay");
+    if (!informCustomer) return { success: false, message: "The Task 'Inform Customer about Delay' is missing."};
+    if (p.getOutgoingFlows(attachedEvent).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(attachedEvent)[0]) !== informCustomer) return { success: false, message: "The delay event must connect to 'Inform Customer'."};
+    if (!p.findMessageFlow(informCustomer, p.findElementByName("bpmn:participant", "Customer"))) return { success: false, message: "A message must be sent from 'Inform Customer' to the 'Customer' pool."};
+
+    const delayEndEvent = p.findElementByName("bpmn:endEvent", "Delay Handled");
+    if (!delayEndEvent) return { success: false, message: "The exception path is a dead end! Add an End Event named 'Delay Handled' after 'Inform Customer'."};
+    if (p.getOutgoingFlows(informCustomer).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(informCustomer)[0]) !== delayEndEvent) {
+        return { success: false, message: "'Inform Customer about Delay' must have a single sequence flow connecting directly to the 'Delay Handled' End Event."};
     }
 
+    return { success: true, message: "Perfect! You've correctly modeled the branching, merging, and exception termination for the supply chain." };
+}
+function validateLevel4(xml) {
+    const p = parseXML(xml);
+    const packageGateway = p.findElementByName("bpmn:parallelGateway", "Package");
+    if (!packageGateway) return { success: false, message: "The 'Package' gateway from Level 2 is missing."};
+    if (p.getLaneNodeIds("Delivery") === null) return { success: false, message: "A 'Delivery' lane is required." };
+    const decisionGateway = p.findElementByName("bpmn:exclusiveGateway", "For Delivery?");
+    if (!decisionGateway) return { success: false, message: "An Exclusive Gateway named 'For Delivery?' is missing." };
+    const deliverPizza = p.findElementByName("bpmn:task", "Deliver Pizza");
+    const handToCustomer = p.findElementByName("bpmn:task", "Hand to Customer");
+    const endComplete = p.findElementByName("bpmn:endEvent", "Order Complete");
+    const endDelivered = p.findElementByName("bpmn:endEvent", "Order Delivered");
+    if (!deliverPizza || !handToCustomer || !endComplete || !endDelivered) return { success: false, message: "One or more elements for the delivery process is missing." };
+    if (!p.isElementInLane(deliverPizza, p.getLaneNodeIds("Delivery"))) return { success: false, message: "'Deliver Pizza' must be in the 'Delivery' lane." };
+    if (!p.isElementInLane(handToCustomer, p.getLaneNodeIds("Order Desk"))) return { success: false, message: "'Hand to Customer' must be in the 'Order Desk' lane." };
+    if (p.getOutgoingFlows(packageGateway).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(packageGateway)[0]) !== decisionGateway) return { success: false, message: "The 'Package' gateway must connect directly to 'For Delivery?'." };
+    const decisionTargets = p.getOutgoingFlows(decisionGateway).map(p.getTargetOfFlow);
+    if (decisionTargets.length !== 2 || !decisionTargets.includes(deliverPizza) || !decisionTargets.includes(handToCustomer)) return { success: false, message: "'For Delivery?' must have two paths: one to 'Deliver Pizza' and one to 'Hand to Customer'." };
+    if (p.getOutgoingFlows(deliverPizza).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(deliverPizza)[0]) !== endDelivered) return { success: false, message: "'Deliver Pizza' must end at 'Order Delivered'." };
+    if (p.getOutgoingFlows(handToCustomer).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(handToCustomer)[0]) !== endComplete) return { success: false, message: "'Hand to Customer' must end at 'Order Complete'." };
+    return { success: true, message: "Excellent! The delivery process is clearly defined." };
+}
+function validateLevel5(xml) {
+    const p = parseXML(xml);
+    const deliverPizza = p.findElementByName("bpmn:task", "Deliver Pizza");
+    if(!deliverPizza) return { success: false, message: "The 'Deliver Pizza' task is missing."};
+    const customerPool = p.findElementByName("bpmn:participant", "Customer");
+    if(!customerPool) return { success: false, message: "The 'Customer' pool is required."};
+    const eventGateway = p.findElementByName("bpmn:eventBasedGateway", "Confirm or Complaint?");
+    if (!eventGateway) return { success: false, message: "An Event-Based Gateway 'Confirm or Complaint?' is missing." };
+    const timerEvent = p.findElementByName("bpmn:intermediateCatchEvent", "30 Mins Pass");
+    const messageEvent = p.findElementByName("bpmn:intermediateCatchEvent", "Complaint Received");
+    if (!timerEvent || !messageEvent) return { success: false, message: "Both the Timer ('30 Mins Pass') and Message ('Complaint Received') events are required." };
+    const handleComplaint = p.findElementByName("bpmn:task", "Handle Complaint");
+    const escalationEvent = p.findElementByName("bpmn:boundaryEvent", "Escalate to Manager");
+    const managerReview = p.findElementByName("bpmn:task", "Manager Review");
+    const endResolved = p.findElementByName("bpmn:endEvent", "Complaint Resolved");
+    const endDelivered = p.findElementByName("bpmn:endEvent", "Order Delivered");
+    if (!handleComplaint || !escalationEvent || !managerReview || !endResolved || !endDelivered) return { success: false, message: "One or more elements for the complaint/escalation path is missing."};
+    if (!p.findMessageFlow(customerPool, messageEvent)) return { success: false, message: "A message flow from 'Customer' to 'Complaint Received' is required."};
+    if (p.getOutgoingFlows(deliverPizza).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(deliverPizza)[0]) !== eventGateway) return { success: false, message: "'Deliver Pizza' must connect directly to the 'Confirm or Complaint?' gateway."};
+    const gatewayTargets = p.getOutgoingFlows(eventGateway).map(p.getTargetOfFlow);
+    if (gatewayTargets.length !== 2 || !gatewayTargets.includes(timerEvent) || !gatewayTargets.includes(messageEvent)) return { success: false, message: "The event gateway must connect to both the timer and the message event."};
+    if (p.getOutgoingFlows(timerEvent).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(timerEvent)[0]) !== endDelivered) return { success: false, message: "'30 Mins Pass' must connect to 'Order Delivered'."};
+    if (p.getOutgoingFlows(messageEvent).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(messageEvent)[0]) !== handleComplaint) return { success: false, message: "The complaint message must trigger the 'Handle Complaint' task."};
+    if (p.getAttachedToRef(escalationEvent) !== handleComplaint.getAttribute('id')) return { success: false, message: "'Escalate to Manager' must be attached to 'Handle Complaint'."};
+    if (p.getOutgoingFlows(escalationEvent).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(escalationEvent)[0]) !== managerReview) return { success: false, message: "The escalation event must connect to 'Manager Review'."};
+    if (p.getOutgoingFlows(managerReview).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(managerReview)[0]) !== endResolved) return { success: false, message: "'Manager Review' must connect to 'Complaint Resolved'."};
+    if (p.getOutgoingFlows(handleComplaint).length !== 1 || p.getTargetOfFlow(p.getOutgoingFlows(handleComplaint)[0]) !== endResolved) return { success: false, message: "'Handle Complaint' must also have a path to 'Complaint Resolved' for non-escalated cases."};
+    return { success: true, message: "Congratulations! You've completed the Pizza Adventure!" };
+}
 
-    // --- Validation Functions ---
-    
-    function validateLevel1(xmlString) {
-      const { findElementByName, getLaneNodeIds } = parseXML(xmlString);
-      
-      const pool = findElementByName("bpmn:participant", "BSH Pizza");
-      if (!pool) {
-        return { success: false, message: "We need a 'Pool' for our business! Name it 'BSH Pizza'." };
-      }
-      
-      const lane1 = findElementByName("bpmn:lane", "Front Counter");
-      if (!lane1) {
-        return { success: false, message: "Don't forget the 'Front Counter' lane!" };
-      }
-      
-      const lane2 = findElementByName("bpmn:lane", "Kitchen");
-      if (!lane2) {
-        return { success: false, message: "We need a 'Kitchen' lane, too!" };
-      }
-      
-      return { success: true, message: "Level 1 Complete! The shop is set up. Now let's get our first order." };
-    }
-    
-    function validateLevel2(xmlString) {
-      const { xmlDoc, findElementByName, getLaneNodeIds, isElementInLane } = parseXML(xmlString);
-      
-      // Check for Level 1 stuff first
-      const level1Check = validateLevel1(xmlString);
-      if (!level1Check.success) return level1Check;
-      
-      // Find our new elements
-      const startEvent = findElementByName("bpmn:startEvent", "Order is Received");
-      const task = findElementByName("bpmn:task", "Make Pizza");
-      const endEvent = findElementByName("bpmn:endEvent", "Pizza Ready"); // Let's give the end a name!
-
-      if (!startEvent) {
-        return { success: false, message: "We need a Start Event named 'Order is Received' to begin the process." };
-      }
-      if (!task) {
-        return { success: false, message: "We need a Task named 'Make Pizza'." };
-      }
-      if (!endEvent) {
-        return { success: false, message: "We need an End Event. Let's name it 'Pizza Ready'." };
-      }
-
-      // Check if they are in the correct lanes
-      const frontCounterIds = getLaneNodeIds("Front Counter");
-      const kitchenIds = getLaneNodeIds("Kitchen");
-      
-      if (!isElementInLane(startEvent, frontCounterIds)) {
-        return { success: false, message: "Drag the 'Order is Received' Start Event into the 'Front Counter' lane." };
-      }
-      if (!isElementInLane(task, kitchenIds)) {
-        return { success: false, message: "Drag the 'Make Pizza' Task into the 'Kitchen' lane." };
-      }
-      if (!isElementInLane(endEvent, kitchenIds)) {
-        return { success: false, message: "Drag the 'Pizza Ready' End Event into the 'Kitchen' lane, too." };
-      }
-      
-      // Check for connections (a bit simpler)
-      const flows = xmlDoc.getElementsByTagName("bpmn:sequenceFlow");
-      if (flows.length < 2) {
-          return { success: false, message: "Connect your process! Make sure there is a line from Start -> Task -> End." };
-      }
-
-      return { success: true, message: "Level 2 Complete! We're in business! But now we're getting busy..." };
-    }
-
-    function validateLevel3(xmlString) {
-      const {xmlDoc, findElementByName, getLaneNodeIds, isElementInLane } = parseXML(xmlString);
-
-      // Check for Level 2 stuff first
-      const level2Check = validateLevel2(xmlString);
-      if (!level2Check.success) return level2Check;
-      
-      // Find our new elements
-      const driverLane = findElementByName("bpmn:lane", "Driver");
-      const deliverTask = findElementByName("bpmn:task", "Deliver Pizza");
-      const endEvent = findElementByName("bpmn:endEvent", "Order Complete"); // New end event name
-
-      if (!driverLane) {
-        return { success: false, message: "We need to add a new Lane for our 'Driver'!" };
-      }
-      if (!deliverTask) {
-        return { success: false, message: "Add a new Task named 'Deliver Pizza'." };
-      }
-      
-      // Check if the task is in the new lane
-      const driverIds = getLaneNodeIds("Driver");
-      if (!isElementInLane(deliverTask, driverIds)) {
-        return { success: false, message: "Drag the 'Deliver Pizza' Task into the 'Driver' lane." };
-      }
-      
-      // Check if the End Event is now in the Driver lane
-      if (endEvent && !isElementInLane(endEvent, driverIds)) {
-         return { success: false, message: "Move the End Event to the 'Driver' lane and name it 'Order Complete'." };
-      }
-      
-      // Check for the new connection
-      const flows = Array.from(xmlDoc.getElementsByTagName("bpmn:sequenceFlow"));
-      const makePizzaTask = findElementByName("bpmn:task", "Make Pizza");
-      
-      const hasPizzaToDeliveryFlow = flows.some(flow => 
-        flow.getAttribute("sourceRef") === makePizzaTask.getAttribute("id") &&
-        flow.getAttribute("targetRef") === deliverTask.getAttribute("id")
-      );
-      
-      if (!hasPizzaToDeliveryFlow) {
-          return { success: false, message: "Make sure the process flows from 'Make Pizza' to 'Deliver Pizza'." };
-      }
-
-      return { success: true, message: "Level 3 Complete! Our team is working perfectly!" };
-    }
-
-    // --- Story Data ---
-    const adventureLevels = {
-      1: {
-        title: "The Grand Opening!",
-        story: "Welcome, boss! You've opened 'BSH Pizza'. Before we hire anyone, let's set up the main departments. We'll need a 'Front Counter' for taking orders and a 'Kitchen' for making them.<br><strong>Goal:</strong> Create one Pool named 'BSH Pizza' and add two Lanes named 'Front Counter' and 'Kitchen'.",
-        checkFunction: validateLevel1
-      },
-      2: {
-        title: "Your First Order!",
-        story: "A customer is here! We need a simple process. It should start at the 'Front Counter', then move to the 'Kitchen'.<br><strong>Goal:</strong> Add a Start Event named 'Order is Received' to the 'Front Counter' lane. Add a Task named 'Make Pizza' and an End Event named 'Pizza Ready' to the 'Kitchen' lane. Connect them all!",
-        checkFunction: validateLevel2
-      },
-      3: {
-        title: "Hired Help!",
-        story: "We're busy! You hired a 'Driver'. This is a new role! After the pizza is made, the driver needs to deliver it.<br><strong>Goal:</strong> Add a new Lane named 'Driver'. Add a Task named 'Deliver Pizza' to this lane. Make the process flow from 'Make Pizza' to 'Deliver Pizza'. Finally, move the End Event to the 'Driver' lane and name it 'Order Complete'.",
+const adventureLevels = {
+    1: { title: "The Foundation!", story: `<p>Welcome to 'BSH Pizzeria'! Let's build our core process with structured kitchen stages.</p><strong>Goal:</strong><ol><li>Create a Pool: "BSH Pizzeria".</li><li>Inside, create two main Lanes: "Order Desk" and "Kitchen".</li><li>Inside the "Kitchen" Lane, add two <strong>Sub-Lanes</strong>: "Prep Station" and "Oven Station".</li><li>In "Order Desk", add a Start Event "Order Received" connected to a Task "Take Payment".</li><li>Connect "Take Payment" to a Task "Prepare Pizza" located in the "Prep Station" sub-lane.</li><li>From "Prepare Pizza", connect to an <strong>Intermediate Conditional Event</strong> named "Quality Check Passed".</li><li>Connect the Conditional Event to a Task "Bake Pizza" in the "Oven Station" sub-lane.</li><li>Finally, connect "Bake Pizza" to an End Event "Pizza Ready".</li></ol>`, checkFunction: validateLevel1 },
+    2: { title: "Parallel Power!", story: `<p>Things are getting busy! While the pizza is being boxed, someone can get drinks. We'll use a Parallel Gateway and an Intermediate Timer.</p><strong>Goal:</strong><ol><li>After "Bake Pizza", add a <strong>Parallel Gateway</strong> named "Prep".</li><li>The gateway must split into two parallel branches.</li><li>One branch goes to an <strong>Intermediate Timer Event</strong> called "Allow Cooling (30s)", which then connects to a Task "Box Pizza" (in "Oven Station").</li><li>The second branch goes to a Task "Get Drinks" (in "Order Desk").</li><li>Both branches must then flow into a second <strong>Parallel Gateway</strong> named "Package" to merge them.</li><li>Connect the "Package" gateway onward to the "Pizza Ready" End Event.</li></ol>`, checkFunction: validateLevel2 },
+    3: {
+        title: "The Supply Chain!",
+        story: `<p>Oh no, we're low on cheese! We must check our stock before preparing the pizza and interact with an external supplier if we're out.</p>
+        <strong>Goal:</strong>
+        <ol>
+            <li>Add two new <strong>collapsed</strong> Pools: "BSH Supplier" and "Customer".<br><em>Hint: Use the wrench icon on a Pool to make it a collapsed participant.</em></li>
+            <li>Reroute the main flow: The connection from "Take Payment" should now go to a new Task <strong>"Check Stock"</strong> (in <strong>"Prep Station"</strong>).</li>
+            <li>From "Check Stock", connect to a new <strong>Exclusive Gateway</strong> named <strong>"Stock OK?"</strong> (in <strong>"Prep Station"</strong>).</li>
+            <li><strong>Path 1 (Out of Stock):</strong> One gateway path must connect to a new Task <strong>"Place Ingredient Order"</strong> (in <strong>"Order Desk"</strong>).</li>
+            <li>Continue this path: "Place Ingredient Order" -> [Message to Supplier] -> <strong>"Receive Ingredients"</strong> (Message Event in "Order Desk") -> [Message from Supplier] -> <strong>"Restock Ingredients"</strong> (Task in "Prep Station").</li>
+            <li><strong>Path 2 (Stock is OK):</strong> The other path from the "Stock OK?" gateway is your "good" path.</li>
+            <li><strong>CRITICAL - MERGE THE PATHS:</strong> Both the "Stock is OK" path and the path from "Restock Ingredients" must connect to a **new, second Exclusive Gateway** (in <strong>"Prep Station"</strong>). This will merge your flows.</li>
+            <li>Finally, the new merging gateway must have a single outgoing connection to the <strong>"Prepare Pizza"</strong> task.</li>
+            <li><strong>Add an Exception:</strong> Attach a <strong>Conditional Boundary Event</strong> to "Restock Ingredients" named "Shipment Delayed 15 Min". This should trigger a task "Inform Customer about Delay" (in <strong>"Order Desk"</strong>), which sends a message to the "Customer" pool.</li>
+            <li><strong>Terminate the Exception Path:</strong> The "Inform Customer about Delay" task must then lead to a new <strong>End Event</strong> named "Delay Handled" to properly close this parallel branch of the process.</li>
+        </ol>`,
         checkFunction: validateLevel3
-      }
-    };
+    },
+    4: { title: "Delivery Decisions!", story: `<p>We're offering delivery! We'll use an Exclusive Gateway to decide between pickup and delivery.</p><strong>Goal:</strong><ol><li>Add a new Lane to the "BSH Pizzeria" pool named "Delivery".</li><li>The flow from the "Package" parallel gateway should now go to an <strong>Exclusive Gateway</strong> in "Order Desk" named "For Delivery?".</li><li>One path leads to a Task "Deliver Pizza" in the "Delivery" lane.</li><li>The other path leads to a Task "Hand to Customer" in the "Order Desk" lane.</li><li>The "Deliver Pizza" path must lead to a new End Event "Order Delivered".</li><li>The "Hand to Customer" path must lead to a different End Event "Order Complete".</li></ol>`, checkFunction: validateLevel4 },
+    5: { title: "Handling Complaints!", story: `<p>The final test! After delivery, we wait. Either time passes peacefully, or the customer complains. We'll use an Event-Based Gateway.</p><strong>Goal:</strong><ol><li>Make sure there is a collapsed "Customer" pool.</li><li>After "Deliver Pizza", add an <strong>Event-Based Gateway</strong> named "Confirm or Complaint?".</li><li>It connects to two catching events: an Intermediate <strong>Timer Event</strong> ("30 Mins Pass") and an Intermediate <strong>Message Event</strong> ("Complaint Received").</li><li>A Message Flow from the "Customer" pool must target "Complaint Received".</li><li>The Timer path flows to the "Order Delivered" end event.</li><li>The Message path flows to "Handle Complaint" (in "Order Desk").</li><li>Attach an <strong>Escalation Boundary Event</strong> to "Handle Complaint" named "Escalate to Manager", leading to "Manager Review".</li><li>Both "Handle Complaint" (if not escalated) and "Manager Review" must lead to a new End Event: "Complaint Resolved".</li></ol>`, checkFunction: validateLevel5 }
+};
 
+const modal = document.getElementById('feedback-modal');
+function showFeedbackModal(title, message, isSuccess) {
+  modal.querySelector('#modal-title').innerText = title;
+  modal.querySelector('#modal-message').innerHTML = message;
+  modal.querySelector('#modal-title').style.color = isSuccess ? 'var(--success)' : 'var(--danger)';
+  modal.classList.add('active');
+  modal.setAttribute('aria-hidden', 'false');
+  document.getElementById('modal-action-btn').focus();
+}
+function hideFeedbackModal() {
+  modal.classList.remove('active');
+  modal.setAttribute('aria-hidden', 'true');
+}
 
-    // --- Feedback Modal ---
-    const modal = document.getElementById('feedback-modal');
-    const modalTitle = document.getElementById('modal-title');
-    const modalMessage = document.getElementById('modal-message');
-    
-    function showFeedbackModal(title, message, isSuccess) {
-      modalTitle.innerText = title;
-      modalMessage.innerHTML = message;
-      modalTitle.style.color = isSuccess ? "#16a34a" : "#dc2626";
-      modal.classList.add('active');
-    }
-    
-    document.getElementById('close-modal-btn').addEventListener('click', () => {
-      modal.classList.remove('active');
-    });
-
-    // --- Button Click Logic ---
-    document.getElementById('check-work-btn').addEventListener('click', async () => {
-      try {
-        if (!modeler) {
-          console.error('Modeler not initialized');
-          return;
-        }
-
-        const result = await modeler.saveXML({ format: true });
-        
-        const levelData = adventureLevels[currentLevel];
-        if (!levelData || !levelData.checkFunction) {
-          console.error('Invalid level data');
-          return;
-        }
-        
-        // We pass the xmlDoc to the validation functions now
-        const validationResult = levelData.checkFunction(result.xml);
-        
-        if (validationResult.success) {
-          showFeedbackModal("Success!", validationResult.message, true);
-          currentLevel++;
-          loadLevel(currentLevel); // Load next level story, but DON'T clear diagram
-        } else {
-          showFeedbackModal("Not Quite...", validationResult.message, false);
-        }
-      } catch (error) {
-        console.error('Error checking work:', error);
-        showFeedbackModal("Error", "There was an error checking your work. Please try again.", false);
-      }
-    });
-    
-    // --- Load Level Function ---
-    async function loadLevel(levelNum) {
-      const levelTitleEl = document.getElementById('level-title');
-      const levelNumEl = document.getElementById('level-num');
-      const storyTextEl = document.getElementById('story-text');
-      const checkBtn = document.getElementById('check-work-btn');
-
-      if (!adventureLevels[levelNum]) {
-        levelTitleEl.innerText = "You Win!";
-        levelNumEl.innerText = "All";
-        storyTextEl.innerHTML = "<strong>You've completed the Pizza Adventure! You're a BPMN expert!</strong>";
+function loadLevel(levelNum) {
+    const levelData = adventureLevels[levelNum];
+    const checkBtn = document.getElementById('check-work-btn');
+    document.getElementById('level-num').innerText = levelNum <= totalLevels ? levelNum : totalLevels;
+    document.getElementById('level-title').innerText = levelData ? levelData.title : 'You Win!';
+    document.getElementById('progress-pill').innerText = `Level ${levelNum} / ${totalLevels}`;
+    document.getElementById('level-badge').innerText = levelNum <= 2 ? 'Beginner' : levelNum <= 4 ? 'Intermediate' : 'Advanced';
+    if (!levelData) {
+        document.getElementById('story-text').innerHTML = "<h3>Congratulations!</h3><p>You've completed all available levels of the Pizza Adventure! You're a true BPMN expert!</p>";
         checkBtn.innerText = "Game Completed!";
         checkBtn.disabled = true;
-        return;
-      }
-      
-      const levelData = adventureLevels[levelNum];
-      levelTitleEl.innerText = levelData.title;
-      levelNumEl.innerText = levelNum;
-      storyTextEl.innerHTML = levelData.story;
-      
-
+    } else {
+        document.getElementById('story-text').innerHTML = levelData.story;
     }
+}
 
-    // Initialize the modeler when the page loads
-    document.addEventListener('DOMContentLoaded', async () => {
-      try {
-        const container = document.getElementById('canvas');
-        modeler = new BpmnJS({ container });
+async function safeFitViewport(delay = 50) {
+  if (!modeler) return;
+  await new Promise(r => setTimeout(r, delay));
+  try { modeler.get('canvas').zoom('fit-viewport', 'auto'); } catch (e) { console.warn('Fit viewport failed', e); }
+}
 
-        // We only load the empty diagram ONCE, when the game first starts.
-        await modeler.importXML(emptyBpmn); 
-        
-        const canvas = modeler.get('canvas');
-        if (canvas && typeof canvas.zoom === 'function') {
-          canvas.zoom('fit-viewport');
-        }
-        
-        loadLevel(currentLevel); // Load Level 1
-      } catch (err) {
-        console.error('Could not initialize BPMN Modeler:', err);
-        document.getElementById('story-text').innerText = 
-          'Error: Could not initialize the BPMN modeler. Please refresh the page.';
-      }
+document.addEventListener('DOMContentLoaded', async () => {
+    document.getElementById('modal-action-btn').addEventListener('click', hideFeedbackModal);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideFeedbackModal(); });
+
+    document.getElementById('story-toggle').addEventListener('click', (e) => {
+        const isCollapsed = document.getElementById('main-split').classList.toggle('story-collapsed');
+        e.currentTarget.setAttribute('aria-pressed', String(isCollapsed));
+        e.currentTarget.textContent = isCollapsed ? 'Expand' : 'Collapse';
+        safeFitViewport(330);
     });
+
+    document.getElementById('check-work-btn').addEventListener('click', async () => {
+        if (!modeler) return;
+        const btn = document.getElementById('check-work-btn');
+        btn.disabled = true;
+        btn.textContent = 'Checking...';
+        try {
+            const { xml } = await modeler.saveXML({ format: true });
+            const levelData = adventureLevels[currentLevel];
+            if (!levelData) return;
+            const validationResult = levelData.checkFunction(xml);
+            if (validationResult.success) {
+                showFeedbackModal('Success!', validationResult.message, true);
+                currentLevel = Math.min(totalLevels + 1, currentLevel + 1);
+                loadLevel(currentLevel);
+            } else {
+                showFeedbackModal('Not Quite...', validationResult.message, false);
+            }
+        } catch (error) {
+            console.error('Error checking work:', error);
+            showFeedbackModal('Error', 'An unexpected error occurred. Check the browser console.', false);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Check My Work';
+        }
+    });
+
+    document.getElementById('zoom-fit-btn').addEventListener('click', () => safeFitViewport(50));
+    document.getElementById('reset-btn').addEventListener('click', async () => {
+        if (modeler && confirm('Are you sure you want to clear the diagram?')) {
+            await modeler.importXML(emptyBpmn);
+            safeFitViewport(50);
+        }
+    });
+
+    const fileInput = document.getElementById('import-input');
+    document.getElementById('import-btn').addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file || !modeler) return;
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            try {
+                await modeler.importXML(event.target.result);
+                safeFitViewport(100);
+            } catch (err) {
+                console.error("Import failed", err);
+                showFeedbackModal("Import Error", "Could not import diagram. The file might be invalid.", false);
+            }
+        };
+        reader.readAsText(file);
+        e.target.value = ''; // Reset input to allow re-importing same file
+    });
+
+    document.getElementById('export-btn').addEventListener('click', async () => {
+        if (!modeler) return;
+        try {
+            const { xml } = await modeler.saveXML({ format: true });
+            const blob = new Blob([xml], { type: 'application/xml;charset=utf-8' });
+            const link = document.createElement('a');
+            link.download = `pizzeria-level-${currentLevel}.bpmn`;
+            link.href = URL.createObjectURL(blob);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        } catch (e) {
+            console.error('Export failed', e);
+            showFeedbackModal('Export Error', 'Could not export the diagram.', false);
+        }
+    });
+
+    try {
+        modeler = new BpmnJS({ container: '#canvas' });
+        await modeler.importXML(emptyBpmn);
+        await safeFitViewport(100);
+        loadLevel(currentLevel);
+    } catch (err) {
+        console.error('Could    not initialize BPMN Modeler:', err);
+        document.getElementById('story-text').innerHTML = '<strong>Error: Could not initialize the BPMN modeler. Please refresh the page.</strong>';
+    }
+});
 </script>
+
 </body>
 </html>

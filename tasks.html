@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Tasks, Collapsed Process & Guidelines</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="mistakes.css">
 </head>
 <body>
   <div class="container events-layout" role="main">
@@ -23,10 +24,8 @@
         <button id="menu-naming" aria-pressed="false">Naming Convention</button>
         <button id="menu-collapsed" aria-pressed="false">Collapsed Process</button>
         <button id="menu-expanded" aria-pressed="false">Expanded Process</button>
-        <!-- New Buttons -->
         <button id="menu-challenge" aria-pressed="false">Learn It <span class="new-badge">NEW</span></button>
-        <button id="menu-mistakes" disabled aria-pressed="false" aria-disabled="true" tabindex="-1">Common Mistakes  <span class="badge">Inprogress</span></button>
-      </nav>
+        <button id="menu-mistakes" aria-pressed="false">Common Mistakes <span class="new-badge">NEW</span></button>      </nav>
     </aside>
 
     <!-- MAIN -->
@@ -220,16 +219,133 @@
           </div>
         </div>
 
-        <!-- 6. NEW COMMON MISTAKES BLOCK (Locked) -->
-        <div id="mistakesSection" class="hidden">
-          <h2>Common Mistakes</h2>
-          <div class="task-box">
-            <div class="definition">
-              <p>This section is currently in progress. Check back later for updates!</p>
-            </div>
+        <!-- 6. COMMON MISTAKES BLOCK -->
+        <div class="content" id="mistakesSection" style="flex-direction:column;">
+  <div class="mistakes-container">
+    
+    <div class="mistake-nav" id="mistakeNav">
+      <button class="mistake-tab-btn active" data-mistake="mistake-1">1. Naming</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-2">2. Single Goal</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-3">3. Flow Rules</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-4">4. Task vs. Event</button>
+      <button class="mistake-tab-btn" data-mistake="mistake-5">5. Task vs. Sub-Process</button>
+    </div>
+
+    <div class="mistake-panel active" id="mistake-1" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 1: Wrong Naming (Passive vs. Active)</h3>
+      <p class="mistake-description">Tasks are *actions* your team performs. They MUST have an <strong>active, "Verb + Noun" name</strong> (e.g., "Create Invoice"). Passive names (like "Invoice Created") are reserved for Events, as they describe a *result*.</p>
+      
+      <div class="mistake-example-grid">
+        <div class="mistake-example bad">
+          <h4>🔴 BAD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/taskbad1.png')">🔍 Zoom</button>
+            <img src="img/mistakes/taskbad1.png" alt="Bad Task Naming">
           </div>
+          <p>"They describe a state, not an action. This is confusing.</p>
         </div>
-      </div> <!-- End of .content -->
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/goodtask1.png')">🔍 Zoom</button>
+            <img src="img/mistakes/goodtask1.png" alt="Good Task Naming">
+          </div>
+          <p>This is a clear, active instruction. This is the correct format. and Shows a Action needs to be performed</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mistake-panel" id="mistake-2" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 2: Task is Too Large (Violates "One Goal")</h3>
+      <p class="mistake-description">A single task should represent one logical unit of work. Avoid vague, giant tasks like "Manage Order" that hide 10 different steps. This makes the process unreadable and impossible to analyze. Break it down!</p>
+      
+      <div class="mistake-example-grid">
+        <div class="mistake-example bad">
+          <h4>🔴 BAD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/badtask2.png')">🔍 Zoom</button>
+            <img src="img/mistakes/badtask2.png" alt="Bad: Vague Task">
+          </div>
+          <p> It's not clear what happens. It hides the validation step.</p>
+        </div>
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/goodtask2.png')">🔍 Zoom</button>
+            <img src="img/mistakes/goodtask2.png" alt="Good: Tasks are broken down">
+          </div>
+          <p>This is perfect. The process is broken into "Reveiew Order," "Create Order," and "Ship Order." Each is a single, clear goal.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mistake-panel" id="mistake-3" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 3: Multiple Arrows Into or Out of a Task</h3>
+      <p class="mistake-description">A Task is not a Gateway! A standard task must have **only one incoming** sequence flow and **only one outgoing** sequence flow. You cannot use a task to merge two paths or split into two paths. That is what **Gateways** are for.</p>
+      
+      <div class="mistake-example-grid">
+        <div class="mistake-example bad">
+          <h4>🔴 BAD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/badtask3.png')">🔍 Zoom</button>
+            <img src="img/mistakes/badtask3.png" alt="Bad: Merging into a task">
+          </div>
+          <p>A Task Cannot have more than 1 Incoming and Outgoing Sequence Flow</p>
+        </div>
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/goodtask3.png')">🔍 Zoom</button>
+            <img src="img/mistakes/goodtask3.png" alt="Good: Using a gateway to merge">
+          </div>
+          <p>This is correct. and Gateways can be Used to merge or demerge into tasks.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mistake-panel" id="mistake-4" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 4: Using a Task for a Trigger or Delay</h3>
+      <p class="mistake-description">A Task represents *work*. It does not represent a *trigger* or a *delay*. If your process needs to start *when* a message arrives, or *wait* for 3 days, you must use an Event (Start Message Event or Intermediate Timer Event), not a Task.</p>
+      
+      <div class="mistake-example-grid">
+        <div class="mistake-example bad">
+          <h4>🔴 BAD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/mistakes/badtask4.png')">🔍 Zoom</button>
+            <img src="img/mistakes/badtask4.png" alt="Bad: Using a task as a trigger">
+          </div>
+          <p>If the first task was named "Wait for Supplier Confirmation," that would be wrong. "Waiting" is not an action; it's a state handled by an Intermediate Event.</p>
+        </div>
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/intermediate_message.png')">🔍 Zoom</button>
+            <img src="img/intermediate_message.png" alt="Good: Using an event to wait">
+          </div>
+          <p>This is correct. The process *waits* at the Intermediate Message Event (double circle). It does not use a "Wait" task.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mistake-panel" id="mistake-5" data-mistake-panel>
+      <h3 class="mistake-title">❌ Mistake 5: Confusing a Task and a Sub-Process</h3>
+      <p class="mistake-description">If an activity is actually a complex process in itself (e.g., "Onboard New Supplier" has 10 steps), don't model it as a single Task. This oversimplifies the model. Use a **Collapsed Sub-Process** (the box with the `+` icon) to show that more detail exists "inside."</p>
+      
+      <div class="mistake-example-grid">
+        <div class="mistake-example good">
+          <h4>🟢 GOOD</h4>
+          <div class="img-wrap">
+            <button class="zoom-btn" onclick="openZoom('img/TaskSolution2.png')">🔍 Zoom</button>
+            <img src="img/TaskSolution2.png" alt="Good: Using a sub-process">
+          </div>
+          <p>This is correct. "Follow Up the Supplier" is clearly a complex process, so it is modeled as a Sub-Process with a `+` icon. This is clean and accurate.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+      </div> 
 
     </section>
   </div>
@@ -426,6 +542,35 @@
     document.getElementById('zoomOverlay').addEventListener('click', e => { if(e.target.id === 'zoomOverlay') closeZoom(); });
     document.addEventListener('keydown', e => { if(e.key === 'Escape') closeZoom(); });
 
+
+// --- (Your existing challenge/zoom/menu logic) ---
+
+    // --- ADD THIS NEW CODE ---
+    
+    // Logic for the new "Common Mistakes" tabs
+    const mistakeNav = document.getElementById('mistakeNav');
+    const mistakePanels = document.querySelectorAll('[data-mistake-panel]');
+
+    if (mistakeNav) {
+      mistakeNav.addEventListener('click', (e) => {
+        // Check if a tab button was clicked
+        if (!e.target.classList.contains('mistake-tab-btn')) return;
+
+        const targetMistake = e.target.dataset.mistake;
+
+        // 1. Update Tab Buttons
+        mistakeNav.querySelectorAll('.mistake-tab-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.mistake === targetMistake);
+        });
+
+        // 2. Show/Hide Content Panels
+        mistakePanels.forEach(panel => {
+          panel.classList.toggle('active', panel.id === targetMistake);
+        });
+      });
+    }
+    setActiveMenu(menuTasks);
+    
   </script>
 </body>
 </html>

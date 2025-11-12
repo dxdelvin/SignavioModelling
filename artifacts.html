@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>         
   <title>Data & Artifacts</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="mistakes.css"> 
   <link rel="icon" type="image/svg" href="img/icon.svg"/>
 </head>
 <body>
@@ -20,9 +21,8 @@
 
       <nav class="menu" aria-label="Module menu">
         <button id="menu-concept" class="active" aria-pressed="true">Concept &amp; Types</button>
-        <button id="menu-usage" aria-pressed="false">Usage</button>
-        <button id="menu-mistakes" disabled aria-pressed="false" aria-disabled="true" tabindex="-1">Common Mistakes  <span class="badge">Inprogress</span></button>
-      </nav>
+        <button id="menu-usage" aria-pressed="false">Usage &amp; Rules</button>
+        </nav>
     </aside>
 
     <section class="main" aria-live="polite">
@@ -51,7 +51,7 @@
                 </svg>
               </div>
               <div>
-                <div class="event-title">File</div>
+                <div class="event-title">File (Data Object)</div>
                 <div class="event-desc">Represents data used or created by tasks (e.g., 'Invoice').</div>
               </div>
             </div>
@@ -82,7 +82,6 @@
               </div>
             </div>
 
-
           </div>
         </div>
 
@@ -92,40 +91,54 @@
         </div>
       </div>
 
-      <div class="content" id="usageBlock" style="display:none;">
+      <div class="content" id="usageBlock" style="display:none; flex-direction:column;">
         <div style="flex:1">
-          <div style="font-weight:800;margin-bottom:8px">Artifact Usage</div>
+          <div style="font-weight:800;margin-bottom:8px">Artifact Usage: Rules & Examples</div>
+
+          <div class="task-box" style="border: 1px solid var(--bsh-accent); background: linear-gradient(180deg, rgba(255, 104, 65, 0.02), transparent); padding: 20px; margin-bottom: 16px;">
+            <h3 style="margin-top:0; color:var(--bsh-accent)">The Golden Rule: Association vs. Sequence Flow</h3>
+            <p style="color:var(--muted); line-height: 1.5;">Artifacts (Files, Databases, Notes) are **not** part of the process sequence. They are extra information.</p>
+            <ul>
+              <li style="color:var(--mistake-green);"><strong>GOOD:</strong> Use a <strong>Dotted Line (Association)</strong> to link an artifact to a task. This shows a relationship (e.g., this task *uses* this file).</li>
+              <li style="color:var(--mistake-red);"><strong>BAD:</strong> Never use a <strong>Solid Line (Sequence Flow)</strong> to connect an artifact. This is a modeling error as it implies the "file" is a step in the process.</li>
+            </ul>
+          </div>
 
           <div class="usage-large" aria-label="Usage large diagram">
             <div style="display:flex;justify-content:space-between;align-items:center">
-              <div style="font-weight:800">Usage Diagram</div>
+              <div style="font-weight:800">Usage Diagram (All Artifacts)</div>
               <div>
                 <button class="btn" onclick="openZoom('img/artifacts_usage.png')">Zoom</button>
               </div>
             </div>
-            <div class="img-wrap" id="usageImageWrap">
-              <img id="usageImage" src="img/artifacts_usage.png" alt="Artifacts usage diagram placeholder">
+            <div class="img-wrap" id="usageImageWrap" style="background: #fff; padding: 10px;">
+              <img id="usageImage" src="img/artifacts_usage.png" alt="Artifacts usage diagram">
+            </div>
+          </div>
+
+          <div class="mistake-example-grid" style="margin-top: 16px;">
+            <div class="mistake-example good">
+              <h4>🟢 File (Data Object) vs. Data Store</h4>
+              <div class="img-wrap">
+                <button class="zoom-btn" onclick="openZoom('img/data_store.png')">🔍 Zoom</button>
+                <img src="img/data_store.png" alt="Data Store Example">
+              </div>
+              <p>A <strong>Data Store</strong> (like 'Applicants Records DB') is the *place* data is stored (a database, a cabinet). A <strong>File/Data Object</strong> (like 'Order request template' in the diagram above) is the *piece of data* itself that moves or is used by the process.</p>
+            </div>
+            <div class="mistake-example good">
+              <h4>🟢 Annotation</h4>
+              <div class="img-wrap">
+                <button class="zoom-btn" onclick="openZoom('img/annotation.png')">🔍 Zoom</button>
+                <img src="img/annotation.png" alt="Annotation Example">
+              </div>
+              <p>An <strong>Annotation</strong> is a simple text note for the human reader. It has no effect on the process flow and is only used to add extra clarification that doesn't fit elsewhere.</p>
             </div>
           </div>
         </div>
       </div>
 
       <div class="content" id="mistakesBlock" style="display:none;">
-        <div style="flex:1">
-          <div style="font-weight:800;margin-bottom:8px">Common Mistakes — Things to Avoid</div>
-
-          <div class="mistakes-list" aria-label="Common mistakes list">
-            <div class="mistake-box" style="margin-bottom: 40px; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-              <h3 style="color: #dc2626; margin-bottom: 12px;">❌ Confusing Files and Data Stores</h3>
-              <p style="color: var(--muted); margin-bottom: 20px;">A File represents information (e.g., 'Invoice'), while a Data Store represents the system that holds it (e.g., 'ERP System').</p>
-            </div>
-            <div class="mistake-box" style="margin-bottom: 40px; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-              <h3 style="color: #dc2626; margin-bottom: 12px;">❌ Connecting Artifacts with Sequence Flows</h3>
-              <p style="color: var(--muted); margin-bottom: 20px;">Artifacts (like Files or Annotations) must connect to flow objects (like Tasks) using an **Association** (dotted line), not a Sequence Flow (solid line).</p>
-            </div>
-          </div>
         </div>
-      </div>
 
     </section>
   </div>
@@ -140,8 +153,8 @@
 // --- Model Data ---
 const artifactModel = {
   'data-object': {
-    title: 'File',
-    desc: "A <strong>File</strong> represents information or data that is used or created during a process. It shows what data is required for a task or what data a task produces. It is connected to tasks via a dotted-line <strong>Association</strong>.<em> </br> </br>(It is not neccessary to make this in Signavio, You can Mention File Input and File Output in Attributes Section itself).",
+    title: 'File (Data Object)',
+    desc: "A <strong>File (Data Object)</strong> represents information or data that is used or created during a process. It shows what data is required for a task or what data a task produces. It is connected to tasks via a dotted-line <strong>Association</strong>.<em> </br> </br>(It is not neccessary to make this in Signavio, You can Mention File Input and File Output in Attributes Section itself).",
     file: 'img/data_object.png'
   },
   'data-store': {
@@ -161,21 +174,18 @@ let currentArtifact = 'data-object';
 // --- Menu Buttons ---
 const menuConcept = document.getElementById('menu-concept');
 const menuUsage = document.getElementById('menu-usage');
-const menuMistakes = document.getElementById('menu-mistakes');
+// "Common Mistakes" button variable and content block removed
 
 const conceptBlock = document.getElementById('conceptBlock');
 const usageBlock = document.getElementById('usageBlock');
-const mistakesBlock = document.getElementById('mistakesBlock');
 
 const pageTitle = document.getElementById('pageTitle');
 
-const allMenuButtons = [menuConcept, menuUsage, menuMistakes];
-const allContentBlocks = [conceptBlock, usageBlock, mistakesBlock];
+const allMenuButtons = [menuConcept, menuUsage];
+const allContentBlocks = [conceptBlock, usageBlock];
 
 // --- Menu Logic ---
 function showMenu(menu){
-  if (menu === 'mistakes' && menuMistakes.hasAttribute('disabled')) return;
-
   allContentBlocks.forEach(block => {
     if(block) block.style.display = 'none';
   });
@@ -187,31 +197,31 @@ function showMenu(menu){
   });
 
   let newTitle = '';
+  let newSub = '';
   
   if(menu === 'concept'){
     menuConcept.classList.add('active');
     menuConcept.setAttribute('aria-pressed','true');
     conceptBlock.style.display = ''; // default display
     newTitle = 'Artifacts — Concept & Types';
+    newSub = 'Click an artifact on the left to view its description and example';
     selectArtifact(currentArtifact); // Re-render the selected artifact
   } else if (menu === 'usage') {
     menuUsage.classList.add('active');
     menuUsage.setAttribute('aria-pressed','true');
-    usageBlock.style.display = ''; 
-    newTitle = 'Artifacts — Usage';
-  } else if (menu === 'mistakes') {
-    menuMistakes.classList.add('active');
-    menuMistakes.setAttribute('aria-pressed','true');
-    mistakesBlock.style.display = ''; 
-    newTitle = 'Artifacts — Common Mistakes';
+    usageBlock.style.display = 'flex'; // Use flex for column layout
+    newTitle = 'Artifacts — Usage & Rules';
+    newSub = 'Learn the "Golden Rule" and see how artifacts are used';
   }
 
   if (pageTitle) pageTitle.innerText = newTitle;
+  if (pageTitle && pageTitle.nextElementSibling) {
+      pageTitle.nextElementSibling.innerText = newSub;
+  }
 }
 
 menuConcept.addEventListener('click', () => showMenu('concept'));
 menuUsage.addEventListener('click', () => showMenu('usage'));
-menuMistakes.addEventListener('click', () => showMenu('mistakes'));
 
 // --- Artifact Selection Logic ---
 function selectArtifact(key) {
@@ -226,6 +236,13 @@ function selectArtifact(key) {
     container.innerHTML = `<div class="small">Artifact not found.</div>`;
     return;
   }
+  
+  // Update the title for "File (Data Object)"
+  const titleText = (key === 'data-object') ? 'File (Data Object)' : data.title;
+  
+  // Update the event-card text
+  document.querySelectorAll('.event-card[data-artifact="data-object"] .event-title').forEach(el => el.innerText = 'File (Data Object)');
+
 
   const intro = document.createElement('div');
   intro.className = 'small';
@@ -235,19 +252,19 @@ function selectArtifact(key) {
   const v = document.createElement('div');
   v.className = 'variant';
   
-  const title = document.createElement('div');
-  title.className = 'v-title';
-  title.innerText = data.title;
+  const titleEl = document.createElement('div');
+  titleEl.className = 'v-title';
+  titleEl.innerText = titleText; // Use the updated title
   
   const thumb = document.createElement('div');
   thumb.className = 'thumb';
   
   const img = document.createElement('img');
   img.src = data.file;
-  img.alt = `${data.title} diagram placeholder`;
+  img.alt = `${titleText} diagram placeholder`;
   thumb.appendChild(img);
   
-  v.appendChild(title);
+  v.appendChild(titleEl);
   v.appendChild(thumb);
   container.appendChild(v);
 }
