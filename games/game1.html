@@ -61,8 +61,44 @@
   </div>
 
 
+<div class="game-modal-overlay active" id="welcome-modal-overlay" style="z-index: 9991;">
+      <div class="game-modal">
+        <h2 id="welcome-title" style="color: var(--accent);">Welcome, Process Doctor!</h2>
+        <p class="quiz-question" id="welcome-message" style="line-height: 1.6;">
+          Your first case is ready. Your mission is to find and diagnose all the modeling errors in the process.
+        </p>
+        <div style="text-align: left; color: var(--muted); line-height: 1.6; margin: 16px 0; font-size: 15px;">
+          <strong>How to Play:</strong>
+          <ul style="padding-left: 24px; margin-top: 10px; margin-bottom: 0;">
+            <li style="margin-bottom: 8px;">
+              <strong>1. Find:</strong> Hover over elements. Errors will glow with an red outline. 
+            </li>
+            <li style="margin-bottom: 8px;">
+              <strong>2. Click:</strong> Click the glowing error to start the diagnosis.(Even arrow glows)
+            </li>
+            <li>
+              <strong>3. Solve:</strong> Answer the multiple-choice question to fix the process!
+            </li>
+          </ul>
+        </div>
+        <button class="btn quiz-next-btn" id="start-diagnosis-btn" style="display: block; width: 100%; margin-top: 20px;">Start Diagnosis</button>
+      </div>
+    </div>
+
   <script>
-    // UPDATED: gameLevels object with "Coming Soon" stubs
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      
+      const welcomeModal = document.getElementById('welcome-modal-overlay');
+      const startBtn = document.getElementById('start-diagnosis-btn');
+      
+      if (welcomeModal && startBtn) {
+        startBtn.addEventListener('click', () => {
+          welcomeModal.classList.remove('active');
+        });
+      }
+    });
+
     const gameLevels = {
       level1: {
         title: "Case File #1:  Hover Over the Elements to Diagnose",
