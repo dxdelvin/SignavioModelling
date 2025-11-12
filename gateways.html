@@ -327,10 +327,10 @@ const challengeData = {
     title: "Easy: Simple XOR Decision",
     scenario: "Start with 'Order Arrived', run 'Verify Order', then use an Exclusive (XOR) Gateway to check 'Order Valid?'. If YES, go to 'Order Logged' and end. If NO, go to 'Send Correction Request' and then end. This keeps the flow short while teaching a basic decision split.",
     hints: [
-      "1x Start Event",
-      "3x Task",
-      "2x Exclusive (XOR) Gateway",
-      "1x End Events"
+      "What kind of gateway should you use for a simple 'Yes/No' decision?",
+      "A common mistake is forgetting to label the *paths* coming out of a gateway. How should you label your 'Yes' and 'No' paths?",
+      "Do you need one End Event or two for this scenario?",
+      "Don't forget to 'balance' your gateways. Do you need a gateway to *merge* the paths before the end?"
     ],
     solution: "img/GatewaySolution1.png"
   },
@@ -339,11 +339,10 @@ const challengeData = {
     title: "Medium: Triple Starts → Merge → Parallel → XOR → Two Ends",
     scenario: "The process may be triggered three ways: a plain Start 'Order Received', a Message Start 'Supplier Ack', or a Timer Start 'Daily Batch'. All three feed into a single merge (use a gateway that accepts whichever trigger arrives) that leads to 'Consolidate Trigger'. From there use a Parallel (AND) split to run 'Prepare Shipment' and 'Notify Billing' concurrently. After both complete, use an XOR to decide (based on check if its available or not) whether to 'Release Order' or 'Hold for Audit' — each path ends separately ('Order Released' and 'Order On Hold').",
     hints: [
-      "3x Start Events (Plain, Message, Timer) that converge",
-      "2x XOR gateway ",
-      "5x Task",
-      "2x Parallel (AND) split/merge",
-      "2x End Events (Order Released, Order On Hold)"
+      "How do you merge three different *start events* into one flow? (Hint: An XOR gateway can merge paths.)",
+      "What gateway type *splits* the flow to run tasks *concurrently* (at the same time)?",
+      "What gateway type must be used to *re-join* the concurrent paths after they are both complete?",
+      "How many different End Events does this scenario describe?"
     ],
     solution: "img/GatewaySolution2.png"
   },
@@ -352,9 +351,10 @@ const challengeData = {
     title: "Hard: All-Gateways Workflow (XOR, AND, OR) with Merges",
     scenario: "Start the process with a Message Start Event 'Order Notification'. Immediately split with a Parallel (AND) Gateway into three branches. Branch A goes into an XOR decision: depending on the Supplier Availability, it routes to either (yes) 'Request Supplier Confirm' or  (no) 'Bypass Supplier' and includes an Intermediate Message Catch event to 'Wait for supplier Reply' after Request Task. Branch B contains an OR (Inclusive) Gateway that may trigger one or both tasks 'Notify Warehouse' and 'Notify Finance' depending on Team Member?, and after those run it passes through an Intermediate Timer Event (Wait 1hr) before rejoining. Branch C runs a simple task 'Run Pre-Shipment Check' and then reaches an Intermediate Conditional Event that evaluates (ReadyForDispatch == TRUE). After all three parallel branches complete, use an AND join to merge them, continue to 'Finalize Shipment' and finish with a single Normal End Event 'Shipment Completed'." ,
     hints: [
-      "Challenge with no hints!",
-      "Use all gateway types: XOR, AND, OR",
-      "Good Luck _😉_"
+      "How many main branches does the *first* Parallel (AND) gateway split into?",
+      "Branch A (XOR): How do you merge the 'Request' and 'Bypass' paths back together before they can continue?",
+      "Branch B (OR): This gateway is 'inclusive', meaning *one or more* paths can be taken. What does its icon look like ('O')?",
+      "How do you merge all three main branches (A, B, and C) back together? (Hint: Remember to balance your gateways!)"
     ],
     solution: "img/GatewaySolution3.png"
   }
@@ -366,13 +366,13 @@ const challengeData = {
 // Menu Buttons
 const menuConcept = document.getElementById('menu-concept');
 const menuUsage = document.getElementById('menu-usage');
-const menuChallenge = document.getElementById('menu-challenge'); // New
-const menuMistakes = document.getElementById('menu-mistakes'); // New
+const menuChallenge = document.getElementById('menu-challenge'); 
+const menuMistakes = document.getElementById('menu-mistakes'); 
 
 // Content Blocks
 const conceptAndUsageBlock = document.getElementById('conceptAndUsageBlock'); // The main content div
-const challengeBlock = document.getElementById('challengeBlock'); // New
-const mistakesBlock = document.getElementById('mistakesBlock'); // New
+const challengeBlock = document.getElementById('challengeBlock'); 
+const mistakesBlock = document.getElementById('mistakesBlock'); 
 
 const pageTitle = document.getElementById('pageTitle');
 

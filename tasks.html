@@ -360,10 +360,9 @@
     title: "Easy: Clear Task Naming & Sequence",
     scenario: "Model a mini-invoice flow where you have to first draft the invoice and then Review it. After Reviewing You have to submit the invoice to the department then you can end it. Use correct task naming (verb + noun) and keep each step as a single task.",
     hints: [
-      "1x Start Event (plain)",
-      "4x Tasks in linear sequence",
-      "1x End Event (plain)",
-      "Naming rule: always use Active voice: Verb + Noun (e.g., 'Draft Invoice')"
+      "How many distinct *actions* (Tasks) are described in the scenario?",
+      "What is the correct 'Verb + Noun' naming convention for each action? (e.g., 'Draft Invoice', not 'Invoice Drafted').",
+      "Remember, a simple task should have only one incoming and one outgoing flow."
     ],
     solution: "img/TaskSolution1.png"
   },
@@ -372,10 +371,8 @@
     title: "Medium: Collapsed Sub-process (Supplier Coordination)",
     scenario: "Model this: We have to Initate Purchase Order So First task ours is to to get the Purchase Request and then we have a lot of steps to follow up the Supplier, So We can Create another Process Model for it, So after following Up we Create the Purchase Order and end it with Purchase Order Created.",
     hints: [
-      "1x Start", 
-      "2x Tasks",
-      "1x Collapsed Sub-process",
-      "1x End",
+      "The scenario mentions 'a lot of steps to follow up the Supplier'. How do you represent a complex set of steps *inside* another process?",
+      "What icon (the `+` sign) indicates that a task is actually a Sub-Process?",
     ],
     solution: "img/TaskSolution2.png"
   },

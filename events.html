@@ -426,9 +426,9 @@ const challengeData = {
     title: "Easy: Message-Triggered Supplier Check ",
     scenario: "Model a tiny process that starts *only* when an external supplier sends a 'Supplier Confirmation Received' message. The message start must immediately trigger a short automated verification task 'Validate Supplier Confirmation Data' and end the process saying 'Data is Confirmed'.",
     hints: [
-      "1x Message Start Event (catching)",
-      "1x User Task ",
-      "1x End Message Event"
+      "What kind of event *waits* for an external message to *start* a process?",
+      "What is the correct 'Verb + Noun' name for the action of validating data?",
+      "What kind of event should you use to show the process has reached the state 'Data is Confirmed'?"
     ],
     solution: "img/EventSolution1.png"
   },
@@ -436,11 +436,10 @@ const challengeData = {
     title: "Medium: BOM Push",
     scenario: "Model a supply-chain process that begins with a event 'BOM Data is Available' and then after the start, the process will be delayed for a timed event and will 'Wait for System Availability Window'. Then it will move 'Prepare BOM Data' Task, after that the process waits to receive a 'System Backlog Cleared' message and proceed immediately to 'Push BOM Data'. After pushing, throw a Message Event to notify the factory system.",
     hints: [
-      "1x Start Event",
-      "1x Intermediate Timer Event (catching)",
-      "1x Intermediate Message Catch Event",
-      "2x Tasks (Prepare BOM Data, Push BOM Data)",
-      "1x End Message Event (throwing)"
+      "What kind of Start Event is 'BOM Data is Available'? (Is it a specific trigger or just a plain start?)",
+      "What *intermediate* event is used to represent a *delay* in the middle of a process?",
+      "What *intermediate* event is used to *wait* for an external message like 'System Backlog Cleared'?",
+      "What kind of *end* event is needed to 'notify' an external system?"
     ],
     solution: "img/EventSolution2.png"
   },
@@ -448,12 +447,10 @@ const challengeData = {
     title: "Hard: Compact eplenishment",
     scenario: "Every night at 02:00 AM, a Timer Start Event triggers the process. The first task is 'Check Inventory Levels' to see if new orders are needed. Once confirmed, the system proceeds to 'Send Purchase Order to Supplier' task. A Intermediate Timer is attached to this task, waiting up to 24 hours for the supplier's confirmation. If a 'Supplier Confirmation Received' message arrives within that time, an Intermediate Event will create a milestone saying 'Book Goods in System', then it will move to task 'Inform Transport Team' and then completing with a Normal End event called 'Purchase Order Created'. However, if no confirmation is received within 24 hours, the boundary timer activates and ends the process through an Error Message End called 'Inform Error to Procurement'.",
     hints: [
-      "1x Start Event: Timer Start",
-      "1x Intermediate Event",
-      "1x Intermediate Catch Timer Event (attached to 'Send Purchase Order')",
-      "3x Tasks: Check Inventory Levels, Send Purchase Order to Supplier, Inform Transport Team",
-      "1x Normal End Event",
-      "1x Error Message End Event"
+      "Read the scenario carefully to identify the correct *type* of Start Event.",
+      "How do you model an exception or 'deadline' (like 'Wait 24 Hours') on a specific task?",
+      "The 'happy path' uses a plain intermediate event as a *milestone*. What does that look like?",
+      "The process has two different outcomes. Does this mean you need two different *types* of End Events?"
     ],
     solution: "img/EventSolution3.png"
   }

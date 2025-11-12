@@ -267,7 +267,6 @@
     </section>
   </div>
 
-  <!-- Zoom Overlay -->
   <div class="zoom-overlay" id="zoomOverlay" role="dialog" aria-modal="true" aria-hidden="true">
     <button class="zoom-close" id="zoomClose" onclick="closeZoom()">Close ✕</button>
     <img id="zoomedImage" src="" alt="Zoomed diagram">
@@ -279,10 +278,10 @@ const challengeData = {
     title: "Easy: Lane Naming with OR Gateway & External Pool",
     scenario: "Model one company pool 'BSH' with three lanes: Procurement, Production, and Logistics. Start in Procurement with 'Order Received'. Use an OR gateway so the flow can go to Production, Logistics, The Task Towards for Production is for partners only 'Create Special Packages'. And the Task towards Logistics is for customers 'Send Information about the Package' (Create a External Pool Customer and Send this Message Flow to the Customer) then the both gets end in the logistics saying 'Order is Completed'",
     hints: [
-      "1x Pool (Company) + 1x External Pool (Customer)",
-      "3x Lanes (Procurement, Production, Logistics)",
-      "2x Inclusive (OR) Gateway for routing",
-      "Start Event and End Event"
+      "How do you represent the main company ('BSH') versus an external participant ('Customer')?",
+      "How do you show internal responsibilities (like 'Procurement' and 'Production') *inside* the 'BSH' pool?",
+      "What kind of gateway allows the flow to go to *one or more* branches (like 'Production' and/or 'Logistics')?",
+      "What type of arrow (solid or dashed) must be used to send a message to the external 'Customer' pool?"
     ],
     solution: "img/PoolSolution1.png"
   },
@@ -291,15 +290,11 @@ const challengeData = {
     title: "Medium (Hard): DSCP Process with IT Sublanes & Events",
     scenario: "In the DSCP pool use two lanes: Operations and IT Systems. Inside IT Systems create two sublanes named ERP and WMS. The process starts in the Operations lane with two triggers — a plain Start Event called ‘Inventory Status Requested’ and a Message Start Event called ‘Reorder Trigger’. Both start events merge at an XOR gateway, meaning either one can initiate the flow. The XOR leads to ‘Create Replenishment Plan’ (Task 1) in Operations and then to ‘Execute Order’ (Task 2), in the WMS lane. After executing the order, a Parallel Gateway splits the flow: one branch goes in Operations and ends with an End Message Event ‘Notify Vendor’, which connects to the external Vendor pool; the other branch passes into the IT Systems lane, where ERP performs the task ‘Update Internal Systems’. The flow then continues to the WMS sublane, which holds an Intermediate Conditional Event checking the condition (StockReceived == TRUE). When the condition is met, the sequence moves back to Operations for the task ‘Finalize Receipt’ and also receives some information from the Vendor and ends with a Normal End Event labeled ‘Order Completed’.",
     hints: [
-      "1x Pool named 'DSCP' with 2 lanes ",
-      "IT Systems lane contains 2 sublanes",
-      "1x Message Start Event (Reorder Trigger)",
-      "1x Intermediate Conditionel Event",
-      "1x XOR Gateway ",
-      "1x Parallel Gateway ",
-      "4x Tasks",
-      "1x External Pool (Vendor)",
-      "1x Normal End and 1x Message End"
+      "The scenario describes lanes *within* the 'IT Systems' lane. What is this concept called?",
+      "The process has two *triggers*. What kind of Start Event is 'Reorder Trigger'?",
+      "What gateway is used to *split* the flow into two *concurrent* paths (to 'Notify Vendor' and 'Update Internal Systems')?",
+      "The process waits for a condition `StockReceived == TRUE`. What *intermediate event* is used for this?",
+      "The process communicates with an external 'Vendor'. What kind of arrow is needed?"
     ],
     solution: "img/PoolSolution2.png"
   }
