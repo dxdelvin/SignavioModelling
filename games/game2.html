@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>The Process Adventure - Advanced</title>
   <link rel="icon" type="image/svg" href="https://cd-public.s3.eu.central-1.amazonaws.com/img/icon.svg"/>
+  <title>The Process Adventure - Advanced</title>
+  <link rel="icon" type="image/svg" href="https://cd-public.s3.eu.central-1.amazonaws.com/img/icon.svg"/>
 
   <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.0.0/dist/assets/diagram-js.css">
   <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.0.0/dist/assets/bpmn-js.css">
@@ -84,6 +86,17 @@ const emptyBpmn = `<?xml version="1.0" encoding="UTF-8"?>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1"><bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1" /></bpmndi:BPMNDiagram>
 </bpmn:definitions>`;
 
+(function injectRuntimeCss() {
+  const css = `
+    .djs-palette { z-index: 60 !important; }
+    .bjs-container, .djs-container { overflow: visible !important; }
+  `;
+  const style = document.createElement('style');
+  style.appendChild(document.createTextNode(css));
+  document.head.appendChild(style);
+})();
+
+function parseXML(xmlString) {
 (function injectRuntimeCss() {
   const css = `
     .djs-palette { z-index: 60 !important; }
@@ -464,7 +477,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         await safeFitViewport(100);
         loadLevel(currentLevel);
     } catch (err) {
-        console.error('Could    not initialize BPMN Modeler:', err);
+        console.error('Could not initialize BPMN Modeler:', err);
         document.getElementById('story-text').innerHTML = '<strong>Error: Could not initialize the BPMN modeler. Please refresh the page.</strong>';
     }
 });
